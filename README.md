@@ -19,7 +19,7 @@ src
 │   │   ├── Detailvue         # 채팅방 참여    
 │   │   ├── ListSmall.vue     # 참여 채팅방 목록 (작은 버전)    
 │   │   └── DetailSmall.vue   # 채팅방 참여 (작은 버전)    
-│   │
+│   │    
 │   ├── post    
 │   │   ├── List.vue          # 게시글 목록    
 │   │   ├── Detail.vue        # 게시글 상세    
