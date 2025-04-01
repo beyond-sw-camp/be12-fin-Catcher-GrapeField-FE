@@ -1,0 +1,26 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .circle {
+      fill: #7e3ff2;
+      opacity: 0.8;
+      transform-origin: 80px 80px;
+      animation: moveOutIn 8s ease-in-out infinite;
+    }
+
+    .c1 { --dx: -20px; --dy: -20px; animation-delay: 0s; }
+    .c2 { --dx:  20px; --dy: -20px; animation-delay: 2s; }
+    .c3 { --dx: -20px; --dy:  20px; animation-delay: 4s; }
+    .c4 { --dx:  20px; --dy:  20px; animation-delay: 6s; }
+
+    @keyframes moveOutIn {
+      0%, 100% { transform: translate(0, 0); }
+      6.25%, 18.75% { transform: translate(var(--dx), var(--dy)); }
+      25%, 100% { transform: translate(0, 0); }
+    }
+  </style>
+
+  <circle class="circle c1" cx="60" cy="60" r="25" />
+  <circle class="circle c2" cx="100" cy="60" r="25" />
+  <circle class="circle c3" cx="60" cy="100" r="25" />
+  <circle class="circle c4" cx="100" cy="100" r="25" />
+</svg>

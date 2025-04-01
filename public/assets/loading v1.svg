@@ -1,0 +1,29 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .circle {
+      fill: #7e3ff2;
+      opacity: 0.8;
+      transform-origin: 80px 80px;
+      animation: moveOutIn 2s ease-in-out infinite;
+    }
+    .c1 { animation-delay: 0s; }
+    .c2 { animation-delay: 0.3s; }
+    .c3 { animation-delay: 0.6s; }
+    .c4 { animation-delay: 0.9s; }
+
+    @keyframes moveOutIn {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(var(--dx), var(--dy));
+      }
+    }
+  </style>
+
+  <!-- 중심 기준으로 네 방향 -->
+  <circle class="circle c1" cx="60" cy="60" r="25" style="--dx: -20px; --dy: -20px;" />
+  <circle class="circle c2" cx="100" cy="60" r="25" style="--dx: 20px; --dy: -20px;" />
+  <circle class="circle c3" cx="60" cy="100" r="25" style="--dx: -20px; --dy: 20px;" />
+  <circle class="circle c4" cx="100" cy="100" r="25" style="--dx: 20px; --dy: 20px;" />
+</svg>
