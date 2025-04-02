@@ -4,7 +4,7 @@
             <div class="logo">
                 <router-link to="/">
                     <div class="logo-image">
-                        <img src="/logo.png" alt="Logo" width="auto" height="auto" />
+                        <img src="/logo.png" alt="Logo" />
                     </div>
                 </router-link>
             </div>
@@ -26,26 +26,23 @@
 
 <style scoped>
 .footer {
-    padding: 30px 70px;
+    padding: 2vw 5vw;
     background-color: white;
-    border-top: 1px solid #EAEAEA;
+    border-top: 0.07vw solid #EAEAEA;
     font-family: Arial, sans-serif;
 }
 
 .footer-content {
     display: flex;
-    justify-content: flex-start;
-    /* 왼쪽 정렬 */
+    justify-content: space-between;
     align-items: center;
-    gap: 40vw;
-    /* 좌우 간격 조정 */
+    gap: 2vw;
 }
 
 .logo-image img {
-    width: 60%;
-    height: 100%;
+    width: 8vw;
+    height: auto;
 }
-
 
 .footer-links {
     display: flex;
@@ -53,10 +50,10 @@
 }
 
 .footer-link {
-    margin: 0 15px;
+    margin: 0 1vw;
     text-decoration: none;
     color: #333333;
-    font-size: 16px;
+    font-size: 1vw;
 }
 
 .footer-link:hover {
@@ -64,14 +61,69 @@
 }
 
 .separator {
-    width: 1px;
-    height: 30px;
+    width: 0.07vw;
+    height: 2vw;
     background-color: #EAEAEA;
+    margin: 0 0.5vw;
 }
 
 .copyright {
     color: #999999;
-    font-size: 14px;
+    font-size: 0.9vw;
     text-align: left;
+    margin-top: 1vw;
+}
+
+/* 반응형 미디어 쿼리 */
+@media screen and (max-width: 768px) {
+    .footer {
+        padding: 3vw 4vw;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2vw;
+    }
+
+    .logo-image img {
+        width: 12vw;
+    }
+
+    .footer-link {
+        font-size: 1.5vw;
+    }
+
+    .copyright {
+        font-size: 1.2vw;
+        margin-top: 2vw;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .footer {
+        padding: 4vw 5vw;
+    }
+
+    .logo-image img {
+        width: 20vw;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+    }
+
+    .footer-link {
+        font-size: 2.5vw;
+        margin: 0 2vw 2vw 0;
+    }
+
+    .separator {
+        height: 4vw;
+    }
+
+    .copyright {
+        font-size: 2vw;
+    }
 }
 </style>
