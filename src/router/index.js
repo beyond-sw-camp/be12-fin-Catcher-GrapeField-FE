@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 
 import Main from "../../public/Main.vue";
 import Login from "../user/Login.vue";
+hanges
 
 const routes = [
     {path: "/", component: Main},
