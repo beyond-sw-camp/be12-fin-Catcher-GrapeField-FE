@@ -24,7 +24,7 @@ const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
   display: flex;
   flex-direction: column;
   min-height: 98vh;
-}
+} 
 
 main {
   flex: 1;
