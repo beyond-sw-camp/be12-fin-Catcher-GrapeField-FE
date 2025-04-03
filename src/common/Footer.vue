@@ -9,12 +9,19 @@
                 </router-link>
             </div>
 
-            <div class="footer-links">
-                <a href="#" class="footer-link">공지사항</a>
+            <div class="footer-links text-sm text-gray-700 font-normal leading-relaxed">
+                <!-- <a href="#" class="footer-link">공지사항</a> -->
+                <router-link :to="{ path: '/customercenter', query: { type: 'notice' } }">
+                    공지사항
+                </router-link>
                 <span class="separator"></span>
-                <a href="#" class="footer-link">자주 묻는 질문</a>
+                <router-link :to="{ path: '/customercenter', query: { type: 'faq' } }">
+                    자주 묻는 질문
+                </router-link>
                 <span class="separator"></span>
-                <a href="#" class="footer-link">1:1 문의</a>
+                <router-link :to="{ path: '/customercenter', query: { type: 'qna' } }">
+                    1:1 문의
+                </router-link>
             </div>
         </div>
 
