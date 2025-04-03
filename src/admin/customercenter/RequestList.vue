@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
+import { toast } from 'vue3-toastify';
 
 const category = ref({
     type: 'all'
@@ -39,10 +40,25 @@ const inquiries = ref([
     },
 ])
 
+const userRole = ref({
+    // role: 'user',
+    role: 'admin',
+})
 const openIndex = ref(null)
-
 function toggle(index) {
-    openIndex.value = openIndex.value === index ? null : index
+    if (userRole.value.role !== 'admin') {
+        toast("접근 권한이 없습니다.", {
+            "theme": "auto",
+            "type": "warning",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+        return
+    }else{
+        openIndex.value = openIndex.value === index ? null : index
+    }
 }
 </script>
 
@@ -118,34 +134,6 @@ function toggle(index) {
                             </td>
                             <td class="text-center">{{ item.createdAt }}</td>
                             <td class="text-center">{{ item.answeredAt || '-' }}</td>
-                        </tr>
-
-                        <!-- 펼쳐지는 답변 영역 -->
-                        <tr v-if="openIndex === index">
-                            <td colspan="5" class="px-6 pb-6">
-                                <div class="rounded-lg border border-gray-300 p-4 text-sm text-gray-800">
-
-                                    <div class="font-bold text-lg text-gray-800 py-3">
-                                        {{ item.title }}
-                                    </div>
-
-                                    <div class="text-sm text-gray-500 mb-4">
-                                        등록일: {{ item.createdAt }}
-                                    </div>
-
-                                    <div class="text-sm text-gray-700 mb-6">
-                                        {{ item.content }}
-                                    </div>
-
-                                    <div class="bg-gray-100 rounded-md p-4 text-sm text-gray-800">
-                                        <div class="flex mb-2">
-                                            <div class="font-semibold text-gray-700">관리자 답변</div>
-                                            <div class="text-xs ml-2 text-gray-500">{{ item.answeredAt }}</div>
-                                        </div>
-                                        <div class="text-gray-700">{{ item.answer }}</div>
-                                    </div>
-                                </div>
-                            </td>
                         </tr>
                     </template>
                 </tbody>

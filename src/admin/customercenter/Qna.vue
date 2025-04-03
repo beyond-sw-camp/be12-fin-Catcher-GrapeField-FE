@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
-
 const category = ref({
     type: 'all'
 });
@@ -44,18 +43,23 @@ const openIndex = ref(null)
 function toggle(index) {
     openIndex.value = openIndex.value === index ? null : index
 }
+
+const userRole = ref({
+    // role: 'user',
+    role: 'admin',
+})
 </script>
 
 <template>
     <div class="w-[1320px] mt-2">
-        <div class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-8">
+        <div v-if="userRole.role !== 'admin'" class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-8">
             <div class="ml-4">
                 <div class="text-zinc-800 text-xl font-bold font-['Inter']">1:1 문의</div>
                 <div class="text-stone-500 text-sm font-normal font-['Inter']">
                     GrapeField 서비스 이용 중 궁금한 점을 문의해 주세요. <br>최대한 빠르게 답변 드리겠습니다.
                 </div>
             </div>
-            <div>
+            <div v-if="userRole.role !== 'admin'">
                 <button
                     class="w-20 h-8 mr-4 bg-violet-700 text-white text-sm font-bold rounded flex items-center justify-center">
                     문의하기</button>
@@ -110,7 +114,7 @@ function toggle(index) {
                             <td class="text-center">{{ item.createdAt }}</td>
                             <td class="text-center">{{ item.answeredAt || '-' }}</td>
                         </tr>
-                    
+
 
                         <!-- 펼쳐지는 답변 영역 -->
                         <tr v-if="openIndex === index">
@@ -120,21 +124,40 @@ function toggle(index) {
                                     <div class="font-bold text-lg text-gray-800 py-3">
                                         {{ item.title }}
                                     </div>
-    
+
                                     <div class="text-sm text-gray-500 mb-4">
                                         등록일: {{ item.createdAt }}
                                     </div>
-    
+
                                     <div class="text-sm text-gray-700 mb-6">
                                         {{ item.content }}
                                     </div>
-    
+
                                     <div class="bg-gray-100 rounded-md p-4 text-sm text-gray-800">
                                         <div class="flex mb-2">
                                             <div class="font-semibold text-gray-700">관리자 답변</div>
                                             <div class="text-xs ml-2 text-gray-500">{{ item.answeredAt }}</div>
                                         </div>
-                                        <div class="text-gray-700">{{ item.answer }}</div>
+                                        <!-- ✅ 관리자일 경우: textarea + 버튼 -->
+                                        <div v-if="userRole.role === 'admin'">
+                                            <textarea v-model="item.answer" rows="3"
+                                                class="w-full border border-gray-300 rounded p-2 text-sm mb-2"
+                                                placeholder="답변 내용을 입력하세요"></textarea>
+                                            <div class="flex justify-end gap-2">
+                                                <button class="bg-violet-700 text-white px-4 py-1 rounded text-sm"
+                                                    @click="submitAnswer(index)">
+                                                    등록
+                                                </button>
+                                                <button class="bg-gray-300 text-gray-800 px-4 py-1 rounded text-sm"
+                                                    @click="cancelEdit(index)">
+                                                    취소
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- ✅ 일반 사용자: 단순 답변 텍스트 -->
+                                        <div v-else>
+                                            {{ item.answer }}
+                                        </div>
                                     </div>
                                 </div>
                             </td>

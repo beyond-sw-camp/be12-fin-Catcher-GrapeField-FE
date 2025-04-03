@@ -6,7 +6,6 @@ const props = defineProps({
     selected: String
 });
 
-
 // 부모에게 전달할 이벤트 정의
 const emit = defineEmits(['selectedType']);
 
