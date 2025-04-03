@@ -12,15 +12,15 @@
       <nav class="main-nav">
         <ul class="nav-list">
           <li class="nav-item">
-            <router-link to="/home" :class="{ 'router-link-active': isActive('/home') }">홈</router-link>
+            <router-link to="/home" :class="{ 'router-link-active': isActive('/home') }" class="truncate">홈</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/events"
-                         :class="{ 'router-link-active': isActive('/events') }">공연/전시</router-link>
+                         :class="{ 'router-link-active': isActive('/events') } "class="truncate">공연/전시</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/community"
-                         :class="{ 'router-link-active': isActive('/community') }">커뮤니티</router-link>
+                         :class="{ 'router-link-active': isActive('/community') }"class="truncate">커뮤니티</router-link>
           </li>
         </ul>
       </nav>
@@ -30,9 +30,9 @@
           <input type="text" placeholder="꽃의 비밀 🔍" />
         </div>
         <div class="auth-buttons">
-          <router-link to="/login" class="login-button">로그인</router-link>
+          <router-link to="/login" class="login-button truncate">로그인</router-link>
           <span class="divider">/</span>
-          <router-link to="/signup" class="signup-button">회원가입</router-link>
+          <router-link to="/signup" class="signup-button truncate">회원가입</router-link>
         </div>
       </div>
     </div>
