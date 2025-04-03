@@ -12,7 +12,7 @@
       <nav class="main-nav">
         <ul class="nav-list">
           <li class="nav-item">
-            <router-link to="/home" :class="{ 'router-link-active': isActive('/home') }" class="truncate">홈</router-link>
+            <router-link to="/" :class="{ 'router-link-active': isActive('/') }" class="truncate">홈</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/events"
@@ -60,8 +60,8 @@ export default {
   methods: {
     isActive(path) {
       // 홈 경로는 정확히 '/'일 때만 활성화
-      if (path === '/home') {
-        return this.currentPath === '/home' || this.currentPath === '/';
+      if (path === '/') {
+        return this.currentPath === '/';
       }
       // 다른 경로는 시작 부분이 일치하면 활성화 (예: /performance/123도 /performance로 인식)
       return this.currentPath.startsWith(path);
