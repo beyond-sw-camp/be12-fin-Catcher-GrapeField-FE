@@ -5,6 +5,7 @@
             <PopularPost />
             <PopularChatRoom />
         </div>
+        <Category />
     </div>
 </template>
 
@@ -14,13 +15,15 @@
 import TopBanner from './TopBanner.vue'
 import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
+import Category from './Category.vue'
 
 
 export default {
     components: {
         TopBanner,
         PopularPost,
-        PopularChatRoom
+        PopularChatRoom,
+        Category
     }
 }
 </script>
