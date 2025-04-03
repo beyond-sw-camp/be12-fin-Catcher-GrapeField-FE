@@ -15,7 +15,7 @@ const handleSelectType = (type) => {
 </script>
 
 <template>
-    <main class="mt-36 ml-10">
+    <main class="mt-24 mx-auto">
         <CustomerCenterHeader :selected="selectedType.type" @selectedType="handleSelectType"/>
         <NoticeList v-if="selectedType.type==='notice'" />
     </main>
