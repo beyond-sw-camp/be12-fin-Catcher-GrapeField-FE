@@ -5,7 +5,7 @@ import Signup from "../user/Signup.vue";
 import GeneralResult from "/src/search/GeneralResult.vue";
 import EventsResult from "/src/search/EventsResult.vue";
 import FindPassword from "../user/FindPassword.vue";
-import CustomerCenter from "../admin/CustomerCenter.vue"
+import CustomerCenter from "../admin/customercenter/CustomerCenter.vue"
 
 const routes = [
     {path: "/", component: Main},
