@@ -12,7 +12,7 @@ const selectedType = ref({
     type:'notice'
 });
 
-//Header에서 받은 데이터
+//Header, Bottom 에서 받은 데이터
 const handleSelectType = (type) => {
     selectedType.value.type = type;
 };
@@ -27,7 +27,7 @@ const handleSelectType = (type) => {
         <Guide v-else-if="selectedType.type==='guide'" />
         <Qna v-else-if="selectedType.type==='qna'" />
         <RequestList v-else-if="selectedType.type==='request'" />
-        <CustomerCenterBottom />
+        <CustomerCenterBottom @selectedType="handleSelectType"/>
     </main>
 
 </template>
