@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 
 import Main from "../../public/Main.vue";
-import CustomerCenter from "../admin/List.vue"
+import CustomerCenter from "../admin/CustomerCenter.vue"
 
 const routes = [
     {path: "/", component: Main},
