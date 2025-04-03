@@ -2,8 +2,12 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: null
+    user: null,
+    role: 'admin',
   }),
+  persist: {
+    storage: sessionStorage,
+  },
   actions: {
     async login(email, password) {
       // 백엔드 연동해야 함! (현재는 mock)
@@ -12,6 +16,12 @@ export const useUserStore = defineStore('user', {
         return true
       }
       return false
+    },
+    setRole(newRole) {
+      this.role = newRole
+    },
+    getRole() {
+      return this.role
     }
   }
 })
