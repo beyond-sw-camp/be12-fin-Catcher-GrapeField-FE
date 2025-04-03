@@ -12,26 +12,26 @@ const selectCategory = (type) => {
 const inquiries = ref([
     {
         id: 5,
-        title: '예매 취소 관련 문의드립니다',
-        status: '답변완료',
+        title: '우는 남자',
+        status: '미승인',
         createdAt: '2024.04.01',
         answeredAt: '2024.04.02',
-        content: '예매 취소가 가능한지 궁금합니다.',
-        answer: '마이페이지 예매 내역에서 취소하실 수 있습니다.',
+        content: '',
+        answer: '이미 등록된 공연입니다.',
     },
     {
         id: 4,
-        title: '공연장 좌석 변경이 가능한가요?',
-        status: '답변완료',
+        title: '우는 남자',
+        status: '승인',
         createdAt: '2024.03.31',
         answeredAt: '2024.04.01',
-        content: '좌석이 마음에 안 들어요.',
-        answer: '좌석 변경은 예매처를 통해 문의해 주세요.',
+        content: '',
+        answer: '승인되었습니다.',
     },
     {
         id: 3,
         title: '채팅방 기능 오류 신고',
-        status: '진행중',
+        status: '처리중',
         createdAt: '2024.03.30',
         answeredAt: '',
         content: '채팅방이 안 들어가져요!',
@@ -48,7 +48,21 @@ function toggle(index) {
 
 <template>
     <div class="w-[1320px] mt-2">
-        <div class="w-[1320px] h-12 bg-stone-50 flex items-center">
+        <div class="w-[1320px] mb-4 h-20 flex items-end justify-between mt-8">
+            <div class="m-4">
+                <div class="text-zinc-800 text-xl font-bold font-['Inter'] mb-2">공연/전시 신청</div>
+                <div class="text-stone-500 text-sm font-normal font-['Inter']">
+                    GrapeField 서비스에 등록되지 않은 공연/전시를 신청할 수 있습니다.<br>
+                    이미 등록된 공연을 신청할 경우 승인되지 않을 수 있습니다.
+                </div>
+            </div>
+            <div>
+                <button
+                    class="w-20 h-8 mr-4 bg-violet-700 text-white text-sm font-bold rounded flex items-center justify-center">
+                    신청하기</button>
+            </div>
+        </div>
+        <div class="w-[1320px] h-12 bg-stone-50 flex items-center mb-4">
             <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
                 <button
                     class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
@@ -57,27 +71,19 @@ function toggle(index) {
                 <button
                     class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'user' ? 'outline-2' : 'outline-1'" @click="selectCategory('user')">
-                    진행중</button>
+                    처리중</button>
                 <button
-                    class="w-28 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'service' ? 'outline-2' : 'outline-1'" @click="selectCategory('service')">
-                    답변 완료</button>
+                    승인</button>
+                <button
+                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    :class="category.type === 'service' ? 'outline-2' : 'outline-1'" @click="selectCategory('service')">
+                    미승인</button>
             </div>
         </div>
 
-        <div class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-4">
-            <div class="ml-4">
-                <div class="text-zinc-800 text-xl font-bold font-['Inter']">1:1 문의</div>
-                <div class="text-stone-500 text-sm font-normal font-['Inter']">
-                    GrapeField 서비스 이용 중 궁금한 점을 문의해 주세요. 최대한 빠르게 답변 드리겠습니다.
-                </div>
-            </div>
-            <div>
-                <button
-                    class="w-20 h-8 mr-4 bg-violet-700 text-white text-sm font-bold rounded flex items-center justify-center">
-                    문의하기</button>
-            </div>
-        </div>
+
 
         <div class="w-full">
             <table class="w-full text-sm">
@@ -102,8 +108,9 @@ function toggle(index) {
                                     <span
                                         class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium w-fit"
                                         :class="{
-                                            'bg-blue-100 text-blue-600': item.status === '답변완료',
-                                            'bg-green-100 text-green-500': item.status === '진행중',
+                                            'bg-blue-100 text-blue-600': item.status === '승인',
+                                            'bg-green-100 text-yellow-500': item.status === '처리중',
+                                            'bg-red-100 text-orange-500': item.status === '미승인'
                                         }">
                                         {{ item.status }}
                                     </span>
@@ -121,15 +128,15 @@ function toggle(index) {
                                     <div class="font-bold text-lg text-gray-800 py-3">
                                         {{ item.title }}
                                     </div>
-    
+
                                     <div class="text-sm text-gray-500 mb-4">
                                         등록일: {{ item.createdAt }}
                                     </div>
-    
+
                                     <div class="text-sm text-gray-700 mb-6">
                                         {{ item.content }}
                                     </div>
-    
+
                                     <div class="bg-gray-100 rounded-md p-4 text-sm text-gray-800">
                                         <div class="flex mb-2">
                                             <div class="font-semibold text-gray-700">관리자 답변</div>
