@@ -6,6 +6,7 @@ import GeneralResult from "/src/search/GeneralResult.vue";
 import EventsResult from "/src/search/EventsResult.vue";
 import FindPassword from "../user/FindPassword.vue";
 import CustomerCenter from "../admin/customercenter/CustomerCenter.vue"
+import SignupSuccess from "../user/SignupSuccess.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -15,6 +16,7 @@ const routes = [
     {path: "/search/events", name: 'EventsResult', component: EventsResult},
     {path: "/findpassword", name: 'FindPassword', component: FindPassword},
     {path: "/customercenter", component: CustomerCenter},
+    {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
 ]
 
 const router = createRouter({
