@@ -65,11 +65,12 @@ export default {
 </script>
 
 <style scoped>
+
 .banner-wrapper {
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 95vw;
     margin: 1vh auto;
-    padding: 0 2vw;
+    padding: 0 5vw;
 }
 
 .banner-container {
