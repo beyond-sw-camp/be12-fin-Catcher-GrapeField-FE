@@ -2,6 +2,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import CustomerCenterHeader from './CustomerCenterHeader.vue';
 import NoticeList from './NoticeList.vue';
+import Faq from './Faq.vue';
 
 const selectedType = ref({
     type:'notice'
@@ -18,6 +19,7 @@ const handleSelectType = (type) => {
     <main class="mt-24 mx-auto">
         <CustomerCenterHeader :selected="selectedType.type" @selectedType="handleSelectType"/>
         <NoticeList v-if="selectedType.type==='notice'" />
+        <Faq v-else-if="selectedType.type==='faq'" />
     </main>
 
 </template>

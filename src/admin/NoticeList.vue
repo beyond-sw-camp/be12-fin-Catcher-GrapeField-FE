@@ -11,15 +11,15 @@ const selectCategory = (type) =>{
 
 const faqList = [
   {
-    question: '[기타] 환불 정책은 어떻게 되나요?',
+    question: '[공지] 환불 정책 안내내',
     answer: '환불 정책은 마이페이지 > 예매내역에서 확인 가능합니다.',
   },
   {
-    question: '[기타] 모바일 티켓은 어디서 확인할 수 있나요?',
+    question: '[점검] 2025-04-03 점검 예정 안내',
     answer: '저희 사이트는 예매처가 아니므로 티켓을 예매했던 사이트를 확인해주세요.',
   },
   {
-    question: '[서비스 이용] 실시간 채팅 기능은 어떻게 사용하나요?',
+    question: '[이벤트] 채팅 기능 오픈 기념 이벤트 안내',
     answer: '이용안내 페이지를 참고해주세요.',
   },
 ]
@@ -37,24 +37,16 @@ function toggle(index) {
       <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
         <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
         :class="category.type==='all' ? 'outline-2' : 'outline-1'"
-        @click="selectCategory('all')">
-          전체</button>
+        @click="selectCategory('all')">전체</button>
         <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
         :class="category.type==='user' ? 'outline-2' : 'outline-1'"
-        @click="selectCategory('user')">
-          회원</button>
-        <button class="w-28 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
+        @click="selectCategory('user')">공지</button>
+        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
         :class="category.type==='service' ? 'outline-2' : 'outline-1'"
-        @click="selectCategory('service')">
-          서비스 이용</button>
+        @click="selectCategory('service')">점검</button>
         <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
-        :class="category.type==='comunity' ? 'outline-2' : 'outline-1'"
-        @click="selectCategory('comunity')">
-          커뮤니티</button>
-        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
-        :class="category.type==='others' ? 'outline-2' : 'outline-1'"
-        @click="selectCategory('others')">
-          기타</button>
+        :class="category.type==='event' ? 'outline-2' : 'outline-1'"
+        @click="selectCategory('event')">이벤트</button>
       </div>
     </div>
     <div>
