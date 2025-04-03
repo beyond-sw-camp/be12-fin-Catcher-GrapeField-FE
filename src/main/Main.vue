@@ -7,6 +7,7 @@
         </div>
         <Category />
         <Card />
+        <Calendar />
     </div>
 </template>
 
@@ -18,6 +19,7 @@ import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
 import Category from './Category.vue'
 import Card from './CardTemplate.vue'
+import Calendar from './Calendar.vue'
 
 
 export default {
@@ -26,7 +28,8 @@ export default {
         PopularPost,
         PopularChatRoom,
         Category,
-        Card
+        Card,
+        Calendar
     }
 }
 </script>
