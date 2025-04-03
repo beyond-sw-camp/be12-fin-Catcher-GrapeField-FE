@@ -48,7 +48,20 @@ function toggle(index) {
 
 <template>
     <div class="w-[1320px] mt-2">
-        <div class="w-[1320px] h-12 bg-stone-50 flex items-center">
+        <div class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-8">
+            <div class="ml-4">
+                <div class="text-zinc-800 text-xl font-bold font-['Inter']">1:1 문의</div>
+                <div class="text-stone-500 text-sm font-normal font-['Inter']">
+                    GrapeField 서비스 이용 중 궁금한 점을 문의해 주세요. <br>최대한 빠르게 답변 드리겠습니다.
+                </div>
+            </div>
+            <div>
+                <button
+                    class="w-20 h-8 mr-4 bg-violet-700 text-white text-sm font-bold rounded flex items-center justify-center">
+                    문의하기</button>
+            </div>
+        </div>
+        <div class="w-[1320px] h-12 bg-stone-50 flex items-center mb-4">
             <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
                 <button
                     class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
@@ -64,21 +77,6 @@ function toggle(index) {
                     답변 완료</button>
             </div>
         </div>
-
-        <div class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-4">
-            <div class="ml-4">
-                <div class="text-zinc-800 text-xl font-bold font-['Inter']">1:1 문의</div>
-                <div class="text-stone-500 text-sm font-normal font-['Inter']">
-                    GrapeField 서비스 이용 중 궁금한 점을 문의해 주세요. 최대한 빠르게 답변 드리겠습니다.
-                </div>
-            </div>
-            <div>
-                <button
-                    class="w-20 h-8 mr-4 bg-violet-700 text-white text-sm font-bold rounded flex items-center justify-center">
-                    문의하기</button>
-            </div>
-        </div>
-
         <div class="w-full">
             <table class="w-full text-sm">
                 <thead class="bg-gray-100 text-gray-600">
@@ -112,6 +110,7 @@ function toggle(index) {
                             <td class="text-center">{{ item.createdAt }}</td>
                             <td class="text-center">{{ item.answeredAt || '-' }}</td>
                         </tr>
+                    
 
                         <!-- 펼쳐지는 답변 영역 -->
                         <tr v-if="openIndex === index">
