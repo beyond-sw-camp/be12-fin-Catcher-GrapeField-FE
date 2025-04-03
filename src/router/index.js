@@ -8,6 +8,7 @@ import FindPassword from "../user/FindPassword.vue";
 import CustomerCenter from "../admin/customercenter/CustomerCenter.vue"
 import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
+import EmailVerification from "../user/EmailVerification.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -19,6 +20,7 @@ const routes = [
     {path: "/customercenter", component: CustomerCenter},
     {path: "/admin", component: Admin},
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
+    { path: '/emailverify', name: EmailVerification, component: EmailVerification },
 ]
 
 const router = createRouter({
