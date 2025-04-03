@@ -5,7 +5,9 @@
   
       <!-- 카테고리 -->
       <Category />
-
+  
+      <!-- 그 아래 이벤트 카드 리스트 -->
+      <EventShowMoreList />
     </div>
   </template>
   
@@ -13,12 +15,13 @@
   import Card from '../main/Card.vue'
   import cardData from '../assets/data/card.json'
   import Category from '../main/Category.vue'
-
+  import EventShowMoreList from './EventShowMoreList.vue'
   
   export default {
     components: {
       Card,
       Category,
+      EventShowMoreList,
     },
     data() {
       return {
@@ -31,4 +34,3 @@
     }
   }
   </script>
-  
