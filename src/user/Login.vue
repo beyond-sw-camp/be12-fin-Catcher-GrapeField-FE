@@ -49,7 +49,7 @@
 
       <div class="bottom-links">
         <p>계정이 없으신가요? <router-link to="/signup">회원가입</router-link></p>
-        <router-link to="/forgot-password">비밀번호를 잊으셨나요?</router-link>
+        <router-link to="/findpassword">비밀번호를 잊으셨나요?</router-link>
       </div>
     </div>
 
