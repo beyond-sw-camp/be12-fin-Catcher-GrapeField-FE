@@ -10,6 +10,7 @@ import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
 import EventsRegister from "../events/Register.vue";
 import EmailVerification from "../user/EmailVerification.vue";
+import EventShowMore from "../events/EventShowMore.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -23,6 +24,7 @@ const routes = [
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
     {path: '/emailverify', name: EmailVerification, component: EmailVerification },
     {path: "/events/register", component: EventsRegister},
+    {path: "/events", name: 'EventShowMore', component: EventShowMore},
 ]
 
 const router = createRouter({
