@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router'
 import CustomerCenterHeader from './CustomerCenterHeader.vue';
 import NoticeList from './NoticeList.vue';
 import Faq from './Faq.vue';
@@ -8,14 +9,24 @@ import Qna from './Qna.vue';
 import RequestList from './RequestList.vue';
 import CustomerCenterBottom from './CustomerCenterBottom.vue';
 
+const route = useRoute()
+const router = useRouter()
+
 const selectedType = ref({
     type:'notice'
 });
 
-//Header, Bottom 에서 받은 데이터
+watch(() => route.query.type,(newType) => {
+        if (newType) selectedType.value.type = newType
+    },
+    { immediate: true }
+)
+
+// Header, Footer로부터 선택 이벤트 받아 반영
 const handleSelectType = (type) => {
-    selectedType.value.type = type;
-};
+    selectedType.value.type = type
+    router.replace({ query: { type } }) // URL 쿼리도 반영
+}
 
 </script>
 
@@ -29,7 +40,6 @@ const handleSelectType = (type) => {
         <RequestList v-else-if="selectedType.type==='request'" />
         <CustomerCenterBottom @selectedType="handleSelectType"/>
     </main>
-
 </template>
 
 <style scoped>
