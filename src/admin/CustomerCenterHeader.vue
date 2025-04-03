@@ -38,14 +38,6 @@ const selectType = (type) => {
             :class="selected === 'guide' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
             @click="selectType('guide')">이용 가이드</button>
         </div>
-
-        <div class="mt-2 px-10">
-            <input
-            type="text"
-            placeholder="검색어를 입력하세요."
-            class="bg-zinc-100 w-full h-12 px-4 rounded border border-zinc-300"
-            />
-        </div>
     </div>
 </template>
 

@@ -3,6 +3,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import CustomerCenterHeader from './CustomerCenterHeader.vue';
 import NoticeList from './NoticeList.vue';
 import Faq from './Faq.vue';
+import Guide from './Guide.vue';
 
 const selectedType = ref({
     type:'notice'
@@ -20,6 +21,7 @@ const handleSelectType = (type) => {
         <CustomerCenterHeader :selected="selectedType.type" @selectedType="handleSelectType"/>
         <NoticeList v-if="selectedType.type==='notice'" />
         <Faq v-else-if="selectedType.type==='faq'" />
+        <Guide v-else-if="selectedType.type==='guide'" />
     </main>
 
 </template>

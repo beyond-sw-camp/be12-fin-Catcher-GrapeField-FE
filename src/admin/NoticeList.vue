@@ -49,6 +49,13 @@ function toggle(index) {
         @click="selectCategory('event')">이벤트</button>
       </div>
     </div>
+    <div class="mt-2 px-10">
+            <input
+            type="text"
+            placeholder="검색어를 입력하세요."
+            class="bg-zinc-100 w-full h-12 px-4 rounded border border-zinc-300"
+            />
+        </div>
     <div>
       <div class="space-y-2 mt-2 text-sm text-gray-700 font-normal leading-relaxed">
         <div
