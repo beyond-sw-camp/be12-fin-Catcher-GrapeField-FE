@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
+import Search from './Search.vue';
 
 const props = defineProps({
     selected: String
@@ -29,16 +30,18 @@ const selectType = (type) => {
             :class="selected === 'faq' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
             @click="selectType('faq')">자주 묻는 질문</button>
             <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'inquiry' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('inquiry')">1:1 문의</button>
+            :class="selected === 'qna' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
+            @click="selectType('qna')">1:1 문의</button>
             <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'apply' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('apply')">공연/전시 신청</button>
+            :class="selected === 'request' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
+            @click="selectType('request')">공연/전시 신청</button>
             <button class="w-64 h-10 font-bold rounded"
             :class="selected === 'guide' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
             @click="selectType('guide')">이용 가이드</button>
         </div>
     </div>
+    <Search v-if="selected==='notice' || selected ==='faq' || selected ==='qna' || selected==='reqeust'" />
+    
 </template>
 
 <style scoped>

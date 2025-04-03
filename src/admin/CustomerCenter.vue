@@ -4,6 +4,7 @@ import CustomerCenterHeader from './CustomerCenterHeader.vue';
 import NoticeList from './NoticeList.vue';
 import Faq from './Faq.vue';
 import Guide from './Guide.vue';
+import Qna from './Qna.vue';
 
 const selectedType = ref({
     type:'notice'
@@ -22,6 +23,7 @@ const handleSelectType = (type) => {
         <NoticeList v-if="selectedType.type==='notice'" />
         <Faq v-else-if="selectedType.type==='faq'" />
         <Guide v-else-if="selectedType.type==='guide'" />
+        <Qna v-else-if="selectedType.type==='qna'" />
     </main>
 
 </template>

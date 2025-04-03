@@ -35,27 +35,20 @@ function toggle(index) {
   <div class="w-[1320px] mt-2">
     <div class="w-[1320px] h-12 bg-stone-50 flex items-center">
       <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
-        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
+        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
         :class="category.type==='all' ? 'outline-2' : 'outline-1'"
         @click="selectCategory('all')">전체</button>
-        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
+        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
         :class="category.type==='user' ? 'outline-2' : 'outline-1'"
         @click="selectCategory('user')">공지</button>
-        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
+        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
         :class="category.type==='service' ? 'outline-2' : 'outline-1'"
         @click="selectCategory('service')">점검</button>
-        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-lg flex items-center justify-center"
+        <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
         :class="category.type==='event' ? 'outline-2' : 'outline-1'"
         @click="selectCategory('event')">이벤트</button>
       </div>
     </div>
-    <div class="mt-2 px-10">
-            <input
-            type="text"
-            placeholder="검색어를 입력하세요."
-            class="bg-zinc-100 w-full h-12 px-4 rounded border border-zinc-300"
-            />
-        </div>
     <div>
       <div class="space-y-2 mt-2 text-sm text-gray-700 font-normal leading-relaxed">
         <div
