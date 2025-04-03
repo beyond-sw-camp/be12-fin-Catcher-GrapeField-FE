@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <button class="submit-btn">회원가입</button>
+        <button class="submit-btn" @click="submitForm">회원가입</button>
         <router-link to="/login" class="login-link">이미 계정이 있으신가요? 로그인</router-link>
       </div>
 
@@ -63,6 +63,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const form = ref({
   name: '',
@@ -107,6 +110,10 @@ const toggleAllAgreements = () => {
     agreements.value[key] = agreeAll.value
   })
 }
+const submitForm = () => {
+  console.log('회원가입 버튼 클릭됨, 페이지 이동 시도...'); 
+  router.push('/signupsuccess');
+};
 </script>
 
 <style scoped>

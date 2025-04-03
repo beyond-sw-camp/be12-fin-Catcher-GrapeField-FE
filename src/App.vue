@@ -13,9 +13,7 @@ const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 <template>
   <div class="layout">
     <Header />
-    <main>
-      <router-view />
-    </main>
+    <router-view />
     <SideBar v-if="showSidebar" />
     <Footer />
   </div>
@@ -26,7 +24,7 @@ const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
   display: flex;
   flex-direction: column;
   min-height: 98vh;
-}
+} 
 
 main {
   flex: 1;
