@@ -6,6 +6,7 @@
             <PopularChatRoom />
         </div>
         <Category />
+        <Card />
     </div>
 </template>
 
@@ -16,6 +17,7 @@ import TopBanner from './TopBanner.vue'
 import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
 import Category from './Category.vue'
+import Card from './CardTemplate.vue'
 
 
 export default {
@@ -23,7 +25,8 @@ export default {
         TopBanner,
         PopularPost,
         PopularChatRoom,
-        Category
+        Category,
+        Card
     }
 }
 </script>

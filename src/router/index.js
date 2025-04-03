@@ -9,6 +9,7 @@ import CustomerCenter from "../admin/customercenter/CustomerCenter.vue"
 import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
 import EventsRegister from "../events/Register.vue";
+import EmailVerification from "../user/EmailVerification.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -20,6 +21,7 @@ const routes = [
     {path: "/customercenter", component: CustomerCenter},
     {path: "/admin", component: Admin},
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
+    {path: '/emailverify', name: EmailVerification, component: EmailVerification },
     {path: "/events/register", component: EventsRegister},
 ]
 
