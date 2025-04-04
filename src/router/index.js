@@ -11,6 +11,7 @@ import SignupSuccess from "../user/SignupSuccess.vue";
 import EventsRegister from "../events/Register.vue";
 import EmailVerification from "../user/EmailVerification.vue";
 import EventShowMore from "../events/EventShowMore.vue";
+import Detail from "../events/Detail.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -25,6 +26,7 @@ const routes = [
     {path: '/emailverify', name: EmailVerification, component: EmailVerification },
     {path: "/events/register", component: EventsRegister},
     {path: "/events", name: 'EventShowMore', component: EventShowMore},
+    {path: "/events/:id", name: 'Detail', component: Detail, props: true},
 ]
 
 const router = createRouter({
