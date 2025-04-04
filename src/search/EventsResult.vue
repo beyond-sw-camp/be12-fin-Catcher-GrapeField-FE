@@ -96,7 +96,7 @@
               <div data-layer="~" class="justify-center text-zinc-800 text-base font-['Noto_Sans_KR']">~</div>
               <div data-layer="number_input" class="w-44 h-10 pl-3.5 pr-7 py-2.5 bg-white rounded-md outline outline-1 outline-offset-[-1px] outline-zinc-300 flex justify-center items-center">
                 <div data-layer="Container" class="flex-1 py-px inline-flex flex-col justify-start items-start overflow-hidden">
-                  <input data-layer="500000" type="number" min="1" max="500000" class="self-stretch justify-center text-zinc-800 text-sm font-['Noto_Sans_KR'] leading-none"/>                </div>
+                  <input data-layer="500000" type="number" min="1" max="500000" placeholder="500000" class="self-stretch justify-center text-zinc-800 text-sm font-['Noto_Sans_KR'] leading-none"/>                </div>
               </div>
             </div>
           </div>
@@ -182,8 +182,8 @@
         </div>
       </div>
       <div data-layer="Container" class="self-stretch relative">
-        <div data-layer="banner grid" class="w-[1205px] left-[-1px] top-[-0.33px] inline-flex justify-start items-start gap-3.5 flex-wrap content-start">
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+        <div data-layer="banner grid" class="inline-flex justify-start items-start gap-3.5 flex-wrap content-start">
+          <router-link to="/events/1" data-layer="banner item container" class="w-72 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
               <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
             </div>
@@ -198,8 +198,8 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+          </router-link>
+          <router-link to="/events/2" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
               <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
             </div>
@@ -214,8 +214,8 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+          </router-link>
+          <router-link to="/events/3" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
               <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
             </div>
@@ -230,8 +230,8 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+          </router-link>
+          <router-link to="/events/4" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
               <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
             </div>
@@ -246,7 +246,7 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
+          </router-link>
           <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
             <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
               <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
