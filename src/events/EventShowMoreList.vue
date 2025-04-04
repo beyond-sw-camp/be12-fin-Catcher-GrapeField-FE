@@ -3,6 +3,7 @@
       <EventShowMoreCard
         v-for="event in events"
         :key="event.id"
+        :id="event.id"
         :title="event.title"
         :venue="event.venue"
         :dateRange="event.dateRange"
