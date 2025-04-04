@@ -121,7 +121,7 @@
 
         <!-- 사이드바가 접혔을 때 나타나는 버튼 -->
         <div v-if="isSidebarCollapsed" class="expand-button" @click="toggleSidebar">
-            <img src="../assets/icons/menu-expand.png" alt="사이드바 펼치기" />
+            <img src="../assets/icons/open.png" alt="사이드바 펼치기" />
         </div>
 
         <!-- 사이드바 -->

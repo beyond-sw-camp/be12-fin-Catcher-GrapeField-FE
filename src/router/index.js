@@ -8,7 +8,9 @@ import PostResult  from "/src/search/PostResult.vue";
 import ReviewResult from "/src/search/ReviewResult.vue";
 import FindPassword from "../user/FindPassword.vue";
 import CustomerCenter from "../admin/customercenter/CustomerCenter.vue"
+import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
+import EventsRegister from "../events/Register.vue";
 import EmailVerification from "../user/EmailVerification.vue";
 import EventShowMore from "../events/EventShowMore.vue";
 import Detail from "../events/Detail.vue";
@@ -25,8 +27,10 @@ const routes = [
     {path: "/search/review", name: 'ReviewResult', component: ReviewResult},
     {path: "/findpassword", name: 'FindPassword', component: FindPassword},
     {path: "/customercenter", component: CustomerCenter},
+    {path: "/admin", component: Admin},
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
-    { path: '/emailverify', name: EmailVerification, component: EmailVerification },
+    {path: '/emailverify', name: EmailVerification, component: EmailVerification },
+    {path: "/events/register", component: EventsRegister},
     {path: "/events", name: 'EventShowMore', component: EventShowMore},
     { path: "/events/:id", name: 'Detail', component: Detail, props: true },
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
