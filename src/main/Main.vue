@@ -6,6 +6,10 @@
             <PopularChatRoom />
         </div>
         <Category />
+        <Card />
+        <Calendar />
+        <CardList title="오픈 예정"/>
+        <CardList title="종료 예정"/>
     </div>
 </template>
 
@@ -16,6 +20,9 @@ import TopBanner from './TopBanner.vue'
 import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
 import Category from './Category.vue'
+import Card from './CardTemplate.vue'
+import Calendar from './Calendar.vue'
+import CardList from './CardList.vue'
 
 
 export default {
@@ -23,7 +30,10 @@ export default {
         TopBanner,
         PopularPost,
         PopularChatRoom,
-        Category
+        Category,
+        Card,
+        Calendar,
+        CardList
     }
 }
 </script>

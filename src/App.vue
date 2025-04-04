@@ -12,12 +12,10 @@ const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 
 <template>
   <div class="layout">
-    <Header/>
-    <main>
-      <router-view/>
-      <SideBar v-if="showSidebar"/>
-    </main>
-    <Footer/>
+    <Header />
+    <router-view class="mt-16"/>
+    <SideBar v-if="showSidebar" />
+    <Footer />
   </div>
 </template>
 

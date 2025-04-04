@@ -1,0 +1,140 @@
+{
+  "recommendedCards": [
+    {
+      "id": 1,
+      "title": "뮤지컬 알라딘 한국 초연",
+      "location": "샤롯데씨어터",
+      "date": "2024.11.22 ~ 2025.06.22",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24012498_p.gif",
+      "badge": "예매중",
+      "badgeType": "ongoing",
+      "likes": 128,
+      "comments": 42
+    },
+    {
+      "id": 2,
+      "title": "콘서트 2025 정승환 팬콘서트",
+      "location": "명화라이브홀",
+      "date": "2025.04.26 ~ 2025.04.27",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25004069_p.gif",
+      "badge": "",
+      "badgeType": "",
+      "likes": 245,
+      "comments": 87
+    },
+    {
+      "id": 3,
+      "title": "콘서트 2025 서울파크뮤직페스티벌",
+      "location": "올림픽공원 88잔디마당 외 1",
+      "date": "2025.06.28 ~ 2025.06.29",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25003438_p.gif",
+      "badge": "SOON 🎵",
+      "badgeType": "soon",
+      "likes": 245,
+      "comments": 87
+    },
+    {
+      "id": 4,
+      "title": "뮤지컬 지킬앤하이드",
+      "location": "블루스퀘어 신한카드홀",
+      "date": "2025.01.15 ~ 2025.04.15",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24013928_p.gif",
+      "badge": "예매중",
+      "badgeType": "ongoing",
+      "likes": 312,
+      "comments": 54
+    },
+    {
+      "id": 5,
+      "title": "2025 LOVESOME - 반 고흐, 영혼의 편지",
+      "location": "난지한강공원",
+      "date": "2024.12.01 ~ 2025.02.28",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25001994_p.gif",
+      "badge": "",
+      "badgeType": "",
+      "likes": 189,
+      "comments": 32
+    },
+    {
+      "id": 6,
+      "title": "2025 서울커피엑스포",
+      "location": "코엑스",
+      "date": "2025.04.11 ~ 2025.04.14",
+      "imageUrl": "https://kr.aving.net/news/photo/202503/1797975_743708_277.jpg",
+      "badge": "SOON ☕",
+      "badgeType": "soon",
+      "likes": 156,
+      "comments": 27
+    }
+  ],
+  "popularCards": [
+    {
+      "id": 7,
+      "title": "연극 햄릿",
+      "location": "예술의전당",
+      "date": "2025.01.10 ~ 2025.03.15",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24005706_p.gif",
+      "badge": "예매중",
+      "badgeType": "ongoing",
+      "likes": 182,
+      "comments": 65
+    },
+    {
+      "id": 8,
+      "title": "2025 LOVESOME - 반 고흐, 영혼의 편지",
+      "location": "난지한강공원",
+      "date": "2024.12.01 ~ 2025.02.28",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25001994_p.gif",
+      "badge": "",
+      "badgeType": "",
+      "likes": 243,
+      "comments": 89
+    },
+    {
+      "id": 9,
+      "title": "2025 서울커피엑스포",
+      "location": "코엑스",
+      "date": "2025.04.11 ~ 2025.04.14",
+      "imageUrl": "https://kr.aving.net/news/photo/202503/1797975_743708_277.jpg",
+      "badge": "SOON ☕",
+      "badgeType": "soon",
+      "likes": 156,
+      "comments": 27
+    },
+    {
+      "id": 13,
+      "title": "뮤지컬 지킬앤하이드",
+      "location": "블루스퀘어 신한카드홀",
+      "date": "2025.01.15 ~ 2025.04.15",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24013928_p.gif",
+      "badge": "예매중",
+      "badgeType": "ongoing",
+      "likes": 312,
+      "comments": 54
+    }
+  ],
+  "newCards": [
+    {
+      "id": 10,
+      "title": "뮤지컬 꽃의 비밀",
+      "location": "세종문화회관",
+      "date": "2025.07.01 ~ 2025.09.30",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24018192_p.gif",
+      "badge": "NEW",
+      "badgeType": "new",
+      "likes": 58,
+      "comments": 12
+    },
+    {
+      "id": 11,
+      "title": "인상파, 모네에서 미국으로: 빛, 바다를 건너다",
+      "location": "디뮤지엄",
+      "date": "2025.02.15 ~ 2025.05.20",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25001149_p.gif",
+      "badge": "NEW",
+      "badgeType": "new",
+      "likes": 76,
+      "comments": 23
+    }
+  ]
+}
