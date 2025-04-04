@@ -12,26 +12,26 @@
         </div>
         <div data-layer="Frame 1321317464"
              class="w-100 h-14 left-0 top-[47px] absolute inline-flex justify-start items-start">
-          <div data-layer="통합검색" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
+          <router-link to="/search" data-layer="통합검색" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
             <div data-layer="통합검색"
                  class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">통합검색
             </div>
-          </div>
-          <div data-layer="공연/전시" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
+          </router-link>
+          <router-link to="/search/events" data-layer="공연/전시" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
             <div data-layer="공연/전시" class="text-center justify-start text-violet-600 text-base font-bold font-['Inter']">
               공연/전시
             </div>
-          </div>
-          <div data-layer="게시판" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
+          </router-link>
+          <router-link to="/search/post" data-layer="게시판" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
             <div data-layer="게시판" class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">
               게시판
             </div>
-          </div>
-          <div data-layer="한줄평" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
+          </router-link>
+          <router-link to="/search/review" data-layer="한줄평" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
             <div data-layer="한줄평" class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">
               한줄평
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
       <div data-layer="Background" class="self-stretch h-96 relative bg-violet-50 rounded-xl">
