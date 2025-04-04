@@ -27,7 +27,6 @@ const handleSelectType = (type) => {
     selectedType.value.type = type
     router.replace({ query: { type } }) // URL 쿼리도 반영
 }
-
 </script>
 
 <template>
