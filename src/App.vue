@@ -8,14 +8,17 @@ import SideBar from './common/SideBar.vue'
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
 const route = useRoute()
 const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
+const isStandalonePage = computed(() => route.meta.standalone === true)
 </script>
 
 <template>
   <div class="layout">
-    <Header />
-    <router-view class="mt-16"/>
-    <SideBar v-if="showSidebar" />
-    <Footer />
+    <Header v-if="!isStandalonePage" />
+    <div :class="{ 'standalone-page': isStandalonePage, 'main-content': !isStandalonePage }">
+      <router-view />
+    </div>
+    <SideBar v-if="showSidebar && !isStandalonePage" />
+    <Footer v-if="!isStandalonePage" />
   </div>
 </template>
 
@@ -31,6 +34,13 @@ main {
   margin-top: 4rem;
   /* 헤더 높이와 동일하게 설정 (기존 5vw에서 4rem으로 변경) */
   padding: 1rem; /* 1vw에서 1rem으로 변경 */
+}
+
+.standalone-page {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
 }
 
 @media screen and (max-width: 1024px) {
