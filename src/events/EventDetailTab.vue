@@ -37,7 +37,7 @@
   
   const emit = defineEmits(['update:tab'])
   
-  const tabs = ['추천', '상세 정보', '게시판', '한줄평']
+  const tabs = ['상세 정보', '게시판', '한줄평', '추천']
   
   const tabIndex = computed(() => {
     const i = tabs.indexOf(props.tab) 
