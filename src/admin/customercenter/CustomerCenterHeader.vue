@@ -2,6 +2,13 @@
 import { defineProps, defineEmits } from 'vue';
 import Search from './Search.vue';
 
+const tabs = [
+    { label: '공지사항', value: 'notice' },
+    { label: '자주 묻는 질문', value: 'faq' },
+    { label: '1:1 문의', value: 'qna' },
+    { label: '공연/전시 신청', value: 'request' },
+    { label: '이용 가이드', value: 'guide' }
+]
 const props = defineProps({
     selected: String
 });
@@ -22,26 +29,16 @@ const selectType = (type) => {
         </div>
 
         <div class="inline-flex mt-2 justify-between items-center">
-            <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'notice' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('notice')">공지사항</button>
-            <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'faq' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('faq')">자주 묻는 질문</button>
-            <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'qna' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('qna')">1:1 문의</button>
-            <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'request' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('request')">공연/전시 신청</button>
-            <button class="w-64 h-10 font-bold rounded"
-            :class="selected === 'guide' ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'"
-            @click="selectType('guide')">이용 가이드</button>
+            <button v-for="tab in tabs" :key="tab.value" @click="selectType(tab.value)"
+                class="w-64 h-10 font-bold rounded"
+                :class="selected === tab.value ? 'bg-violet-700 text-white' : 'bg-stone-50 text-black'">
+                {{ tab.label }}
+            </button>
         </div>
+
     </div>
-    <Search v-if="selected==='notice' || selected ==='faq' || selected ==='qna' || selected==='reqeust'" />
-    
+    <Search v-if="['notice', 'faq', 'qna', 'request'].includes(selected)" />
+
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

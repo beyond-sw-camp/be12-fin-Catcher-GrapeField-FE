@@ -16,6 +16,7 @@ import EventShowMore from "../events/EventShowMore.vue";
 import Detail from "../events/Detail.vue";
 import ChatRoom from "../events/chat/Detail.vue";
 import ChatRoomList from "../events/chat/List.vue";
+import MyPage from "../user/mypage/MyPage.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -34,7 +35,8 @@ const routes = [
     {path: "/events", name: 'EventShowMore', component: EventShowMore},
     { path: "/events/:id", name: 'Detail', component: Detail, props: true },
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
-    { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } }
+    { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
+    { path:"/mypage", component: MyPage}
 ]
 
 const router = createRouter({
