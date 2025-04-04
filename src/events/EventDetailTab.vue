@@ -1,13 +1,13 @@
 <template>
-    <div class="w-[1320px] bg-white flex relative">
+    <div class="w-[1320px] bg-white flex relative mx-auto">
       <div
         v-for="tabName in tabs"  
         :key="tabName"
         class="w-28 h-14 bg-white cursor-pointer flex items-center justify-center"
         @click="$emit('update:tab', tabName)" 
-        >
+      >
         <div
-          :class="[
+          :class="[ 
             'text-center text-xl font-[Inter]',
             tabName === tab  
               ? 'text-violet-600 font-extrabold'
@@ -46,5 +46,6 @@
   </script>
   
   <style scoped>
-
+  /* 추가 스타일 필요 시 여기에 작성 */
   </style>
+  
