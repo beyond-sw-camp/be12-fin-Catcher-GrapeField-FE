@@ -11,7 +11,8 @@
                     <!-- 프로필 패널 -->
                     <div v-if="activePanel === 'profile'" class="profile-panel">
                         <div class="profile-avatar">
-                            <img src="../assets/icons/user-avatar.png" alt="사용자 프로필" />
+                            <!-- <img src="../assets/icons/user-avatar.png" alt="사용자 프로필" /> -->
+                            <img src="../assets/icons/profile.png" alt="사용자 프로필" />
                         </div>
                         <div class="profile-name">사용자</div>
                         <div class="profile-email">grapefield@example.com</div>
