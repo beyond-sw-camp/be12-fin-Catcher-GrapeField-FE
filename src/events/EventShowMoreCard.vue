@@ -1,5 +1,5 @@
 <template>
-    <router-link :to="`/event/${id}`" class="block">
+    <router-link :to="`/events/${id}`" class="block">
     <div class="w-56 h-80 bg-white rounded-2xl shadow-md flex flex-col">
       <!-- 상단 색 배경 -->
       <div :class="['w-full h-64 rounded-2xl', color]"></div>
