@@ -1,162 +1,180 @@
 {
-    "events": [
-      {
-        "id": 1,
-        "title": "꽃의 비밀",
-        "genre": "연극",
-        "posterUrl": "/path/to/poster.jpg",
-        "period": "2025.02.08 ~ 2025.05.11",
-        "isOngoing": true,
-        "score": 9.7,
-        "duration": "120분",
-        "ageLimit": "8세 이상",
-        "venue": "원더아트센터 박스홀",
-        "price": "VIP석 77,000원 | R석 66,000원 | S석 55,000원",
-        "bookingEarly": "2025.12.22 ~ 2025.01.14",
-        "bookingNormal": "2025.01.15 ~ 2025.05.10",
-        "cast": [
-          { "name": "김주연", "role": "햄릿 역" },
-          { "name": "박연기", "role": "오필리어 역" },
-          { "name": "정배우", "role": "클로디어스 역" }
-        ],
-        "description": "셰익스피어의 희극 작품을 재해석한 〈꽃의 비밀〉은 인간 내면의 욕망과 사랑에 대한 이야기를 담고 있습니다.",
-        "guidelines": [
-          "8세 이상 관람가 (미취학 아동 입장 불가)",
-          "공연 시작 후에는 입장이 제한됩니다.",
-          "공연장 내 음식물 반입 및 사진/영상 촬영은 금지됩니다."
-        ],
-        "detailImage": "/path/to/detail-image.jpg"
+  "events": [
+    {
+      "id": 1,
+      "title": "꽃의 비밀",
+      "genre": "연극",
+      "posterUrl": "/path/to/poster.jpg",
+      "period": "2025.02.08 ~ 2025.05.11",
+      "isOngoing": true,
+      "score": 9.7,
+      "duration": "120분",
+      "ageLimit": "8세 이상",
+      "venue": "원더아트센터 박스홀",
+      "price": "VIP석 77,000원 | R석 66,000원 | S석 55,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
       },
-      {
-        "id": 2,
-        "title": "한 여름 밤의 꿈",
-        "genre": "연극",
-        "posterUrl": "/path/to/poster2.jpg",
-        "period": "2025.03.01 ~ 2025.06.01",
-        "isOngoing": false,
-        "score": 8.9,
-        "duration": "100분",
-        "ageLimit": "12세 이상",
-        "venue": "예술의전당",
-        "price": "VIP석 80,000원 | R석 70,000원 | S석 50,000원",
-        "bookingEarly": "2025.01.01 ~ 2025.01.15",
-        "bookingNormal": "2025.01.16 ~ 2025.06.01",
-        "cast": [
-          { "name": "이주영", "role": "피터팬 역" },
-          { "name": "박미영", "role": "티틀리 역" },
-          { "name": "김서준", "role": "다이아몬드 역" }
-        ],
-        "description": "셰익스피어의 고전 연극을 현대적인 감각으로 재해석한 작품입니다.",
-        "guidelines": [
-          "12세 이상 관람가",
-          "공연 시작 후에는 입장이 제한됩니다."
-        ],
-        "detailImage": "/path/to/detail-image2.jpg"
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
       },
-      
-      {
-        "id": 3,
-        "title": "겨울왕국",
-        "genre": "뮤지컬",
-        "posterUrl": "/path/to/poster.jpg",
-        "period": "2025.02.01 ~ 2025.04.01",
-        "isOngoing": true,
-        "score": 9.8,
-        "duration": "150분",
-        "ageLimit": "5세 이상",
-        "venue": "세종문화회관",
-        "price": "VIP석 120,000원 | R석 100,000원 | S석 80,000원",
-        "bookingEarly": "2024.12.15 ~ 2025.01.10",
-        "bookingNormal": "2025.01.11 ~ 2025.04.01",
-        "cast": [
-          { "name": "김소연", "role": "엘사 역" },
-          { "name": "박지훈", "role": "안나 역" },
-          { "name": "이상엽", "role": "크리스토프 역" }
-        ],
-        "description": "디즈니의 유명 뮤지컬 '겨울왕국'을 서울에서 만나볼 수 있는 기회입니다.",
-        "guidelines": [
-          "5세 이상 관람가",
-          "공연 시작 후에는 입장이 제한됩니다."
-        ],
-        "detailImage": "/path/to/detail-image3.jpg"
+      "cast": [
+        { "name": "김주연", "role": "햄릿 역" },
+        { "name": "박연기", "role": "오필리어 역" },
+        { "name": "정배우", "role": "클로디어스 역" }
+      ],
+      "description": "셰익스피어의 희극 작품을 재해석한 〈꽃의 비밀〉은 인간 내면의 욕망과 사랑에 대한 이야기를 담고 있습니다.",
+      "guidelines": [
+        "8세 이상 관람가 (미취학 아동 입장 불가)",
+        "공연 시작 후에는 입장이 제한됩니다.",
+        "공연장 내 음식물 반입 및 사진/영상 촬영은 금지됩니다."
+      ],
+      "detailImage": "/path/to/detail-image.jpg"
+    },
+    {
+      "id": 2,
+      "title": "한 여름 밤의 꿈",
+      "genre": "연극",
+      "posterUrl": "/path/to/poster2.jpg",
+      "period": "2025.03.01 ~ 2025.06.01",
+      "isOngoing": false,
+      "score": 8.9,
+      "duration": "100분",
+      "ageLimit": "12세 이상",
+      "venue": "예술의전당",
+      "price": "VIP석 80,000원 | R석 70,000원 | S석 50,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
       },
-      {
-        "id": 4,
-        "title": "맘마미아",
-        "genre": "뮤지컬",
-        "posterUrl": "/path/to/poster4.jpg",
-        "period": "2025.04.01 ~ 2025.06.30",
-        "isOngoing": true,
-        "score": 9.5,
-        "duration": "130분",
-        "ageLimit": "10세 이상",
-        "venue": "블루스퀘어",
-        "price": "VIP석 90,000원 | R석 70,000원 | S석 50,000원",
-        "bookingEarly": "2025.01.10 ~ 2025.01.25",
-        "bookingNormal": "2025.01.26 ~ 2025.06.30",
-        "cast": [
-          { "name": "김연수", "role": "소피 역" },
-          { "name": "윤세라", "role": "다나 역" },
-          { "name": "장재영", "role": "하비 역" }
-        ],
-        "description": "'맘마미아'는 ABBA의 히트곡을 모은 뮤지컬로, 전 세계적으로 인기 있는 공연입니다.",
-        "guidelines": [
-          "10세 이상 관람가",
-          "공연 시작 후에는 입장이 제한됩니다."
-        ],
-        "detailImage": "/path/to/detail-image4.jpg"
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
       },
-  
-      {
-        "id": 5,
-        "title": "K-POP LIVE",
-        "genre": "콘서트",
-        "posterUrl": "/path/to/poster5.jpg",
-        "period": "2025.03.01 ~ 2025.03.30",
-        "isOngoing": true,
-        "score": 9.6,
-        "duration": "180분",
-        "ageLimit": "15세 이상",
-        "venue": "올림픽공원",
-        "price": "VIP석 150,000원 | R석 120,000원 | S석 90,000원",
-        "bookingEarly": "2025.01.15 ~ 2025.02.01",
-        "bookingNormal": "2025.02.02 ~ 2025.03.30",
-        "cast": [
-          { "name": "BTS", "role": "메인 아티스트" },
-          { "name": "블랙핑크", "role": "서브 아티스트" },
-          { "name": "아이유", "role": "특별 게스트" }
-        ],
-        "description": "K-POP의 최신 히트곡들을 모은 대규모 콘서트.",
-        "guidelines": [
-          "15세 이상 관람가",
-          "공연 시작 후에는 입장이 제한됩니다."
-        ],
-        "detailImage": "/path/to/detail-image5.jpg"
+      "cast": [
+        { "name": "이주영", "role": "피터팬 역" },
+        { "name": "박미영", "role": "티틀리 역" },
+        { "name": "김서준", "role": "다이아몬드 역" }
+      ],
+      "description": "셰익스피어의 고전 연극을 현대적인 감각으로 재해석한 작품입니다.",
+      "guidelines": ["12세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image2.jpg"
+    },
+
+    {
+      "id": 3,
+      "title": "겨울왕국",
+      "genre": "뮤지컬",
+      "posterUrl": "/path/to/poster.jpg",
+      "period": "2025.02.01 ~ 2025.04.01",
+      "isOngoing": true,
+      "score": 9.8,
+      "duration": "150분",
+      "ageLimit": "5세 이상",
+      "venue": "세종문화회관",
+      "price": "VIP석 120,000원 | R석 100,000원 | S석 80,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
       },
-      {
-        "id": 6,
-        "title": "소녀시대 콘서트",
-        "genre": "콘서트",
-        "posterUrl": "/path/to/poster6.jpg",
-        "period": "2025.04.10 ~ 2025.05.10",
-        "isOngoing": false,
-        "score": 9.3,
-        "duration": "120분",
-        "ageLimit": "12세 이상",
-        "venue": "서울 잠실 실내체육관",
-        "price": "VIP석 130,000원 | R석 100,000원 | S석 80,000원",
-        "bookingEarly": "2025.01.20 ~ 2025.02.05",
-        "bookingNormal": "2025.02.06 ~ 2025.05.10",
-        "cast": [
-          { "name": "소녀시대", "role": "주요 아티스트" }
-        ],
-        "description": "소녀시대의 최신 곡과 클래식 히트곡들을 함께 즐길 수 있는 콘서트.",
-        "guidelines": [
-          "12세 이상 관람가",
-          "공연 시작 후에는 입장이 제한됩니다."
-        ],
-        "detailImage": "/path/to/detail-image6.jpg"
-      }
-    ]
-  }
-  
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [
+        { "name": "김소연", "role": "엘사 역" },
+        { "name": "박지훈", "role": "안나 역" },
+        { "name": "이상엽", "role": "크리스토프 역" }
+      ],
+      "description": "디즈니의 유명 뮤지컬 '겨울왕국'을 서울에서 만나볼 수 있는 기회입니다.",
+      "guidelines": ["5세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image3.jpg"
+    },
+    {
+      "id": 4,
+      "title": "맘마미아",
+      "genre": "뮤지컬",
+      "posterUrl": "/path/to/poster4.jpg",
+      "period": "2025.04.01 ~ 2025.06.30",
+      "isOngoing": true,
+      "score": 9.5,
+      "duration": "130분",
+      "ageLimit": "10세 이상",
+      "venue": "블루스퀘어",
+      "price": "VIP석 90,000원 | R석 70,000원 | S석 50,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [
+        { "name": "김연수", "role": "소피 역" },
+        { "name": "윤세라", "role": "다나 역" },
+        { "name": "장재영", "role": "하비 역" }
+      ],
+      "description": "'맘마미아'는 ABBA의 히트곡을 모은 뮤지컬로, 전 세계적으로 인기 있는 공연입니다.",
+      "guidelines": ["10세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image4.jpg"
+    },
+
+    {
+      "id": 5,
+      "title": "K-POP LIVE",
+      "genre": "콘서트",
+      "posterUrl": "/path/to/poster5.jpg",
+      "period": "2025.03.01 ~ 2025.03.30",
+      "isOngoing": true,
+      "score": 9.6,
+      "duration": "180분",
+      "ageLimit": "15세 이상",
+      "venue": "올림픽공원",
+      "price": "VIP석 150,000원 | R석 120,000원 | S석 90,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [
+        { "name": "BTS", "role": "메인 아티스트" },
+        { "name": "블랙핑크", "role": "서브 아티스트" },
+        { "name": "아이유", "role": "특별 게스트" }
+      ],
+      "description": "K-POP의 최신 히트곡들을 모은 대규모 콘서트.",
+      "guidelines": ["15세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image5.jpg"
+    },
+    {
+      "id": 6,
+      "title": "소녀시대 콘서트",
+      "genre": "콘서트",
+      "posterUrl": "/path/to/poster6.jpg",
+      "period": "2025.04.10 ~ 2025.05.10",
+      "isOngoing": false,
+      "score": 9.3,
+      "duration": "120분",
+      "ageLimit": "12세 이상",
+      "venue": "서울 잠실 실내체육관",
+      "price": "VIP석 130,000원 | R석 100,000원 | S석 80,000원",
+      "bookingEarly": {
+        "period": "2025.12.22 ~ 2025.01.14",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2025.01.15 ~ 2025.05.10",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [{ "name": "소녀시대", "role": "주요 아티스트" }],
+      "description": "소녀시대의 최신 곡과 클래식 히트곡들을 함께 즐길 수 있는 콘서트.",
+      "guidelines": ["12세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image6.jpg"
+    }
+  ]
+}
