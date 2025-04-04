@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import Sidebar from './Sidebar.vue';
 import UserInfo from './UserInfo.vue';
 import Contents from './Contents.vue';
+import Favorite from './Favorite.vue';
+import QnA from './QnA.vue';
 
 const route = useRoute()
 const router = useRouter()
@@ -29,6 +31,8 @@ const handleMenuType = (menu) => {
         <main class="flex-1 mt-24 mr-8 px-6">
             <UserInfo v-if="selectedMenu.menu === 'information'" />
             <Contents v-if="selectedMenu.menu === 'contents'" />
+            <Favorite v-if="selectedMenu.menu === 'favorite'" />
+            <QnA v-if="selectedMenu.menu === 'qna'" />
         </main>
     </div>
 
