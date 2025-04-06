@@ -11,8 +11,7 @@
                     <!-- 프로필 패널 -->
                     <div v-if="activePanel === 'profile'" class="profile-panel">
                         <div class="profile-avatar">
-                            <!-- <img src="../assets/icons/user-avatar.png" alt="사용자 프로필" /> -->
-                            <img src="../assets/icons/profile.png" alt="사용자 프로필" />
+                            <img src="../assets/icons/participant.png" alt="사용자 프로필" />
                         </div>
                         <div class="profile-name">사용자</div>
                         <div class="profile-email">grapefield@example.com</div>
@@ -28,33 +27,76 @@
 
                     <!-- 채팅 패널 -->
                     <div v-else-if="activePanel === 'chat'" class="chat-panel">
-                        <div class="panel-title">내 관심 채팅방</div>
+                        <!-- 채팅방 목록 보기 상태일 때 -->
+                        <div v-if="!activeChatRoom" class="chat-list-view">
+                            <div class="panel-title">내 관심 채팅방</div>
 
-                        <!-- 채팅방 목록 -->
-                        <div class="chat-list">
-                            <div v-if="favoriteChatRooms.length === 0" class="chat-empty">
-                                <p>관심 등록된 채팅방이 없습니다.</p>
-                                <p>채팅 목록에서 관심 채팅방을 추가해보세요!</p>
+                            <!-- 채팅방 목록 -->
+                            <div class="chat-list">
+                                <div v-if="favoriteChatRooms.length === 0" class="chat-empty">
+                                    <p>관심 등록된 채팅방이 없습니다.</p>
+                                    <p>채팅 목록에서 관심 채팅방을 추가해보세요!</p>
+                                </div>
+
+                                <div v-for="room in favoriteChatRooms" :key="room.id" class="chat-item"
+                                    @click="showChatRoom(room)">
+                                    <div class="chat-item-top">
+                                        <div class="chat-title">{{ room.title }}</div>
+                                        <div v-if="room.isActive" class="chat-status active">LIVE</div>
+                                        <div v-else class="chat-status inactive">대기</div>
+                                    </div>
+                                    <div class="chat-preview">{{ room.preview }}</div>
+                                    <div class="chat-item-footer">
+                                        <div class="chat-participants">{{ room.participants }}명 참여중</div>
+                                        <div class="chat-date">{{ room.date }}</div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div v-for="room in favoriteChatRooms" :key="room.id" class="chat-item"
-                                @click="openChatRoomNewWindow(room.id)">
-                                <div class="chat-item-top">
-                                    <div class="chat-title">{{ room.title }}</div>
-                                    <div v-if="room.isActive" class="chat-status active">LIVE</div>
-                                    <div v-else class="chat-status inactive">대기</div>
-                                </div>
-                                <div class="chat-preview">{{ room.preview }}</div>
-                                <div class="chat-item-footer">
-                                    <div class="chat-participants">{{ room.participants }}명 참여중</div>
-                                    <div class="chat-date">{{ room.date }}</div>
-                                </div>
+                            <!-- 전체보기 버튼 -->
+                            <div class="view-all-button" @click="viewAllChatRoomsNewWindow">
+                                전체 채팅방 보기
                             </div>
                         </div>
 
-                        <!-- 전체보기 버튼 -->
-                        <div class="view-all-button" @click="viewAllChatRoomsNewWindow">
-                            전체 채팅방 보기
+                        <!-- 채팅방 보기 상태일 때 -->
+                        <div v-else class="chat-room-view">
+                            <!-- 채팅방 헤더 -->
+                            <div class="chat-room-header">
+                                <button class="back-button" @click="backToChatList">←</button>
+                                <div class="chat-room-title">{{ activeChatRoom.title }}</div>
+                                <button class="fullscreen-button" @click="openChatRoomNewWindow(activeChatRoom.id)">
+                                    <img src="../assets/icons/expand.png" alt="전체화면" />
+                                </button>
+                            </div>
+
+                            <!-- 채팅 메시지 영역 -->
+                            <div class="chat-messages" ref="chatMessages">
+                                <div v-for="(message, index) in activeChatRoomMessages" :key="index" 
+                                    :class="['message-container', message.isMe ? 'my-message' : '']">
+                                    <div class="message-avatar" v-if="!message.isMe">
+                                        <img src="/src/assets/icons/participant.png" alt="프로필" />
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-sender" v-if="!message.isMe">{{ message.sender }}</div>
+                                        <div class="message-bubble">
+                                            {{ message.content }}
+                                        </div>
+                                        <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 채팅 입력 영역 -->
+                            <div class="chat-input">
+                                <input 
+                                    type="text" 
+                                    v-model="newMessage" 
+                                    placeholder="메시지 입력..." 
+                                    @keyup.enter="sendMessage"
+                                />
+                                <button class="send-button" @click="sendMessage">전송</button>
+                            </div>
                         </div>
                     </div>
 
@@ -188,14 +230,17 @@ export default {
         return {
             activePanel: null,
             isSidebarCollapsed: false,
-            chatRooms: [] // 채팅방 데이터
+            chatRooms: [], // 채팅방 데이터
+            activeChatRoom: null, // 현재 활성화된 채팅방
+            activeChatRoomMessages: [], // 활성화된 채팅방의 메시지
+            newMessage: '' // 새 메시지 입력
         };
     },
     computed: {
         getPanelTitle() {
             switch (this.activePanel) {
                 case 'profile': return '프로필';
-                case 'chat': return '채팅';
+                case 'chat': return this.activeChatRoom ? this.activeChatRoom.title : '채팅';
                 case 'calendar': return '캘린더';
                 case 'interest': return '관심목록';
                 case 'history': return '히스토리';
@@ -219,8 +264,10 @@ export default {
         togglePanel(panelName) {
             if (this.activePanel === panelName) {
                 this.activePanel = null;
+                this.activeChatRoom = null; // 패널 닫을 때 채팅방도 초기화
             } else {
                 this.activePanel = panelName;
+                this.activeChatRoom = null; // 다른 패널로 이동 시 채팅방 초기화
 
                 // 채팅 패널이 활성화되면 채팅방 데이터 로드
                 if (panelName === 'chat') {
@@ -230,11 +277,13 @@ export default {
         },
         closePanel() {
             this.activePanel = null;
+            this.activeChatRoom = null;
         },
         toggleSidebar() {
             this.isSidebarCollapsed = !this.isSidebarCollapsed;
             if (this.isSidebarCollapsed) {
                 this.activePanel = null;
+                this.activeChatRoom = null;
             }
             // 로컬 스토리지에 상태 저장
             localStorage.setItem('sidebarCollapsed', this.isSidebarCollapsed);
@@ -245,10 +294,100 @@ export default {
             // chat.json 데이터 사용
             if (chatData && chatData.chatRooms) {
                 this.chatRooms = chatData.chatRooms.map(room => ({
-                    ...room,
-                    isFavorite: chatData.userFavorites.includes(room.id)
+                    ...room
                 }));
             }
+        },
+
+        // 채팅방 보기
+        showChatRoom(room) {
+            this.activeChatRoom = room;
+            
+            // 채팅방 메시지 로드
+            this.activeChatRoomMessages = room.messages.map(msg => ({
+                ...msg,
+                timestamp: new Date(msg.timestamp)
+            }));
+            
+            // 메시지 영역 스크롤 맨 아래로 이동 (다음 렌더링 사이클에)
+            this.$nextTick(() => {
+                this.scrollToBottom();
+            });
+        },
+
+        // 채팅방 목록으로 돌아가기
+        backToChatList() {
+            this.activeChatRoom = null;
+            this.activeChatRoomMessages = [];
+            this.newMessage = '';
+        },
+
+        // 메시지 전송
+        sendMessage() {
+            if (!this.newMessage.trim() || !this.activeChatRoom) return;
+            
+            // 새 메시지 추가
+            const newMsg = {
+                id: Date.now(),
+                sender: '나',
+                content: this.newMessage,
+                timestamp: new Date(),
+                isMe: true
+            };
+            
+            this.activeChatRoomMessages.push(newMsg);
+            this.newMessage = '';
+            
+            // 메시지 영역 스크롤 맨 아래로 이동
+            this.$nextTick(() => {
+                this.scrollToBottom();
+            });
+            
+            // 자동 응답 (실제로는 웹소켓 등으로 구현)
+            setTimeout(() => {
+                const autoResponse = {
+                    id: Date.now() + 1,
+                    sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
+                    content: this.getRandomResponse(),
+                    timestamp: new Date(),
+                    avatar: `../assets/icons/profile.png`,
+                    isMe: false
+                };
+                
+                this.activeChatRoomMessages.push(autoResponse);
+                
+                this.$nextTick(() => {
+                    this.scrollToBottom();
+                });
+            }, 1000);
+        },
+
+        // 메시지 스크롤 맨 아래로 이동
+        scrollToBottom() {
+            if (this.$refs.chatMessages) {
+                this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+            }
+        },
+
+        // 랜덤 응답 메시지 생성
+        getRandomResponse() {
+            const responses = [
+                '네, 지금 공연장 분위기가 정말 좋습니다!',
+                '메인 홀 우측이 잘 보이는 것 같아요.',
+                '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
+                '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
+                '오늘 특별 게스트도 온다는 소문이 있어요!',
+                '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
+                '공연 후 사인회는 로비에서 진행된다고 합니다.'
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        },
+
+        // 시간 포맷팅
+        formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
         },
 
         // 새 창으로 채팅방 열기
@@ -404,12 +543,14 @@ export default {
     top: 20vh;
     right: 4vw;
     height: 60vh;
-    width: 20vw;
+    width: 30vw;
     background-color: white;
     box-shadow: 0 0 0.6vw rgba(0, 0, 0, 0.1);
     z-index: 9;
     border-radius: 0.5vw 0 0 0.5vw;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .panel-header {
@@ -419,6 +560,7 @@ export default {
     padding: 1.2vh 1.2vw;
     border-bottom: 0.1vh solid #eee;
     background-color: #fff;
+    flex-shrink: 0;
 }
 
 .panel-header h3 {
@@ -426,6 +568,9 @@ export default {
     color: #6A0DAD;
     font-size: 1.2vw;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .close-btn {
@@ -447,8 +592,10 @@ export default {
 
 .panel-content {
     padding: 1.5vh 1.2vw;
-    height: calc(100% - 4vh);
+    height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 패널 트랜지션 */
@@ -528,6 +675,18 @@ export default {
 }
 
 /* 채팅 패널 스타일 */
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-list-view, .chat-room-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .panel-title {
     font-size: 1.1vw;
     font-weight: 600;
@@ -542,6 +701,8 @@ export default {
     flex-direction: column;
     gap: 1vh;
     margin-bottom: 1.5vh;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .chat-empty {
@@ -627,9 +788,168 @@ export default {
     cursor: pointer;
     font-size: 1vw;
     transition: background-color 0.2s;
+    margin-top: auto;
 }
 
 .view-all-button:hover {
+    background-color: #5A0C9D;
+}
+
+/* 채팅방 스타일 */
+.chat-room-view {
+    height: 100%;
+}
+
+.chat-room-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8vw;
+    margin-bottom: 1vh;
+    padding-bottom: 1vh;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+/* 채팅방 스타일 계속 */
+.back-button {
+    background: none;
+    border: none;
+    font-size: 1.3vw;
+    color: #6A0DAD;
+    cursor: pointer;
+    padding: 0.4vh 0.6vw;
+    border-radius: 0.3vw;
+}
+
+.back-button:hover {
+    background-color: rgba(106, 13, 173, 0.08);
+}
+
+.chat-room-title {
+    flex: 1;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fullscreen-button {
+    background: none;
+    border: none;
+    padding: 0.4vh 0.6vw;
+    cursor: pointer;
+    border-radius: 0.3vw;
+}
+
+.fullscreen-button:hover {
+    background-color: rgba(106, 13, 173, 0.08);
+}
+
+.fullscreen-button img {
+    width: 1.2vw;
+    height: 1.2vw;
+    opacity: 0.7;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5vh 0;
+    margin-bottom: 1vh;
+}
+
+.message-container {
+    display: flex;
+    margin-bottom: 1vh;
+    gap: 0.6vw;
+}
+
+.my-message {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #F5F0FF;
+    flex-shrink: 0;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.message-sender {
+    font-size: 0.8vw;
+    color: #666;
+    margin-bottom: 0.2vh;
+}
+
+.message-bubble {
+    background-color: #F5F0FF;
+    padding: 0.8vh 1vw;
+    border-radius: 0.8vw;
+    font-size: 0.95vw;
+    color: #333;
+}
+
+.my-message .message-bubble {
+    background-color: #6A0DAD;
+    color: white;
+}
+
+.message-time {
+    font-size: 0.7vw;
+    color: #999;
+    margin-top: 0.3vh;
+    align-self: flex-end;
+}
+
+.my-message .message-time {
+    align-self: flex-start;
+}
+
+.chat-input {
+    display: flex;
+    gap: 0.8vw;
+    margin-top: auto;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.8vh 1vw;
+    border: 1px solid #E0E0E0;
+    border-radius: 2vw;
+    font-size: 0.9vw;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: #6A0DAD;
+}
+
+.send-button {
+    background-color: #6A0DAD;
+    color: white;
+    border: none;
+    padding: 0.8vh 1.2vw;
+    border-radius: 2vw;
+    font-size: 0.9vw;
+    cursor: pointer;
+}
+
+.send-button:hover {
     background-color: #5A0C9D;
 }
 
@@ -788,7 +1108,8 @@ export default {
     .chat-title,
     .interest-title,
     .history-title,
-    .event-title {
+    .event-title,
+    .chat-room-title {
         font-size: 3.5vw;
     }
 
@@ -835,6 +1156,44 @@ export default {
     .view-all-button {
         font-size: 3.5vw;
         padding: 1.5vh 0;
+    }
+    
+    .back-button {
+        font-size: 4vw;
+        padding: 1vh 1.5vw;
+    }
+    
+    .fullscreen-button img {
+        width: 4vw;
+        height: 4vw;
+    }
+    
+    .message-avatar {
+        width: 8vw;
+        height: 8vw;
+    }
+    
+    .message-sender {
+        font-size: 3vw;
+    }
+    
+    .message-bubble {
+        font-size: 3.5vw;
+        padding: 1.5vh 2vw;
+    }
+    
+    .message-time {
+        font-size: 2.5vw;
+    }
+    
+    .chat-input input {
+        font-size: 3.5vw;
+        padding: 1.5vh 2vw;
+    }
+    
+    .send-button {
+        font-size: 3.5vw;
+        padding: 1.5vh 3vw;
     }
 }
 </style>

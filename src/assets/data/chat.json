@@ -15,7 +15,7 @@
           "sender": "관람객1",
           "content": "오늘 공연 정말 좋았어요!",
           "timestamp": "2025-04-04T19:25:00",
-          "avatar": "/assets/icons/avatar1.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -23,7 +23,7 @@
           "sender": "관람객2",
           "content": "주인공 배우의 고음이 정말 인상적이었습니다.",
           "timestamp": "2025-04-04T19:27:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -31,7 +31,7 @@
           "sender": "관람객3",
           "content": "맞아요! 2막에서 특히 감동적이었죠.",
           "timestamp": "2025-04-04T19:30:00",
-          "avatar": "/assets/icons/avatar3.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -46,7 +46,7 @@
           "sender": "관람객4",
           "content": "지금 주차장 거의 만석입니다. 근처 부설 주차장 이용하시는 게 좋을 것 같아요.",
           "timestamp": "2025-04-04T19:36:00",
-          "avatar": "/assets/icons/avatar4.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -78,7 +78,7 @@
           "sender": "관람객1",
           "content": "전시장 입구부터 너무 멋있어요!",
           "timestamp": "2025-04-04T14:10:00",
-          "avatar": "/assets/icons/avatar5.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -86,7 +86,7 @@
           "sender": "관람객2",
           "content": "2층 오른쪽 끝에 있는 작품이 특히 인상적이네요",
           "timestamp": "2025-04-04T14:15:00",
-          "avatar": "/assets/icons/avatar3.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -101,7 +101,7 @@
           "sender": "관람객3",
           "content": "적당히 있어요. 붐비지는 않아서 작품 감상하기 좋습니다.",
           "timestamp": "2025-04-04T14:22:00",
-          "avatar": "/assets/icons/avatar6.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -128,7 +128,7 @@
           "sender": "관람객1",
           "content": "콘서트 시작 전인데 이미 분위기가 뜨겁네요!",
           "timestamp": "2025-04-04T18:30:00",
-          "avatar": "/assets/icons/avatar1.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -136,7 +136,7 @@
           "sender": "관람객2",
           "content": "앞자리 몇 줄은 이미 다 찼어요",
           "timestamp": "2025-04-04T18:35:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -151,7 +151,7 @@
           "sender": "관람객3",
           "content": "주차장 거의 만석입니다. 대중교통 이용 추천해요.",
           "timestamp": "2025-04-04T18:42:00",
-          "avatar": "/assets/icons/avatar4.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -178,7 +178,7 @@
           "sender": "관람객1",
           "content": "오늘 작가와의 대화 시간 18시에 있습니다!",
           "timestamp": "2025-04-04T13:10:00",
-          "avatar": "/assets/icons/avatar5.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -186,7 +186,7 @@
           "sender": "관람객2",
           "content": "해안가 풍경 사진들이 정말 아름답네요",
           "timestamp": "2025-04-04T13:15:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -201,7 +201,7 @@
           "sender": "관람객1",
           "content": "전시장 내 세미나실에서 진행됩니다.",
           "timestamp": "2025-04-04T13:22:00",
-          "avatar": "/assets/icons/avatar5.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -228,7 +228,7 @@
           "sender": "관람객1",
           "content": "햄릿 역할의 배우 연기가 정말 압권이네요!",
           "timestamp": "2025-04-04T19:10:00",
-          "avatar": "/assets/icons/avatar3.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -236,7 +236,7 @@
           "sender": "관람객2",
           "content": "특히 2막에서 독백 장면이 감동적이었어요",
           "timestamp": "2025-04-04T19:15:00",
-          "avatar": "/assets/icons/avatar1.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -251,7 +251,7 @@
           "sender": "관람객3",
           "content": "네, 2막과 3막 사이에 15분 인터미션이 있습니다.",
           "timestamp": "2025-04-04T19:21:00",
-          "avatar": "/assets/icons/avatar6.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -278,7 +278,7 @@
           "sender": "관람객1",
           "content": "이번 공연에서 크리스틴 역할을 맡은 배우의 목소리가 정말 천상의 목소리네요",
           "timestamp": "2025-04-04T20:05:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -286,7 +286,7 @@
           "sender": "관람객2",
           "content": "샹들리에 떨어지는 장면에서 놀라서 소리 질렀어요 ㅋㅋ",
           "timestamp": "2025-04-04T20:10:00",
-          "avatar": "/assets/icons/avatar4.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -313,7 +313,7 @@
           "sender": "관람객1",
           "content": "빛과 소리가 반응하는 전시물이 너무 신기해요",
           "timestamp": "2025-04-04T15:05:00",
-          "avatar": "/assets/icons/avatar1.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -321,7 +321,7 @@
           "sender": "관람객2",
           "content": "3관에 있는 프로젝션 매핑 작품이 압권이에요!",
           "timestamp": "2025-04-04T15:12:00",
-          "avatar": "/assets/icons/avatar5.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -348,7 +348,7 @@
           "sender": "관람객1",
           "content": "2관 재즈트리오 공연이 정말 훌륭해요",
           "timestamp": "2025-04-04T16:05:00",
-          "avatar": "/assets/icons/avatar3.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -356,7 +356,7 @@
           "sender": "관람객2",
           "content": "메인 스테이지는 너무 붐비네요. 좀 일찍 자리잡아야 할 것 같아요",
           "timestamp": "2025-04-04T16:15:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -377,7 +377,7 @@
           "sender": "관람객1",
           "content": "스칸디나비안 디자인관 정말 멋져요!",
           "timestamp": "2025-04-04T11:05:00",
-          "avatar": "/assets/icons/avatar4.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -385,7 +385,7 @@
           "sender": "관람객2",
           "content": "가구 구매 시 현장 할인도 적용된대요",
           "timestamp": "2025-04-04T11:15:00",
-          "avatar": "/assets/icons/avatar6.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -406,7 +406,7 @@
           "sender": "관람객1",
           "content": "지휘자의 해석이 정말 독특하고 신선해요",
           "timestamp": "2025-04-04T19:05:00",
-          "avatar": "/assets/icons/avatar5.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -414,7 +414,7 @@
           "sender": "관람객2",
           "content": "프로그램북에 악보 해설이 자세히 나와있어 좋네요",
           "timestamp": "2025-04-04T19:12:00",
-          "avatar": "/assets/icons/avatar1.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -441,7 +441,7 @@
           "sender": "관람객1",
           "content": "주역 발레리나의 기교가 정말 환상적이에요",
           "timestamp": "2025-04-04T20:05:00",
-          "avatar": "/assets/icons/avatar2.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -449,7 +449,7 @@
           "sender": "관람객2",
           "content": "오케스트라 연주도 완벽해요",
           "timestamp": "2025-04-04T20:10:00",
-          "avatar": "/assets/icons/avatar3.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
@@ -470,7 +470,7 @@
           "sender": "관람객1",
           "content": "국내외 갤러리들이 다양하게 참여했네요",
           "timestamp": "2025-04-04T13:05:00",
-          "avatar": "/assets/icons/avatar4.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         },
         {
@@ -478,7 +478,7 @@
           "sender": "관람객2",
           "content": "작품 가격이 생각보다 합리적인 것도 있어요",
           "timestamp": "2025-04-04T13:15:00",
-          "avatar": "/assets/icons/avatar6.png",
+          "avatar": "/src/assets/icons/participant.png",
           "isMe": false
         }
       ],
