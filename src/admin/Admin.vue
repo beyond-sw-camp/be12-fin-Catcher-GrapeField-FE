@@ -23,11 +23,11 @@ const handleMenuType = (menu) => {
 </script>
 
 <template>
-    <div class="flex min-h-screen">
+    <div class="wrapper flex min-h-screen">
       <!-- 왼쪽 사이드바 -->
-      <Sidebar class="mt-16 w-100 bg-violet-800 text-white" :menus="selectedMenu.menu" @selectMenu="handleMenuType"/>
+      <Sidebar class="w-100 bg-violet-800 text-white" :menus="selectedMenu.menu" @selectMenu="handleMenuType"/>
       <!-- 오른쪽 메인 콘텐츠 -->
-      <main class="flex-1 mt-24 mr-8 px-6">
+      <main class="flex-1 mr-8 px-6">
         <Report v-if="selectedMenu.menu==='report'" />
         <Qna v-if="selectedMenu.menu==='qna'"/>
         <UserManage v-if="selectedMenu.menu==='user'"/>
@@ -35,4 +35,14 @@ const handleMenuType = (menu) => {
       </main>
     </div>
   </template>
-<style scoped></style>
+<style scoped>
+/*여백 통일 임시 조치*/
+.wrapper{
+  margin-bottom: 2vh;
+  width: 95%;
+  max-width: 95vw;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0;
+}
+</style>

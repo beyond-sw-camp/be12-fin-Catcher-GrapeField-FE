@@ -69,7 +69,7 @@ export default {
 .banner-wrapper {
   width: 95%;
   max-width: 95vw;
-  margin: 1vh auto;
+  margin: 5vh auto;
   padding: 0 5vw;
 }
 
