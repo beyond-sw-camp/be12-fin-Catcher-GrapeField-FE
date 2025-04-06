@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-screen-xl mx-auto grid grid-cols-5 gap-x-4 gap-y-8 mt-10">
+    <div class="wrapper max-w-screen-xl mx-auto grid grid-cols-4 gap-x-4 gap-y-8 mt-10">
       <EventShowMoreCard
         v-for="event in events"
         :key="event.id"
@@ -34,3 +34,13 @@
   ]
   const filteredEvents = events // 나중에 필터 추가 가능
   </script>
+<style scoped>
+/* 여백 통일 임시 레이아웃 설정*/
+.wrapper{
+  margin-bottom: 2vw;
+  width: 95%;
+  max-width: 95vw;
+  margin: 2vh auto;
+  padding: 0 5vw;
+}
+</style>
