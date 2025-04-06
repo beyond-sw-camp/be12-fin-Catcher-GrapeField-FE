@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div data-layer="main frame" class="w-[1204px] inline-flex flex-col justify-start items-center gap-9">
+  <div data-layer="main frame" class="wrapper mt-4 inline-flex flex-col justify-center items-center gap-9">
     <nav data-layer="검색결과 카테고리 바" class="self-stretch h-28 relative">
       <div data-layer="Title"
            class="left-0 top-0 absolute justify-start text-neutral-800 text-2xl font-bold font-['Inter']">'햄릿' 검색 결과
@@ -182,10 +182,10 @@
         </div>
       </div>
       <div data-layer="Container" class="self-stretch relative">
-        <div data-layer="banner grid" class="inline-flex justify-start items-start gap-3.5 flex-wrap content-start">
-          <router-link to="/events/1" data-layer="banner item container" class="w-72 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+        <div data-layer="banner grid" class="inline-flex justify-evenly items-start gap-x-3 gap-y-8 flex-wrap">
+          <router-link to="/events/1" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -199,9 +199,9 @@
               </div>
             </div>
           </router-link>
-          <router-link to="/events/2" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          <router-link to="/events/2" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -215,9 +215,9 @@
               </div>
             </div>
           </router-link>
-          <router-link to="/events/3" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          <router-link to="/events/3" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -231,9 +231,9 @@
               </div>
             </div>
           </router-link>
-          <router-link to="/events/4" data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          <router-link to="/events/4" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -247,9 +247,9 @@
               </div>
             </div>
           </router-link>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          <router-link to="/events/5" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -262,10 +262,10 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          </router-link>
+          <router-link to="/events/6" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -278,10 +278,10 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          </router-link>
+          <router-link to="/events/7" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -294,10 +294,10 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-          <div data-layer="banner item container" class="w-72 h-96 relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
-            <div data-layer="poster container" class="w-64 h-54 left-[20px] top-[10px] absolute">
-              <div data-layer="poster" class="w-64 h-64 left-0 top-0 absolute bg-purple-100"></div>
+          </router-link>
+          <router-link to="/events/8" data-layer="banner item container" class="w-64 h-96 flex-row relative bg-white rounded-lg shadow-[0px_2px_8px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+            <div data-layer="poster container" class="w-64 h-54 flex justify-center">
+              <div data-layer="poster" class="w-64 h-64 left-0 bg-purple-100"></div>
             </div>
             <div data-layer="item info container" class="w-64 left-[20px] top-[270px] absolute inline-flex flex-col justify-start items-start ">
               <div data-layer="뮤지컬 '햄릿' 2022" class="self-stretch justify-center text-neutral-800 text-lg font-bold font-['Inter']">뮤지컬 '햄릿' 2022</div>
@@ -310,9 +310,7 @@
                 <div data-layer="status" class="left-[14px] top-[3px] absolute justify-center text-amber-500 text-xs font-medium font-['Noto_Sans_KR']">예정</div>
               </div>
             </div>
-          </div>
-
-
+          </router-link>
         </div>
       </div>
     </div>
@@ -397,5 +395,10 @@
 </template>
 
 <style scoped>
-
+.wrapper{
+  width: 95%;
+  max-width: 95vw;
+  margin: 5vh auto;
+  padding: 0 5vw;
+}
 </style>
