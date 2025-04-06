@@ -28,6 +28,14 @@
       <div class="auth-section">
         <div class="search-box">
           <input type="text" placeholder="꽃의 비밀 🔍" />
+          <router-link to="/search" class="search-button">
+            <div class="search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+          </router-link>
         </div>
         <div class="auth-buttons">
           <router-link to="/login" class="login-button truncate">로그인</router-link>
@@ -161,18 +169,51 @@ export default {
   align-items: center;
 }
 
+/* search-box 관련 스타일 수정 */
 .search-box {
-  margin-right: 1.5rem;  /* 1.5vw에서 1.5rem으로 변경 */
+  margin-right: 1.5rem;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .search-box input {
-  padding: 0.5rem 1rem;  /* 0.5vw 1vw에서 0.5rem 1rem으로 변경 */
-  border: 0.07rem solid #e0e0e0;  /* 0.07vw에서 0.07rem으로 변경 */
-  border-radius: 1.5rem;  /* 1.5vw에서 1.5rem으로 변경 */
+  padding: 0.5rem 1rem;
+  padding-right: 2.5rem; /* 검색 버튼을 위한 여백 추가 */
+  border: 0.07rem solid #e0e0e0;
+  border-radius: 1.5rem;
   background-color: #f5f0ff;
-  width: 20rem;  /* 20vw에서 20rem으로 변경 */
-  font-size: 0.9rem;  /* 0.9vw에서 0.9rem으로 변경 */
+  width: 20rem;
+  font-size: 0.9rem;
+}
+
+/* 새로 추가된 검색 버튼 스타일 */
+.search-button {
+  position: absolute;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #7c4dff; /* 보라색 배경 */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.search-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: #ffffff; /* 흰색 아이콘 */
 }
 
 .auth-buttons {
