@@ -6,6 +6,7 @@ import UserInfo from './UserInfo.vue';
 import Contents from './Contents.vue';
 import Favorite from './Favorite.vue';
 import QnA from './QnA.vue';
+import MyCalendar from './MyCalendar.vue';
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +32,7 @@ const handleMenuType = (menu) => {
         <main class="flex-1 mt-24 mr-8 px-6">
             <UserInfo v-if="selectedMenu.menu === 'information'" />
             <Contents v-if="selectedMenu.menu === 'contents'" />
+            <MyCalendar v-if="selectedMenu.menu === 'calender'" />
             <Favorite v-if="selectedMenu.menu === 'favorite'" />
             <QnA v-if="selectedMenu.menu === 'qna'" />
         </main>

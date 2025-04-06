@@ -1,8 +1,8 @@
 <template>
     <div class="flex justify-between items-start mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-zinc-800">공연 예매 캘린더</h1>
-            <p class="text-base text-stone-500 mt-1">다양한 공연과 전시회의 예매 시작일을 한눈에 확인하세요</p>
+            <h1 class="text-3xl font-bold text-zinc-800">{{ title }}</h1>
+            <p class="text-base text-stone-500 mt-1">{{ subtitle }}</p>
         </div>
 
         <!-- 오른쪽: 월 이동 버튼 + 전체 -->
@@ -37,21 +37,40 @@
     </div>
 
     <!-- 👇 카테고리 색상 레전드 -->
-    <div class="flex items-center gap-4 mb-4">
-      <span class="text-base font-bold text-zinc-800">카테고리 색상:</span>
-      <Legend color="bg-purple-700" text="공연" />
-      <Legend color="bg-green-500" text="전시" />
-      <Legend color="bg-amber-500" text="연극" />
-      <Legend color="bg-blue-500" text="팬미팅" />
-      <Legend color="bg-fuchsia-700" text="콘서트" />
+    <div v-if="showLegend" class="flex items-center gap-4 mb-4">
+        <span class="text-base font-bold text-zinc-800">카테고리 색상:</span>
+        <Legend color="bg-purple-700" text="공연" />
+        <Legend color="bg-green-500" text="전시" />
+        <Legend color="bg-amber-500" text="연극" />
+        <Legend color="bg-blue-500" text="팬미팅" />
+        <Legend color="bg-fuchsia-700" text="콘서트" />
     </div>
+
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import Legend from './CalendarLegend.vue'
 
-defineProps(['year', 'month'])
+defineProps({
+    title: {
+        type: String,
+        default: '공연 예매 캘린더'
+    },
+    subtitle: {
+        type: String,
+        default: '다양한 공연과 전시회의 예매 시작일을 한눈에 확인하세요'
+    },
+    year: Number,
+    month: Number,
+
+    showLegend: {
+        type: Boolean,
+        default: true
+    }
+})
+
+
 
 const showDropdown = ref(false)
 const selectedFilter = ref('전체')
