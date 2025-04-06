@@ -2,7 +2,8 @@
     <div class="card-slider-container">
         <div class="card-slider-header">
             <h2 class="section-title">{{ title }}</h2>
-            <button class="more-btn">더보기</button>
+            <button v-if="showMoreButton" class="more-btn"
+            @click="goToShowMore">더보기</button>
         </div>
 
         <div class="card-slider">
@@ -59,8 +60,13 @@ export default {
         cards: {
             type: Array,
             required: true
-        }
-    },
+        },
+        showMoreButton: {
+    type: Boolean,
+    default: true // 기본은 true (메인에서는 보이게)
+  }
+},
+    
     data() {
         return {
             currentPage: 0,
@@ -116,8 +122,12 @@ export default {
             return {
                 transition: 'transform 0.3s ease, opacity 0.3s ease',
             };
-        }
+        },
+        goToShowMore() {
+     this.$router.push('/events')  // ✅ "/events"로 이동
     }
+},
+    
 };
 </script>
 

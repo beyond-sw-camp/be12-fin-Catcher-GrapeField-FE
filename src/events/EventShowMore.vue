@@ -1,8 +1,8 @@
 <template>
     <div>
       <!-- 추천 콘텐츠 섹션 -->
-      <Card title="추천 콘텐츠" :cards="combinedCards" />
-  
+       <!-- ✅ 메인에서는 더보기 버튼이 나오고 공연/전시 페이지에서는 더보기 버튼이 없도록 false 처리 -->
+      <Card title="추천 콘텐츠" :cards="combinedCards" :showMoreButton="false" />
       <!-- 카테고리 -->
       <Category />
   
