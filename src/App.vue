@@ -33,7 +33,7 @@ const isStandalonePage = computed(() => route.meta.standalone === true)
   flex: 1;
   margin-top: 4rem;
   /* 헤더 높이와 동일하게 설정 (기존 5vw에서 4rem으로 변경) */
-  padding: 1rem; /* 1vw에서 1rem으로 변경 */
+  padding-bottom: 1rem; /* 1vw에서 1rem으로 변경 */
 }
 
 .standalone-page {
