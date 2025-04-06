@@ -14,32 +14,35 @@
         <!-- 날짜 셀 -->
         <div class="grid grid-cols-7 border-neutral-200">
             <!-- 날짜 셀 클릭 이벤트 추가 -->
-                <div v-for="(date, index) in calendarDates" :key="index"
-                    class="h-32 border border-neutral-200 relative px-2 py-1 cursor-pointer"
-                    :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }"
-                    @click="$emit('date-click', date.fullDate)">
-                    <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
+            <div v-for="(date, index) in calendarDates" :key="index"
+                class="h-32 border border-neutral-200 relative px-2 py-1 cursor-pointer"
+                :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }"
+                @click="$emit('date-click', date.fullDate)">
+                <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
 
-                    <div class="h-6">
-                        <span v-if="getEventsForDate(date.fullDate).length > 1"
-                            class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
-                            {{ date.day }}
-                        </span>
-                        <span v-else class="text-sm text-zinc-800">
-                            {{ date.day }}
-                        </span>
-                    </div>
-
-
-                    <!-- 이벤트 바 -->
-                    <div v-for="event in getEventsForDate(date.fullDate)" :key="event.title + event.time" class="mt-1">
-                        <div
-                            :class="['flex items-center w-full h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate', categoryStyleMap[event.category]?.bg]">
-                            <div :class="['w-1 h-4 mr-1', categoryStyleMap[event.category]?.border]"></div>
-                            {{ event.title }} ({{ event.time }})
-                        </div>
-                    </div>
+                <div class="h-6">
+                    <span v-if="getEventsForDate(date.fullDate).length > 1"
+                        class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
+                        {{ date.day }}
+                    </span>
+                    <span v-else class="text-sm text-zinc-800">
+                        {{ date.day }}
+                    </span>
                 </div>
+
+
+                <!-- 이벤트 바 -->
+                <div v-for="event in getEventsForDate(date.fullDate)" :key="event.title + event.time" class="mt-1">
+                    <div :class="[
+                        'flex items-center min-w-0 h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate',
+                        categoryStyleMap[event.category]?.bg
+                    ]">
+                        <div :class="['flex-shrink-0 w-1 h-4 mr-1', categoryStyleMap[event.category]?.border]"></div>
+                        {{ event.title }} ({{ event.time }})
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -97,10 +100,10 @@ function getEventsForDate(date) {
 }
 
 const categoryStyleMap = {
-    공연: { bg: 'bg-purple-100', border: 'bg-purple-700' },
+    뮤지컬: { bg: 'bg-purple-100', border: 'bg-purple-700' },
     전시: { bg: 'bg-green-100', border: 'bg-green-500' },
-    연극: { bg: 'bg-orange-100', border: 'bg-amber-500' },
-    팬미팅: { bg: 'bg-sky-100', border: 'bg-blue-500' },
-    콘서트: { bg: 'bg-purple-100', border: 'bg-fuchsia-700' }
+    연극: { bg: 'bg-orange-100', border: 'bg-orange-500' },
+    콘서트: { bg: 'bg-fuchsia-100', border: 'bg-fuchsia-700' },
+    박람회: { bg: 'bg-amber-100', border: 'bg-amber-500' }
 }
 </script>
