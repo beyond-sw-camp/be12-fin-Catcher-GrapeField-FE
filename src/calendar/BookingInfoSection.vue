@@ -6,7 +6,7 @@
                 {{ selectedData.date }} {{ isMyCalendar ? '예매 일정' : '예매 오픈 정보' }}
             </h2>
             <p class="text-base text-stone-500">
-                {{ selectedData.items.length }}개의 {{ isMyCalendar ? '예매 일정' : '공연/전시회' }}가
+                {{ selectedData.items.length }}개의 {{ isMyCalendar ? '예매 일정이' : '공연/전시회가' }}
                 {{ isMyCalendar ? '등록되어 있습니다' : '예매를 시작합니다' }}
             </p>
 
