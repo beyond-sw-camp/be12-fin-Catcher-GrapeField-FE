@@ -1,7 +1,6 @@
 <template>
     <div class="category-container">
         <h2 class="category-title">카테고리</h2>
-
         <div class="category-buttons">
             <button v-for="category in categories" :key="category.id" class="category-button"
                 :class="{ active: selectedCategory === category.id }" @click="selectCategory(category.id)">
@@ -35,8 +34,12 @@ export default {
 
 <style scoped>
 .category-container {
-    width: 100%;
     margin-bottom: 2vw;
+    width: 95%;
+    max-width: 95vw;
+    margin: 2vh auto;
+    padding: 0 5vw;
+
 }
 
 .category-title {
@@ -48,6 +51,7 @@ export default {
 
 .category-buttons {
     display: flex;
+    justify-content: space-evenly;
     gap: 1vw;
     overflow-x: auto;
     padding-bottom: 0.5vw;

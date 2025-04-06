@@ -14,7 +14,7 @@ const isStandalonePage = computed(() => route.meta.standalone === true)
 <template>
   <div class="layout">
     <Header v-if="!isStandalonePage" />
-    <div :class="{ 'standalone-page': isStandalonePage, 'main-content': !isStandalonePage }">
+    <div :class="{ 'standalone-page': isStandalonePage, 'main-content': !isStandalonePage }" class="mx-auto">
       <router-view />
     </div>
     <SideBar v-if="showSidebar && !isStandalonePage" />

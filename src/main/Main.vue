@@ -1,18 +1,4 @@
-<template>
-    <TopBanner />
-    <div class="main-content">
-        <div class="content-row">
-            <PopularPost />
-            <PopularChatRoom />
-        </div>
-        <Category />
-        <Card />
-        <Calendar />
-        <CardList title="오픈 예정"/>
-        <CardList title="종료 예정"/>
-    </div>
-</template>
-<script>
+<script setup>
 import TopBanner from './TopBanner.vue'
 import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
@@ -20,19 +6,22 @@ import Category from './Category.vue'
 import Card from './CardTemplate.vue'
 import Calendar from './Calendar.vue'
 import CardList from './CardList.vue'
-
-export default {
-    components: {
-        TopBanner,
-        PopularPost,
-        PopularChatRoom,
-        Category,
-        Card,
-        Calendar,
-        CardList
-    }
-}
 </script>
+
+<template>
+    <TopBanner />
+    <div>
+        <div class="content-row">
+            <PopularPost />
+            <PopularChatRoom />
+        </div>
+        <Category />
+        <Card/>
+        <Calendar />
+        <CardList title="오픈 예정"/>
+        <CardList title="종료 예정"/>
+    </div>
+</template>
 
 <style>
 /* 메인 컨테이너 스타일 */

@@ -132,10 +132,10 @@
   <style scoped>
   .calendar-container {
     font-family: 'Inter', sans-serif;
-    width: 100%;
-    max-width: 90vw;
-    margin: 0 auto;
-    padding: 2vh 2vw;
+    width: 95%;
+    max-width: 95vw;
+    margin: 2vh auto;
+    padding: 2vh 5vw;
   }
   
   .title {
