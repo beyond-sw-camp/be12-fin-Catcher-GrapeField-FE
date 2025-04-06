@@ -44,6 +44,10 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition) {
+        // 항상 맨 위로 스크롤 이동
+        return { top: 0 }
+      }
 });
 
 export default router;
