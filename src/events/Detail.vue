@@ -1,5 +1,5 @@
 <template>
-    <div class="pt-10 px-20" v-if="event">
+    <div class="wrapper" v-if="event">
       <!-- 상단 Header와 탭 부분 -->
       <EventHeaderInfo :event="event" />
   
@@ -43,13 +43,12 @@
   </script>
   
   <style scoped>
-  /* 필요시 추가 스타일 */
-  .pt-10 {
-    padding-top: 2.5rem; /* 상단 여백 */
-  }
-  .px-20 {
-    padding-left: 5rem;
-    padding-right: 5rem;
-  }
+.wrapper{
+  margin-bottom: 2vw;
+  width: 95%;
+  max-width: 95vw;
+  margin: 2vh auto;
+  padding: 0 5vw;
+}
   </style>
   

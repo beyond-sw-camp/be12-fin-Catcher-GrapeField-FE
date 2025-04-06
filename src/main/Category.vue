@@ -39,7 +39,6 @@ export default {
     max-width: 95vw;
     margin: 2vh auto;
     padding: 0 5vw;
-
 }
 
 .category-title {

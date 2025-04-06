@@ -25,11 +25,11 @@ const handleMenuType = (menu) => {
 </script>
 
 <template>
-    <div class="flex min-h-screen">
+    <div class="flex mt-4 min-h-screen">
         <!-- 왼쪽 사이드바 -->
-        <Sidebar class="mt-16 w-100" :menus="selectedMenu.menu" @selectMenu="handleMenuType" />
+        <Sidebar class="w-100" :menus="selectedMenu.menu" @selectMenu="handleMenuType" />
         <!-- 오른쪽 메인 콘텐츠 -->
-        <main class="flex-1 mt-24 mr-8 px-6">
+        <main class="flex-1 mr-8 px-6">
             <UserInfo v-if="selectedMenu.menu === 'information'" />
             <Contents v-if="selectedMenu.menu === 'contents'" />
             <MyCalendar v-if="selectedMenu.menu === 'calender'" />
