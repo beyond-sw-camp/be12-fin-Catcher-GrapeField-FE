@@ -4,7 +4,7 @@
 
 <template>
 
-  <div data-layer="Frame 1321317495" class="w-[1200px] inline-flex flex-col justify-start items-start gap-9">
+  <div data-layer="Frame 1321317495" class="wrapper mt-4 inline-flex flex-col justify-start items-start gap-9">
     <div data-layer="<nav/>검색결과 카테고리 바" class="self-stretch h-28 relative">
       <div data-layer="Title"
            class="left-0 top-0 absolute justify-start text-neutral-800 text-2xl font-bold font-['Inter']">'햄릿' 검색 결과
@@ -364,5 +364,10 @@
 </template>
 
 <style scoped>
-
+.wrapper{
+  width: 95%;
+  max-width: 95vw;
+  margin: 5vh auto;
+  padding: 0 5vw;
+}
 </style>
