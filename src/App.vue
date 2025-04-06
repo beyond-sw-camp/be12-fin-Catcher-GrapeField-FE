@@ -29,7 +29,7 @@ const isStandalonePage = computed(() => route.meta.standalone === true)
   min-height: 98vh;
 }
 
-main {
+.main-content {
   flex: 1;
   margin-top: 4rem;
   /* 헤더 높이와 동일하게 설정 (기존 5vw에서 4rem으로 변경) */

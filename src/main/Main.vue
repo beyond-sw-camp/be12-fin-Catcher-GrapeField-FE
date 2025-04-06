@@ -12,10 +12,7 @@
         <CardList title="종료 예정"/>
     </div>
 </template>
-
-
 <script>
-
 import TopBanner from './TopBanner.vue'
 import PopularPost from './PopularPost.vue'
 import PopularChatRoom from './PopularChatRoom.vue'
@@ -23,7 +20,6 @@ import Category from './Category.vue'
 import Card from './CardTemplate.vue'
 import Calendar from './Calendar.vue'
 import CardList from './CardList.vue'
-
 
 export default {
     components: {
