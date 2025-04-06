@@ -70,7 +70,7 @@ export default {
   width: 95%;
   max-width: 95vw;
   margin: 1vh auto;
-  padding: 0 5vw;
+  padding: 0 10vw;
 }
 
 .banner-container {
