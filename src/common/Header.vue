@@ -24,6 +24,9 @@
           </li>
         </ul>
       </nav>
+      <div class="search-box">
+        <input type="text" placeholder="꽃의 비밀 🔍" />
+      </div>
 
       <!-- 로그인 상태별 UI -->
       <div class="flex items-center gap-2">
@@ -234,7 +237,7 @@ const isActive = (path) => {
   border-radius: 1.5rem;
   /* 1.5vw에서 1.5rem으로 변경 */
   background-color: #f5f0ff;
-  width: 20rem;
+  width: 30rem;
   /* 20vw에서 20rem으로 변경 */
   font-size: 0.9rem;
   /* 0.9vw에서 0.9rem으로 변경 */
