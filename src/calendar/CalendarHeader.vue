@@ -36,20 +36,20 @@
         </div>
     </div>
 
-    <!-- 카테고리 색상 레전드 -->
+    <!-- 👇 카테고리 색상 레전드 -->
     <div class="flex items-center gap-4 mb-4">
-        <span class="text-base font-bold text-zinc-800">카테고리 색상:</span>
-        <Legend color="bg-purple-700" text="공연" />
-        <Legend color="bg-green-500" text="전시" />
-        <Legend color="bg-amber-500" text="연극" />
-        <Legend color="bg-blue-500" text="팬미팅" />
-        <Legend color="bg-fuchsia-700" text="콘서트" />
+      <span class="text-base font-bold text-zinc-800">카테고리 색상:</span>
+      <Legend color="bg-purple-700" text="공연" />
+      <Legend color="bg-green-500" text="전시" />
+      <Legend color="bg-amber-500" text="연극" />
+      <Legend color="bg-blue-500" text="팬미팅" />
+      <Legend color="bg-fuchsia-700" text="콘서트" />
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import CalendarLegend from './CalendarLegend.vue'
+import Legend from './CalendarLegend.vue'
 
 defineProps(['year', 'month'])
 

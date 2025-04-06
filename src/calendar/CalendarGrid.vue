@@ -1,79 +1,103 @@
 <template>
-    <div class="bg-white">
-      <div class="grid grid-cols-7 border-b border-neutral-200 text-base font-bold">
-        <div class="text-red-500 text-center py-2">일</div>
-        <div class="text-center py-2">월</div>
-        <div class="text-center py-2">화</div>
-        <div class="text-center py-2">수</div>
-        <div class="text-center py-2">목</div>
-        <div class="text-center py-2">금</div>
-        <div class="text-blue-500 text-center py-2">토</div>
-      </div>
-      <div class="grid grid-cols-7 border-neutral-200">
-        <div
-          v-for="(date, index) in calendarDates"
-          :key="index"
-          class="h-32 border border-neutral-200 relative px-2 py-1"
-          :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }"
-        >
-          <div class="text-sm">{{ date.day }}</div>
-          <div
-            v-for="event in getEventsForDate(date.fullDate)"
-            :key="event.title"
-            class="mt-1 text-xs font-bold text-zinc-800 truncate"
-          >
-            <div :class="['flex items-center w-full h-6 px-1', event.bg]">
-              <div :class="['w-1 h-6 mr-1', event.border]"></div>
-              {{ event.title }} ({{ event.time }})
-            </div>
-          </div>
+    <div class="bg-white rounded-xl">
+        <!-- 요일 헤더 -->
+        <div class="grid grid-cols-7 border-b border-neutral-200 text-base font-bold">
+            <div class="text-red-500 text-center py-2">일</div>
+            <div class="text-center py-2">월</div>
+            <div class="text-center py-2">화</div>
+            <div class="text-center py-2">수</div>
+            <div class="text-center py-2">목</div>
+            <div class="text-center py-2">금</div>
+            <div class="text-blue-500 text-center py-2">토</div>
         </div>
-      </div>
+
+        <!-- 날짜 셀 -->
+        <div class="grid grid-cols-7 border-neutral-200">
+            <div v-for="(date, index) in calendarDates" :key="index"
+                class="h-32 border border-neutral-200 relative px-2 py-1"
+                :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }">
+                <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
+
+                <div class="h-6">
+                    <span v-if="getEventsForDate(date.fullDate).length > 1"
+                        class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
+                        {{ date.day }}
+                    </span>
+                    <span v-else class="text-sm text-zinc-800">
+                        {{ date.day }}
+                    </span>
+                </div>
+
+
+                <!-- 이벤트 바 -->
+                <div v-for="event in getEventsForDate(date.fullDate)" :key="event.title + event.time" class="mt-1">
+                    <div
+                        :class="['flex items-center w-full h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate', categoryStyleMap[event.category]?.bg]">
+                        <div :class="['w-1 h-4 mr-1', categoryStyleMap[event.category]?.border]"></div>
+                        {{ event.title }} ({{ event.time }})
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { computed } from 'vue'
-  const props = defineProps(['year', 'month', 'events'])
-  
-  const today = new Date()
-  
-  function formatDate(y, m, d) {
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps(['year', 'month', 'events'])
+
+const today = new Date()
+
+function formatDate(y, m, d) {
     const date = new Date(y, m - 1, d)
     const yyyy = date.getFullYear()
     const mm = String(date.getMonth() + 1).padStart(2, '0')
     const dd = String(date.getDate()).padStart(2, '0')
     return `${yyyy}-${mm}-${dd}`
-  }
-  
-  function getCalendarDates(y, m) {
+}
+
+function getCalendarDates(y, m) {
     const dates = []
     const firstDay = new Date(y, m - 1, 1)
     const startDay = firstDay.getDay()
     const daysInMonth = new Date(y, m, 0).getDate()
     const prevMonthDays = new Date(y, m - 1, 0).getDate()
-  
+
+    // 이전 달
     for (let i = startDay - 1; i >= 0; i--) {
-      const d = prevMonthDays - i
-      dates.push({ day: d, monthOffset: -1, fullDate: formatDate(y, m - 1, d) })
+        const d = prevMonthDays - i
+        dates.push({ day: d, monthOffset: -1, fullDate: formatDate(y, m - 1, d) })
     }
+
+    // 현재 달
     for (let i = 1; i <= daysInMonth; i++) {
-      const isToday = y === today.getFullYear() && m === today.getMonth() + 1 && i === today.getDate()
-      dates.push({ day: i, monthOffset: 0, fullDate: formatDate(y, m, i), today: isToday })
+        const isToday = y === today.getFullYear() && m === today.getMonth() + 1 && i === today.getDate()
+        dates.push({ day: i, monthOffset: 0, fullDate: formatDate(y, m, i), today: isToday })
     }
+
+    // 다음 달
     const remain = dates.length % 7
     if (remain !== 0) {
-      for (let i = 1; i <= 7 - remain; i++) {
-        dates.push({ day: i, monthOffset: 1, fullDate: formatDate(y, m + 1, i) })
-      }
+        for (let i = 1; i <= 7 - remain; i++) {
+            dates.push({ day: i, monthOffset: 1, fullDate: formatDate(y, m + 1, i) })
+        }
     }
+
     return dates
-  }
-  
-  const calendarDates = computed(() => getCalendarDates(props.year, props.month))
-  
-  function getEventsForDate(date) {
+}
+
+const calendarDates = computed(() => getCalendarDates(props.year, props.month))
+
+function getEventsForDate(date) {
     return props.events.filter(e => e.date === date)
-  }
-  </script>
-  
+}
+
+const categoryStyleMap = {
+    공연: { bg: 'bg-purple-100', border: 'bg-purple-700' },
+    전시: { bg: 'bg-green-100', border: 'bg-green-500' },
+    연극: { bg: 'bg-orange-100', border: 'bg-amber-500' },
+    팬미팅: { bg: 'bg-sky-100', border: 'bg-blue-500' },
+    콘서트: { bg: 'bg-purple-100', border: 'bg-fuchsia-700' }
+}
+</script>
