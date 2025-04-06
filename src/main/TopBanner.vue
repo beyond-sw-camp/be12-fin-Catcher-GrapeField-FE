@@ -67,10 +67,10 @@ export default {
 <style scoped>
 
 .banner-wrapper {
-    width: 95%;
-    max-width: 95vw;
-    margin: 1vh auto;
-    padding: 0 5vw;
+  width: 95%;
+  max-width: 95vw;
+  margin: 1vh auto;
+  padding: 0 5vw;
 }
 
 .banner-container {

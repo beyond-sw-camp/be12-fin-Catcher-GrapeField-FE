@@ -294,7 +294,11 @@ export default {
 /* 반응형 조정 */
 @media (max-width: 768px) {
   .calendar-container {
-    padding: 1vh 3vw;
+    font-family: 'Inter', sans-serif;
+    width: 95%;
+    max-width: 95vw;
+    margin: 2vh auto;
+    padding: 2vh 5vw;
   }
 
   .title {

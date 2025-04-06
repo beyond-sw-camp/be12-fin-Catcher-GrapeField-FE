@@ -1,7 +1,7 @@
 <template>
-    <Card title="추천" :cards="cardData.recommendedCards" />
-    <Card title="인기" :cards="cardData.popularCards" />
-    <Card title="신규" :cards="cardData.newCards" />
+    <Card class="wrapper" title="추천" :cards="cardData.recommendedCards" />
+    <Card class="wrapper" title="인기" :cards="cardData.popularCards" />
+    <Card class="wrapper" title="신규" :cards="cardData.newCards" />
 </template>
 
 <script>
@@ -19,3 +19,13 @@ export default {
     }
 };
 </script>
+<style scoped>
+/* 여백 들여쓰기 통일 조정용... 임시 레이아웃 속성*/
+.wrapper{
+  margin-bottom: 2vw;
+  width: 95%;
+  max-width: 95vw;
+  margin: 2vh auto;
+  padding: 0 5vw;
+}
+</style>

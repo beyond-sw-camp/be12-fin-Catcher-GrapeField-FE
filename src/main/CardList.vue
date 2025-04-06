@@ -4,7 +4,6 @@
       <h1 class="title">{{ title }}</h1>
       <div class="more-btn">더보기</div>
     </div>
-
     <div class="cards-container">
       <!-- v-for로 이벤트 데이터 순회 -->
       <div v-for="(event, index) in events" :key="index" class="card">
@@ -107,8 +106,10 @@ export default {
 
 <style scoped>
 .container {
-  width: 100%;
-  padding: 2vh 2vw;
+  width: 95%;
+  max-width: 95vw;
+  margin: 2vh auto;
+  padding: 2vh 5vw;
   font-family: "Inter", sans-serif;
 }
 
