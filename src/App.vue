@@ -9,12 +9,19 @@ import SideBar from './common/SideBar.vue'
 const route = useRoute()
 const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 const isStandalonePage = computed(() => route.meta.standalone === true)
+
+// ✅ 페이지에 따라 레이아웃 클래스를 동적으로 결정
+const layoutClass = computed(() => {
+  if (route.path.startsWith('/admin')) return 'admin-layout'
+  if (route.path.startsWith('/mypage')) return 'mypage-layout'
+  return isStandalonePage.value ? 'standalone-page' : 'main-content'
+})
 </script>
 
 <template>
   <div class="layout">
     <Header v-if="!isStandalonePage" />
-    <div :class="{ 'standalone-page': isStandalonePage, 'main-content': !isStandalonePage }" class="mx-auto">
+    <div :class="layoutClass">
       <router-view />
     </div>
     <SideBar v-if="showSidebar && !isStandalonePage" />
