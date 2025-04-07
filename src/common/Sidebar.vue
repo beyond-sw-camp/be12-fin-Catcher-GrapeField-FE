@@ -543,7 +543,7 @@ export default {
     top: 20vh;
     right: 4vw;
     height: 60vh;
-    width: 30vw;
+    width: 22vw;
     background-color: white;
     box-shadow: 0 0 0.6vw rgba(0, 0, 0, 0.1);
     z-index: 9;
