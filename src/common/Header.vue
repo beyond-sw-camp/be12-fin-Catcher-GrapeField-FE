@@ -22,6 +22,10 @@
             <router-link to="/community" :class="{ 'router-link-active': isActive('/community') }"
               class="truncate">커뮤니티</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/calendar_detail" :class="{ 'router-link-active': isActive('/calendar_detail') }"
+              class="truncate">캘린더</router-link>
+          </li>
         </ul>
       </nav>
       <!-- search-box 부분 수정 -->
@@ -29,7 +33,8 @@
         <input type="text" placeholder="꽃의 비밀 🔍" />
         <router-link to="/search" class="search-button">
           <div class="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>

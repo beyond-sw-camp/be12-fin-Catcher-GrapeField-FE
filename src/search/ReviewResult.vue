@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div data-layer="Frame 1321317489" class="w-[1200px] inline-flex flex-col justify-start items-start gap-12">
+  <div data-layer="Frame 1321317489" class="wrapper mt-4 inline-flex flex-col justify-start items-start gap-12">
     <div data-layer="<nav/>검색결과 카테고리 바" class="self-stretch h-28 relative">
       <div data-layer="Title"
            class="left-0 top-0 absolute justify-start text-neutral-800 text-2xl font-bold font-['Inter']">'햄릿' 검색 결과
@@ -32,7 +32,7 @@
         </router-link>
       </div>
     </div>
-    <div data-layer="Frame 1321317502" class="w-[1200px] inline-flex flex-col justify-start items-start gap-8">
+    <div data-layer="Frame 1321317502" class="inline-flex flex-col justify-start items-start gap-8">
       <div data-layer="한줄평 (58)" class="self-stretch h-6 justify-start text-neutral-800 text-xl font-bold font-['Inter']">한줄평 (58) </div>
       <div data-layer="REVIEW LIST" class="self-stretch flex flex-col justify-start items-start gap-4">
         <div data-layer="REVIEW ITEM" class="self-stretch h-20 px-6 py-5 bg-white rounded-[10px] outline outline-1 outline-offset-[-0.50px] outline-violet-50 flex flex-col justify-start items-start gap-2.5">
@@ -273,5 +273,10 @@
 </template>
 
 <style scoped>
-
+.wrapper{
+  width: 95%;
+  max-width: 95vw;
+  margin: 5vh auto;
+  padding: 0 5vw;
+}
 </style>

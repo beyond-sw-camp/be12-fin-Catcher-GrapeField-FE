@@ -4,7 +4,7 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     isLogin:false,
     user: null,
-    role: 'admin',
+    role: '',
   }),
   persist: {
     storage: sessionStorage,
@@ -15,6 +15,13 @@ export const useUserStore = defineStore('user', {
       if (email === 'test@test.com' && password === '1234') {
         this.isLogin=true,
         this.user = { email }
+        this.role= 'user'
+        return true
+      }
+      else if (email === 'admin@test.com' && password === '1234') {
+        this.isLogin=true,
+        this.user = { email }
+        this.role= 'admin'
         return true
       }
       return false
