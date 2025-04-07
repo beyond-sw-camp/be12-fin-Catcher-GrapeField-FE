@@ -79,7 +79,7 @@
                         </div>
                         <div class="flex justify-between items-center w-full">
                             <span class="text-xs text-neutral-400">{{ post.community }} • {{ post.date }}</span>
-                            <span class="text-sm text-purple-700">조회회 {{ post.views }}</span>
+                            <span class="text-sm text-purple-700">조회 {{ post.views }}</span>
                         </div>
                     </div>
                 </div>
