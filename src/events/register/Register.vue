@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router'
-import { useUserStore } from '../stores/useUserStore'
+import { useUserStore } from '../../stores/useUserStore'
+import ParticipantInput from './ParticipantInput.vue'
+import CompanyInput from './Companyinput.vue';
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -129,67 +131,19 @@ function removeCompany(index) {
                 </div>
             </div>
             <!-- 참가자 정보 -->
-            <section class="mt-6 pt-6">
-                <h2 class="font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 mb-4">
-                    참가자 정보
-                </h2>
-
-                <div v-for="(p, index) in participants" :key="index"
-                    class="mb-6 p-4 border rounded-lg relative bg-white">
-                    <!-- 삭제 버튼 -->
-                    <button v-if="participants.length > 1" @click="removeParticipant(index)"
-                        class="absolute top-2 right-2 text-red-500 font-bold text-xl">–</button>
-
-                    <!-- 입력칸 -->
-                    <div class="flex flex-wrap gap-4">
-                        <input class="border rounded px-3 py-2 w-[20%]" placeholder="이름 *" v-model="p.name" />
-                        <input class="border rounded px-3 py-2 w-[20%]" placeholder="역할 *" v-model="p.role" />
-                        <input type="file" class="border rounded px-3 py-2 w-[30%] text-sm" />
-                    </div>
-
-                    <textarea class="w-full border rounded px-3 py-2 mt-3" rows="3" placeholder="프로필 소개 (예: 주요 출연작 등)"
-                        v-model="p.description"></textarea>
-                </div>
-
-                <button @click="addParticipant"
-                    class="text-violet-700 border border-violet-700 px-4 py-2 rounded hover:bg-violet-50">
+            <section>
+                <h2 class="font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">참가자 정보</h2>
+                <ParticipantInput v-for="(p, i) in participants" :key="i" v-model="participants[i]"
+                    @remove="removeParticipant(i)" />
+                <button @click="addParticipant" class="mt-2 px-4 py-2 rounded border">
                     + 참가자 추가
                 </button>
             </section>
-
-
             <!-- 기업 정보 -->
-            <section class="mt-6 pt-6">
-                <h2 class="font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 mb-4">
-                    참여 기업 정보
-                </h2>
-
-                <div v-for="(c, index) in companies" :key="index" class="mb-6 p-4 border rounded-lg relative bg-white">
-                    <!-- 삭제 버튼 -->
-                    <button v-if="companies.length > 1" @click="removeCompany(index)"
-                        class="absolute top-2 right-2 text-red-500 font-bold text-xl">–</button>
-
-                    <!-- 참여 유형 & 기업명 & 파일 -->
-                    <div class="flex gap-4 items-center mb-3">
-                        <label class="text-sm text-gray-700 pt-1">참여 유형 *</label>
-                        <select class="border rounded px-3 py-2 text-sm" v-model="c.type">
-                            <option disabled value="">선택</option>
-                            <option>주최</option>
-                            <option>주관</option>
-                            <option>후원</option>
-                            <option>참가</option>
-                        </select>
-                        <input class="border rounded px-3 py-2 w-1/3" placeholder="기업명 *" v-model="c.name" />
-                        <input type="file" class="border rounded px-3 py-2 w-1/3 text-sm" />
-                    </div>
-
-                    <!-- 기업 소개 (넓게) -->
-                    <textarea class="w-full border rounded px-3 py-2" rows="3" placeholder="기업 소개"
-                        v-model="c.description"></textarea>
-                </div>
-
-                <button @click="addCompany"
-                    class="text-violet-700 border border-violet-700 px-4 py-2 rounded hover:bg-violet-50">
+            <section>
+                <h2 class="font-semibold mt-6 text-gray-700 bg-gray-100 px-4 py-2 mb-4">기업 정보</h2>
+                <CompanyInput v-for="(c, i) in companies" :key="i" v-model="companies[i]" @remove="removeCompany(i)" />
+                <button @click="addCompany" class="mt-2 px-4 py-2 rounded border">
                     + 기업 추가
                 </button>
             </section>
