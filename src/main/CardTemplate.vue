@@ -19,13 +19,34 @@ export default {
     }
 };
 </script>
+
 <style scoped>
-/* 여백 들여쓰기 통일 조정용... 임시 레이아웃 속성*/
-.wrapper{
-  margin-bottom: 2vw;
-  width: 95%;
-  max-width: 95vw;
-  margin: 2vh auto;
-  padding: 0 5vw;
+/* 카드 래퍼 스타일 - 75vw로 변경 */
+.wrapper {
+    width: 100%;
+    max-width: 70vw;
+    margin: 4vh auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+    .wrapper {
+        max-width: 95vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        max-width: 90vw;
+        margin: 3vh auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .wrapper {
+        max-width: 85vw;
+        margin: 2vh auto;
+    }
 }
 </style>
