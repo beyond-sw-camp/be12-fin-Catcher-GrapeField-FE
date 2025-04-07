@@ -52,7 +52,7 @@ export default {
         </div>
 
         <div class="room-list">
-            <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-2 py-4" :class="room.color">
+            <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-4 py-2" :class="room.color">
                 <!-- <div class="room-avatar">
                     <img v-if="room.imageUrl" :src="room.imageUrl" alt="채팅방 이미지" class="room-image">
                 </div> -->
