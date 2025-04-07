@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-xl">
+    <div class="bg-white rounded-xl border border-gray-200 mx-auto p-2 shadow-sm">
         <!-- 요일 헤더 -->
         <div class="grid grid-cols-7 border-b border-neutral-200 text-base font-bold overflow-hidden">
             <div class="text-red-500 text-center py-2">일</div>
