@@ -294,7 +294,7 @@ function getBackgroundStyle(slide) {
 
     .banner-title {
         font-size: 2.5vw;
-        text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+        text-shadow: 0px 0px 2rem rgba(255, 255, 255, 0.5);
     }
 
     .banner-subtitle {
@@ -353,8 +353,8 @@ function getBackgroundStyle(slide) {
     }
 
     .banner-container {
-        height: 20vh;
-        min-height: 180px;
+        height: 18vh;
+        min-height: 10rem;
     }
 
     .banner-title {
