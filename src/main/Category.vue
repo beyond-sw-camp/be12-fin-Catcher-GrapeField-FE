@@ -34,15 +34,14 @@ export default {
 
 <style scoped>
 .category-container {
-    margin-bottom: 2vw;
-    width: 95%;
-    max-width: 95vw;
-    margin: 2vh auto;
-    padding: 0 5vw;
+    width: 70vw;
+    margin: 4vh auto;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .category-title {
-    font-size: 1.5vw;
+    font-size: 1.2vw;
     font-weight: 700;
     color: #27272a;
     margin-bottom: 1vw;
@@ -50,15 +49,34 @@ export default {
 
 .category-buttons {
     display: flex;
-    justify-content: space-evenly;
     gap: 1vw;
     overflow-x: auto;
-    padding-bottom: 0.5vw;
+    padding-bottom: 1vw;
+    scrollbar-width: thin;
+}
+
+.category-buttons::-webkit-scrollbar {
+    height: 6px;
+}
+
+.category-buttons::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.category-buttons::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
+}
+
+.category-buttons::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
 .category-button {
     min-width: 10vw;
     height: 6vw;
+    flex-shrink: 0;
     background-color: white;
     border: none;
     border-radius: 0.5vw;
@@ -93,7 +111,30 @@ export default {
 }
 
 /* 반응형 */
+@media (max-width: 1200px) {
+    .category-container {
+        width: 80vw;
+    }
+
+    .category-button {
+        min-width: 12vw;
+        height: 7vw;
+    }
+
+    .category-name {
+        font-size: 1.4vw;
+    }
+
+    .category-count {
+        font-size: 1vw;
+    }
+}
+
 @media (max-width: 768px) {
+    .category-container {
+        width: 85vw;
+    }
+
     .category-title {
         font-size: 2.5vw;
     }
@@ -113,6 +154,10 @@ export default {
 }
 
 @media (max-width: 480px) {
+    .category-container {
+        width: 90vw;
+    }
+
     .category-title {
         font-size: 4vw;
     }
