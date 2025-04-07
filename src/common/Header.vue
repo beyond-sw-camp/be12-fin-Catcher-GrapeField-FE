@@ -10,31 +10,31 @@
       </div>
 
       <nav class="main-nav">
-        <ul class="nav-list">
+        <ul class="nav-list px-1.5">
           <li class="nav-item">
             <router-link to="/" :class="{ 'router-link-active': isActive('/') }" class="truncate">홈</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/events" :class="{ 'router-link-active': isActive('/events') }"
-              class="truncate">공연/전시</router-link>
+                         class="truncate">공연/전시</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/community" :class="{ 'router-link-active': isActive('/community') }"
-              class="truncate">커뮤니티</router-link>
+                         class="truncate">커뮤니티</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/calendar_detail" :class="{ 'router-link-active': isActive('/calendar_detail') }"
-              class="truncate">캘린더</router-link>
+                         class="truncate">캘린더</router-link>
           </li>
         </ul>
       </nav>
       <!-- search-box 부분 수정 -->
-      <div class="search-box">
+      <div class="search-box px-1.5">
         <input type="text" placeholder="꽃의 비밀 🔍" />
         <router-link to="/search" class="search-button">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -43,12 +43,12 @@
       </div>
 
       <!-- 로그인 상태별 UI -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 px-1.5">
         <!-- ✅ 비로그인 -->
         <template v-if="!isLogin">
-          <router-link to="/login" class="text-sm text-gray-700 hover:underline">로그인</router-link>
+          <router-link to="/login" class="text-sm text-gray-700 hover:underline truncate">로그인</router-link>
           <span class="text-gray-400">/</span>
-          <router-link to="/signup" class="text-sm text-gray-700 hover:underline">회원가입</router-link>
+          <router-link to="/signup" class="text-sm text-gray-700 hover:underline truncate">회원가입</router-link>
         </template>
 
         <!-- ✅ 로그인 -->
@@ -60,21 +60,21 @@
 
           <!-- 알림 버튼 -->
           <button
-            class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
+              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
             🔔
           </button>
 
           <!-- 점 세 개 메뉴 버튼 -->
           <div class="relative">
             <button
-              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
-              @click="toggleMenu">
+                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
+                @click="toggleMenu">
               ⋯
             </button>
 
             <!-- 드롭다운 메뉴 -->
             <div v-if="showMenu"
-              class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
+                 class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
               <button class="text-gray-700 hover:underline whitespace-nowrap">설정</button>
               <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
             </div>
