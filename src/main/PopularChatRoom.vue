@@ -1,5 +1,36 @@
+<script>
+import chatRooms from '../assets/data/popular-chatroom.json'
+export default {
+  data() {
+    return {
+      chatRooms: [],
+      activeFilter: 'all-time' // 기본값은 ALL-TIME BEST
+    };
+  },
+  created() {
+    this.chatRooms = chatRooms.chatRooms;
+  },
+  computed: {
+    filteredRooms() {
+      if (this.activeFilter === 'all-time') {
+        // ALL-TIME BEST: 좋아요 기준 정렬
+        return [...this.chatRooms].sort((a, b) => b.likes - a.likes);
+      } else {
+        // 지금 HOT: 댓글 기준 정렬
+        return [...this.chatRooms].sort((a, b) => b.comments - a.comments);
+      }
+    }
+  },
+  methods: {
+    setFilter(filter) {
+      this.activeFilter = filter;
+    }
+  }
+};
+</script>
+
 <template>
-    <div class="chat-rooms">
+    <div class="w-full p-4 bg-white shadow rounded-lg">
         <div class="chat-header">
             <h2 class="chat-title">인기 채팅방</h2>
             <div class="filter-buttons">
@@ -46,37 +77,6 @@
         </div>
     </div>
 </template>
-
-<script>
-import chatRooms from '../assets/data/popular-chatroom.json'
-export default {
-    data() {
-        return {
-            chatRooms: [],
-            activeFilter: 'all-time' // 기본값은 ALL-TIME BEST
-        };
-    },
-    created() {
-        this.chatRooms = chatRooms.chatRooms;
-    },
-    computed: {
-        filteredRooms() {
-            if (this.activeFilter === 'all-time') {
-                // ALL-TIME BEST: 좋아요 기준 정렬
-                return [...this.chatRooms].sort((a, b) => b.likes - a.likes);
-            } else {
-                // 지금 HOT: 댓글 기준 정렬
-                return [...this.chatRooms].sort((a, b) => b.comments - a.comments);
-            }
-        }
-    },
-    methods: {
-        setFilter(filter) {
-            this.activeFilter = filter;
-        }
-    }
-};
-</script>
 
 <style scoped>
 .chat-rooms {

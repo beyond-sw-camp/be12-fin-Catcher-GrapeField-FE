@@ -9,28 +9,33 @@ import CardList from './CardList.vue'
 </script>
 
 <template>
-    <TopBanner />
-    <div>
-        <div class="content-row">
-            <PopularPost />
-            <PopularChatRoom />
-        </div>
-        <Category />
-        <Card/>
-        <Calendar />
-        <CardList title="오픈 예정"/>
-        <CardList title="종료 예정"/>
+  <TopBanner />
+  <div>
+    <div class="content-row flex flex-col lg:flex-row w-full max-w-[1200px] mx-auto gap-y-4 lg:gap-x-8">
+      <div class="w-full lg:w-3/5 h-full">
+        <PopularPost />
+      </div>
+      <div class="w-full lg:w-2/5 h-full">
+        <PopularChatRoom />
+      </div>
     </div>
+
+    <Category />
+    <Card />
+    <Calendar />
+    <CardList title="오픈 예정" />
+    <CardList title="종료 예정" />
+  </div>
 </template>
+
 
 <style>
 /* 상단 배너와 맞춘 content-row 너비 및 내부 아이템 너비 설정 */
 .content-row {
-    display: flex;
     width: 70vw;
     margin: 0 auto;
-    justify-content: space-between;
-    gap: 2vw;
+    //justify-content: space-between;
+    //gap: 2vw;
 }
 
 /* 인기 게시글 / 채팅방 공통 스타일 */
