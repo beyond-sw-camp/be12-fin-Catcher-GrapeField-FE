@@ -174,7 +174,7 @@ export default {
 
 .banner-container {
     width: 100%;
-    height: 25vh;
+    height: 28vh;
     min-height: 240px;
     background-color: #f8f5ff;
     border-radius: 1vw;
