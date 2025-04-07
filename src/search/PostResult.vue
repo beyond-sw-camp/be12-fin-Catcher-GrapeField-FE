@@ -37,9 +37,9 @@
     <div data-layer="Frame" class="w-[1200px] inline-flex flex-col justify-start items-center gap-3">
       <div data-layer="title bar" class="self-stretch h-12 inline-flex justify-between items-center">
         <div data-layer="title 게시글(n)" class="justify-start text-neutral-800 text-xl font-bold font-['Inter']">게시글 (128)</div>
-        <div data-layer="search input bar" class="w-96 h-10 relative bg-white rounded-[20px] outline outline-1 outline-offset-[-1px] outline-zinc-300">
-          <div data-layer="Frame 1321317501" class="w-80 left-[14px] top-[6px] absolute inline-flex justify-between items-center">
-            <div data-layer="게시글 내 재검색" class="w-36 justify-start text-neutral-800 text-sm font-normal font-['Inter']">게시글 내 재검색</div>
+        <div data-layer="search input bar" class="w-80 h-10 relative bg-white rounded-[20px] outline outline-1 outline-offset-[-1px] outline-zinc-300">
+          <div data-layer="Frame 1321317501" class="w-72 left-[14px] top-[6px] absolute inline-flex justify-between items-center">
+            <input type="text" placeholder="게시글 내 재검색" data-layer="게시글 내 재검색" class="w-36 justify-start text-neutral-800 text-sm font-normal font-['Inter']"></input>
             <div data-layer="btn" class="w-7 h-7 relative">
               <div data-layer="Ellipse 3" class="w-7 h-7 left-0 top-0 absolute bg-violet-600 rounded-full"></div>
               <div data-svg-wrapper data-layer="lens-svgrepo-com 1" class="left-[9.33px] top-[9.33px] absolute">

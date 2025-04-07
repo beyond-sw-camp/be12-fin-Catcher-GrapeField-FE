@@ -11,6 +11,11 @@
       <div v-if="selectedTab === '상세 정보'">
         <EventDetail :event="event" />
       </div>
+      <div v-if="selectedTab === '게시판'">
+        <EventPost></EventPost>
+<!--        나중에 데이터 직접 넣을 때 아래코드로 변경해야됨-->
+<!--        <EventPost :event="event" />-->
+      </div>
     </div>
   
     <div v-else class="text-center text-gray-500 pt-20">
@@ -26,6 +31,7 @@
   import EventTabs from './EventDetailTab.vue'
   import EventDetail from './EventDetail.vue'
   import eventsData from '../assets/data/events.json'
+  import EventPost from './EventPost.vue'
   
   // 1. 라우터에서 id 가져오기
   const route = useRoute()
