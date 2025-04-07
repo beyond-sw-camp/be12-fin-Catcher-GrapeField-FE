@@ -18,6 +18,7 @@ import ChatRoom from "../events/chat/Detail.vue";
 import ChatRoomList from "../events/chat/List.vue";
 import MyPage from "../user/mypage/MyPage.vue";
 import DetailCalendar from "../calendar/DetailCalendar.vue";
+import Community from "../events/community/Community.vue";
 
 const routes = [
     {path: "/", component: Main},
@@ -32,13 +33,17 @@ const routes = [
     {path: "/admin", component: Admin},
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
     {path: '/emailverify', name: EmailVerification, component: EmailVerification },
-    {path: "/events/register", component: EventsRegister},
+    //관리자 페이지(공연/전시 등록)
+    { path: '/events/register', component: EventsRegister },
+    //사용자 페이지(공연/전시 신청)
+    { path: '/events/request', component: EventsRegister },
     {path: "/events", name: 'EventShowMore', component: EventShowMore},
     { path: "/events/:id", name: 'Detail', component: Detail, props: true },
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
     { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
     { path:"/mypage", component: MyPage},
     {path: "/calendar_detail", name: 'DetailCalendar', component: DetailCalendar},
+    {path: "/community", name: 'CommunityHome', component: Community},
 ]
 
 const router = createRouter({
