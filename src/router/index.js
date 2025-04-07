@@ -30,7 +30,16 @@ const routes = [
     {path: "/search/review", name: 'ReviewResult', component: ReviewResult},
     {path: "/findpassword", name: 'FindPassword', component: FindPassword},
     {path: "/customercenter", component: CustomerCenter},
-    {path: "/admin", component: Admin},
+    {
+        path: '/admin',
+        component: Admin,
+        meta: { standalone: true },
+      },
+      {
+        path: '/mypage',
+        component: MyPage,
+        meta: { standalone: true },
+      },
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
     {path: '/emailverify', name: EmailVerification, component: EmailVerification },
     //관리자 페이지(공연/전시 등록)
@@ -41,7 +50,7 @@ const routes = [
     { path: "/events/:id", name: 'Detail', component: Detail, props: true },
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
     { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
-    { path:"/mypage", component: MyPage},
+    // { path:"/mypage", component: MyPage},
     {path: "/calendar_detail", name: 'DetailCalendar', component: DetailCalendar},
     {path: "/community", name: 'CommunityHome', component: Community},
 ]
