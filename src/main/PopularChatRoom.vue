@@ -3,13 +3,25 @@
         <div class="chat-header">
             <h2 class="chat-title">인기 채팅방</h2>
             <div class="filter-buttons">
-                <button class="filter-btn all-time">ALL-TIME BEST</button>
-                <button class="filter-btn hot">지금 HOT 🔥</button>
+                <button 
+                    class="filter-btn all-time" 
+                    :class="{ active: activeFilter === 'all-time' }"
+                    @click="setFilter('all-time')"
+                >
+                    ALL-TIME BEST
+                </button>
+                <button 
+                    class="filter-btn hot"
+                    :class="{ active: activeFilter === 'hot' }"
+                    @click="setFilter('hot')"
+                >
+                    지금 HOT 🔥
+                </button>
             </div>
         </div>
 
         <div class="room-list">
-            <div v-for="(room, index) in chatRooms" :key="index" class="room-item" :class="room.color">
+            <div v-for="(room, index) in filteredRooms" :key="index" class="room-item" :class="room.color">
                 <div class="room-avatar">
                     <img v-if="room.imageUrl" :src="room.imageUrl" alt="채팅방 이미지" class="room-image">
                 </div>
@@ -40,24 +52,47 @@ import chatRooms from '../assets/data/popular-chatroom.json'
 export default {
     data() {
         return {
-            chatRooms: []
+            chatRooms: [],
+            activeFilter: 'all-time' // 기본값은 ALL-TIME BEST
         };
     },
     created() {
         this.chatRooms = chatRooms.chatRooms;
+    },
+    computed: {
+        filteredRooms() {
+            if (this.activeFilter === 'all-time') {
+                // ALL-TIME BEST: 좋아요 기준 정렬
+                return [...this.chatRooms].sort((a, b) => b.likes - a.likes);
+            } else {
+                // 지금 HOT: 댓글 기준 정렬
+                return [...this.chatRooms].sort((a, b) => b.comments - a.comments);
+            }
+        }
+    },
+    methods: {
+        setFilter(filter) {
+            this.activeFilter = filter;
+        }
     }
 };
 </script>
 
 <style scoped>
 .chat-rooms {
-    width: 43%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-right: 7 vw;
+    width: 35vw;
+    /* 너비 고정 */
+    min-width: 0;
+    /* min-width 제거 */
+    max-width: none;
+    /* max-width 제한 제거 */
+    padding-right: 0;
+    /* 패딩 줄임 */
     margin-top: 4vw;
     margin-bottom: 4vw;
     position: relative;
+    box-sizing: border-box;
+    /* 박스 사이징 추가 */
 }
 
 .chat-header {
@@ -86,11 +121,12 @@ export default {
     font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
+    transition: all 0.2s ease;
 }
 
 .all-time {
-    background-color: #6b21a8;
-    color: #f5f0ff;
+    background-color: #e9d5ff;
+    color: #6b21a8;
 }
 
 .hot {
@@ -98,6 +134,14 @@ export default {
     color: #831843;
     display: flex;
     align-items: center;
+}
+
+/* 버튼 active 상태 스타일 */
+.filter-btn.active {
+    background-color: #6b21a8;
+    color: #f5f0ff;
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .room-list {
@@ -116,24 +160,9 @@ export default {
     padding: 0 0.8vw;
 }
 
-.pink {
-    background-color: #f9a8d4;
-}
-
-.purple-light {
-    background-color: #e9d5ff;
-}
-
-.violet {
+/* 채팅방 색상 통일 */
+.room-item {
     background-color: #ddd6fe;
-}
-
-.fuchsia {
-    background-color: #fbcfe8;
-}
-
-.purple-dark {
-    background-color: #d8b4fe;
 }
 
 .room-avatar {
@@ -147,7 +176,8 @@ export default {
 .room-info {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: 35%;
+    /* 40%에서 줄임 */
 }
 
 .room-name {
@@ -187,27 +217,6 @@ img {
     position: relative;
 }
 
-.comment-icon:before {
-    content: "";
-    position: absolute;
-    width: 0.8vw;
-    height: 0.8vw;
-    border-radius: 50%;
-    background-color: white;
-    left: 0.2vw;
-    top: 0.2vw;
-}
-
-.like-icon:before {
-    content: "";
-    position: absolute;
-    width: 1vw;
-    height: 0.8vw;
-    background-color: #6b21a8;
-    left: 0.1vw;
-    top: 0.2vw;
-}
-
 .stat-count {
     font-size: 0.8vw;
     color: #27272a;
@@ -229,6 +238,25 @@ img {
     box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
 }
 
+.room-avatar {
+    width: 3vw;
+    height: 3vw;
+    background-color: #f8fafc;
+    border-radius: 50%;
+    margin-right: 1vw;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 반응형 스타일은 그대로 유지 */
 @media (max-width: 768px) {
     .chat-title {
         font-size: 3vw;
@@ -332,38 +360,6 @@ img {
         margin-top: 1vw;
         font-size: 2.5vw;
         order: 4;
-    }
-}
-
-.room-avatar {
-    width: 3vw;
-    height: 3vw;
-    background-color: #f8fafc;
-    border-radius: 50%;
-    margin-right: 1vw;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.room-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-@media (max-width: 768px) {
-    .room-avatar {
-        width: 5vw;
-        height: 5vw;
-    }
-}
-
-@media (max-width: 480px) {
-    .room-avatar {
-        width: 8vw;
-        height: 8vw;
     }
 }
 </style>
