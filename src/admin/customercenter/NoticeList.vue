@@ -32,8 +32,8 @@ function toggle(index) {
 </script>
 
 <template>
-  <div class="w-[1320px] mt-2">
-    <div class="w-[1320px] h-12 bg-stone-50 flex items-center">
+  <div class="w-[100%] mt-2">
+    <div class="w-[100%] h-12 bg-stone-50 flex items-center">
       <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
         <button class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
         :class="category.type==='all' ? 'outline-2' : 'outline-1'"

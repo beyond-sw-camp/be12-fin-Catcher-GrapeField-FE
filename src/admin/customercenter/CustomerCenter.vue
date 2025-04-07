@@ -30,7 +30,7 @@ const handleSelectType = (type) => {
 </script>
 
 <template>
-    <main class="mt-16 mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-8">
+    <main class="mx-auto w-[95%] max-w-[95%] px-4 sm:px-6 lg:px-8">
         <CustomerCenterHeader :selected="selectedType.type" @selectedType="handleSelectType"/>
         <NoticeList v-if="selectedType.type==='notice'" />
         <Faq v-else-if="selectedType.type==='faq'" />
