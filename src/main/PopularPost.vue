@@ -40,13 +40,19 @@ export default {
 
 <style scoped>
 .popular-posts {
-    width: 43%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-left: 7vw;
+    width: 35vw;
+    /* 너비 통일 */
+    min-width: 0;
+    /* min-width 제거 */
+    max-width: 35vw;
+    /* max-width 유지 */
+    padding-left: 0;
+    /* 왼쪽 패딩 제거 또는 줄임 */
     margin-top: 4vw;
     margin-bottom: 4vw;
-}
+    box-sizing: border-box;
+    /* 패딩이 너비에 포함되도록 설정 */
+}   
 
 .popular-title {
     font-size: 1.2vw;

@@ -24,75 +24,59 @@ import CardList from './CardList.vue'
 </template>
 
 <style>
-/* 메인 컨테이너 스타일 */
+/* 상단 배너와 맞춘 content-row 너비 및 내부 아이템 너비 설정 */
 .content-row {
     display: flex;
+    width: 70vw;
+    margin: 0 auto;
     justify-content: space-between;
-    align-items: flex-start;
-    /* 상단 정렬 */
     gap: 2vw;
-    
-    width: 95%
 }
 
-/* 인기 게시글 조정 */
-.popular-posts {
-    width: 45%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-left: 5vw;
-    margin-top: 0;
-    /* 마진 제거 */
-}
-
-/* 인기 채팅방 조정 */
+/* 인기 게시글 / 채팅방 공통 스타일 */
+.popular-posts,
 .chat-rooms {
-    width: 45%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-right: 5vw;
-    margin-top: 0;
-    /* 마진 제거 */
+    width: 34vw;
+    padding: 1rem;
+    margin: 2vh 0;
+    box-sizing: border-box;
 }
 
-/* 섹션 제목 스타일 통일 */
-.popular-title,
-.chat-title {
-    font-size: 1.2vw;
-    font-weight: 700;
-    color: #27272a;
-    margin-bottom: 1vw;
+/* 반응형 - 1200px 이하 */
+@media (max-width: 1200px) {
+    .content-row {
+        width: 80vw;
+    }
+
+    .popular-posts,
+    .chat-rooms {
+        width: 39vw;
+    }
 }
 
-/* 컴포넌트 내부 간격 통일 */
-.post-list,
-.room-list {
-    gap: 0.vw;
-}
-
-/* 아이템 높이 통일 */
-.post-item,
-.room-item {
-    height: 3.5vw;
-}
-
+/* 반응형 - 768px 이하 (한 줄 배치) */
 @media (max-width: 768px) {
     .content-row {
+        width: 85vw;
         flex-direction: column;
+        gap: 3vh;
     }
 
     .popular-posts,
     .chat-rooms {
         width: 100%;
-        max-width: 100%;
-        padding-left: 2vw;
-        padding-right: 2vw;
-        margin-bottom: 3vw;
+    }
+}
+
+/* 반응형 - 600px 이하 */
+@media (max-width: 600px) {
+    .content-row {
+        width: 90vw;
     }
 
-    .popular-title,
-    .chat-title {
-        font-size: 2.5vw;
+    .popular-posts,
+    .chat-rooms {
+        width: 100%;
     }
 }
 </style>
