@@ -7,8 +7,34 @@ const route = useRoute()
 const userStore = useUserStore()
 
 // 사용자 역할
-const role =userStore.role;
+const role = userStore.role;
 const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
+
+//참가자 정보
+const participants = ref([
+    { name: '', role: '', profile: '', description: '' }
+])
+//입력란 추가
+function addParticipant() {
+    participants.value.push({ name: '', role: '', profile: '', description: '' })
+}
+//입력란 삭제
+function removeParticipant(index) {
+    participants.value.splice(index, 1)
+}
+
+//기업 정보
+const companies = ref([
+    { type: '', name: '', logo: '', description: '' }
+])
+//입력란 추가
+function addCompany() {
+    companies.value.push({ type: '', name: '', logo: '', description: '' })
+}
+//입력란 삭제
+function removeCompany(index) {
+    companies.value.splice(index, 1)
+}
 </script>
 
 <template>
@@ -26,7 +52,8 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
 
         <!-- 기본 정보 -->
         <section class="mt-6 border-t pt-6">
-            <h2 class="font-semibold text-gray-700 mb-4">기본 정보</h2>
+            <h2 class="font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">기본 정보</h2>
+
             <div class="flex gap-4 mb-4">
                 <select class="border rounded px-3 py-2 w-1/6" required>
                     <option disabled selected>장르 선택</option>
@@ -34,16 +61,10 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
                 </select>
                 <input class="border rounded px-3 py-2 flex-1" placeholder="공연/전시 제목" required />
             </div>
-            <div class="flex gap-4 w-full">
-                <input class="border rounded px-3 py-2 w-[20%]" placeholder="주최자/기관명" />
-                <input class="border rounded px-3 py-2 w-[20%]" placeholder="담당자명" />
-                <input class="border rounded px-3 py-2 w-[30%]" placeholder="연락처 (예: 000-0000-0000)" />
-                <input class="border rounded px-3 py-2 w-[30%]" placeholder="이메일" />
-            </div>
         </section>
 
         <section class="mt-6 border-t pt-6">
-            <h2 class="font-semibold text-gray-700 mb-4">장소 및 일정</h2>
+            <h2 class="font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">장소 및 일정</h2>
 
             <!-- 첫 줄: 장소명, 주소, 주소 검색 버튼 -->
             <div class="flex gap-4 mb-4">
@@ -81,17 +102,18 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
 
         <!-- 상세 정보 -->
         <section class="mt-6 border-t pt-6">
-            <h2 class="font-semibold text-gray-700 mb-4">상세 정보</h2>
+            <h2 class="font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">상세 정보</h2>
 
             <!-- 공연/전시 설명 -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">공연/전시 설명 *</label>
                 <textarea class="w-full border rounded px-3 py-2" rows="4"
                     placeholder="공연/전시에 대한 상세 설명을 입력해 주세요."></textarea>
             </div>
 
             <!-- 예매 정보 -->
+            <h2 class="font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">예매 정보</h2>
             <div class="flex flex-wrap items-center gap-4 mb-4">
+
                 <div class="flex items-center">
                     <input type="checkbox" id="bookable" class="mr-2" />
                     <label for="bookable" class="text-sm font-medium text-gray-700">선예매</label>
@@ -106,10 +128,84 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
                     <button class="w-10 h-10 rounded border text-violet-700 text-lg">+</button>
                 </div>
             </div>
+            <!-- 참가자 정보 -->
+            <section class="mt-6 pt-6">
+                <h2 class="font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 mb-4">
+                    참가자 정보
+                </h2>
+
+                <div v-for="(p, index) in participants" :key="index"
+                    class="mb-6 p-4 border rounded-lg relative bg-white">
+                    <!-- 삭제 버튼 -->
+                    <button v-if="participants.length > 1" @click="removeParticipant(index)"
+                        class="absolute top-2 right-2 text-red-500 font-bold text-xl">–</button>
+
+                    <!-- 입력칸 -->
+                    <div class="flex flex-wrap gap-4">
+                        <input class="border rounded px-3 py-2 w-[20%]" placeholder="이름 *" v-model="p.name" />
+                        <input class="border rounded px-3 py-2 w-[20%]" placeholder="역할 *" v-model="p.role" />
+                        <input type="file" class="border rounded px-3 py-2 w-[30%] text-sm" />
+                    </div>
+
+                    <textarea class="w-full border rounded px-3 py-2 mt-3" rows="3" placeholder="프로필 소개 (예: 주요 출연작 등)"
+                        v-model="p.description"></textarea>
+                </div>
+
+                <button @click="addParticipant"
+                    class="text-violet-700 border border-violet-700 px-4 py-2 rounded hover:bg-violet-50">
+                    + 참가자 추가
+                </button>
+            </section>
+
+
+            <!-- 기업 정보 -->
+            <section class="mt-6 pt-6">
+                <h2 class="font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 mb-4">
+                    참여 기업 정보
+                </h2>
+
+                <div v-for="(c, index) in companies" :key="index" class="mb-6 p-4 border rounded-lg relative bg-white">
+                    <!-- 삭제 버튼 -->
+                    <button v-if="companies.length > 1" @click="removeCompany(index)"
+                        class="absolute top-2 right-2 text-red-500 font-bold text-xl">–</button>
+
+                    <!-- 참여 유형 & 기업명 & 파일 -->
+                    <div class="flex gap-4 items-center mb-3">
+                        <label class="text-sm text-gray-700 pt-1">참여 유형 *</label>
+                        <select class="border rounded px-3 py-2 text-sm" v-model="c.type">
+                            <option disabled value="">선택</option>
+                            <option>주최</option>
+                            <option>주관</option>
+                            <option>후원</option>
+                            <option>참가</option>
+                        </select>
+                        <input class="border rounded px-3 py-2 w-1/3" placeholder="기업명 *" v-model="c.name" />
+                        <input type="file" class="border rounded px-3 py-2 w-1/3 text-sm" />
+                    </div>
+
+                    <!-- 기업 소개 (넓게) -->
+                    <textarea class="w-full border rounded px-3 py-2" rows="3" placeholder="기업 소개"
+                        v-model="c.description"></textarea>
+                </div>
+
+                <button @click="addCompany"
+                    class="text-violet-700 border border-violet-700 px-4 py-2 rounded hover:bg-violet-50">
+                    + 기업 추가
+                </button>
+            </section>
 
             <!-- 포스터 이미지 -->
+            <h2 class="mt-6 font-semibold text-gray-700 bg-gray-100 px-4 py-2 mb-4">이미지 첨부</h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">포스터 이미지 *</label>
+                <div class="flex gap-4">
+                    <input type="file" class="flex-1 border rounded px-3 py-2 text-sm" />
+                    <button class="bg-violet-700 text-white px-4 py-2 rounded">찾아보기</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">파일을 선택하세요 (최대 5MB, JPG/PNG 형식)</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">소개 및 상세 이미지</label>
                 <div class="flex gap-4">
                     <input type="file" class="flex-1 border rounded px-3 py-2 text-sm" />
                     <button class="bg-violet-700 text-white px-4 py-2 rounded">찾아보기</button>
@@ -138,7 +234,6 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
                 등록하기
             </button>
         </div>
-
     </div>
 </template>
 
