@@ -47,8 +47,8 @@ import CardList from './CardList.vue'
     box-sizing: border-box;
 }
 
-/* 반응형 - 1200px 이하 */
-@media (max-width: 1200px) {
+/* 반응형 - 1280px 이하 lg */
+@media (max-width: 1280px) {
     .content-row {
         width: 80vw;
     }
@@ -73,8 +73,8 @@ import CardList from './CardList.vue'
     }
 }
 
-/* 반응형 - 600px 이하 */
-@media (max-width: 600px) {
+/* 반응형 - 640px 이하 */
+@media (max-width: 640px) {
     .content-row {
         width: 90vw;
     }
