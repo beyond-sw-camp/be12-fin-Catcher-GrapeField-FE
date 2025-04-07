@@ -1,23 +1,25 @@
 <script setup>
 import { ref } from 'vue';
+import { useRoute } from 'vue-router'
+import { useUserStore } from '../stores/useUserStore'
 
-const userRole = ref({
-    // role: 'user',
-    role:'admin',
-})
+const route = useRoute()
+const userStore = useUserStore()
 
+// 사용자 역할
+const role =userStore.role;
 const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
 </script>
 
 <template>
     <div class="max-w-[1320px] mx-auto px-8 py-10">
         <!-- 제목 영역 -->
-        <h1 v-if="userRole.role === 'user'" class="text-2xl font-bold text-white bg-violet-700 py-4 px-6 rounded">공연/전시
+        <h1 v-if="role === 'user'" class="text-2xl font-bold text-white bg-violet-700 py-4 px-6 rounded">공연/전시
             신청
         </h1>
-        <h1 v-else-if="userRole.role === 'admin'" class="text-2xl font-bold text-white bg-violet-700 py-4 px-6 rounded">
+        <h1 v-else-if="role === 'admin'" class="text-2xl font-bold text-white bg-violet-700 py-4 px-6 rounded">
             공연/전시 등록</h1>
-        <p v-if="userRole.role === 'user'" class="mt-4 text-sm text-gray-600">
+        <p v-if="role === 'user'" class="mt-4 text-sm text-gray-600">
             GrapeField에 공연 또는 전시회를 등록하고 싶으신가요? 아래 양식을 작성해 주시면 검토 후 등록해 드립니다. <br />
             <span class="text-red-500">* </span>표시는 필수 입력 항목입니다.
         </p>
@@ -127,11 +129,11 @@ const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
 
         <!-- 신청 버튼 -->
         <div class="text-center mt-10">
-            <button v-if="userRole.role === 'user'"
+            <button v-if="role === 'user'"
                 class="bg-violet-700 text-white px-10 py-3 rounded-full text-lg font-semibold">
                 신청하기
             </button>
-            <button v-else-if="userRole.role === 'admin'"
+            <button v-else-if="role === 'admin'"
                 class="bg-violet-700 text-white px-10 py-3 rounded-full text-lg font-semibold">
                 등록하기
             </button>
