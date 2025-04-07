@@ -72,7 +72,7 @@ export default {
                         </div>
                     </div>
                 </div>
-              <button class="enter-btn text-xs ml-2 min-w-[4.5rem]">입장</button>
+              <button class="enter-btn text-xs ml-2 min-w-[3rem]">입장</button>
             </div>
         </div>
     </div>
@@ -109,7 +109,7 @@ export default {
   border-radius: 2em;
   border: none;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 0.625rem;
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.2s ease;
@@ -192,13 +192,6 @@ export default {
   text-overflow: ellipsis;
 }
 
-.room-stats {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  margin-left: auto;
-}
-
 .stat-item {
   display: flex;
   align-items: center;
@@ -211,13 +204,13 @@ img {
 }
 
 .stat-count {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #27272a;
 }
 
 .enter-btn {
   font-size: 0.875rem;
-  padding: 0.5em 1.2em;
+  padding: 0.25em 0.25em;
   background-color: #6b21a8;
   border: none;
   border-radius: 1.5rem;
@@ -230,7 +223,7 @@ img {
 /* 반응형 - 태블릿 이하 */
 @media (max-width: 768px) {
   .chat-title {
-    font-size: 1.1rem;
+    font-size: 0.85rem;
   }
 
   .filter-btn {
@@ -251,7 +244,7 @@ img {
   }
 
   .enter-btn {
-    padding: 0.4em 1em;
+    padding: 0.25em 0.25em;
   }
 }
 
