@@ -7,7 +7,7 @@
   
       <!-- 공연 정보 텍스트 -->
       <div class="w-5/6">
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
           <span class="text-2xl font-bold text-neutral-800">{{ event.genre }}</span>
           <span class="text-2xl font-bold text-neutral-800">{{ event.title }}</span>
         </div>
