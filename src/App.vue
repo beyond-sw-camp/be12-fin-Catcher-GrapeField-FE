@@ -21,7 +21,7 @@ const layoutClass = computed(() => {
 <template>
   <div class="layout">
     <Header v-if="!isStandalonePage" />
-    <div :class="layoutClass">
+    <div class="ml-8 mr-8" :class="layoutClass">
       <router-view />
     </div>
     <SideBar v-if="showSidebar && !isStandalonePage" />
