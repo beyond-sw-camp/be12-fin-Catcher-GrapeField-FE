@@ -136,20 +136,20 @@ export default {
 .calendar-container {
   font-family: 'Inter', sans-serif;
   width: 100%;
-  max-width: 90vw;
+  max-width: 70vw;
   margin: 0 auto;
   padding: 2vh 2vw;
 }
 
 .title {
-  font-size: 4vmin;
+  font-size: 2.4vw;
   font-weight: bold;
   color: #27272a;
   margin-bottom: 1vh;
 }
 
 .subtitle {
-  font-size: 2.5vmin;
+  font-size: 2vmin;
   color: #78716c;
   margin-bottom: 3vh;
 }
@@ -273,12 +273,12 @@ export default {
   font-weight: bold;
   margin-right: 2vw;
   min-width: 8vw;
-  font-size: 2.5vmin;
+  font-size: 2.2vmin;
 }
 
 .event-title {
   flex-grow: 1;
-  font-size: 2.5vmin;
+  font-size: 2.0vmin;
 }
 
 .alarm-btn {
@@ -298,17 +298,17 @@ export default {
   }
 
   .title {
-    font-size: 5vmin;
+    font-size: 4vmin;
   }
 
   .subtitle {
-    font-size: 3vmin;
+    font-size: 2.6vmin;
   }
 
   .month-year,
   .event-date,
   .event-title {
-    font-size: 3vmin;
+    font-size: 2.5vmin;
   }
 
   .weekday {
