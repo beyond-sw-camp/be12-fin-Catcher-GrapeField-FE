@@ -142,14 +142,14 @@ export default {
 }
 
 .title {
-  font-size: 2.4vw;
+  font-size: 2.1vw;
   font-weight: bold;
   color: #27272a;
   margin-bottom: 1vh;
 }
 
 .subtitle {
-  font-size: 2vmin;
+  font-size: 1.9vmin;
   color: #78716c;
   margin-bottom: 3vh;
 }
