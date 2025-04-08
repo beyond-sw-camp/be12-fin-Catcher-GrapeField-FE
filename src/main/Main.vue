@@ -23,8 +23,8 @@ import CardList from './CardList.vue'
     <Category />
     <Card />
     <Calendar />
-    <CardList title="오픈 예정" />
-    <CardList title="종료 예정" />
+    <CardList title="오픈" index="1" />
+    <CardList title="종료" index="6"/>
   </div>
 </template>
 
@@ -34,8 +34,8 @@ import CardList from './CardList.vue'
 .content-row {
     width: 70vw;
     margin: 0 auto;
-    //justify-content: space-between;
-    //gap: 2vw;
+    /* //justify-content: space-between; */
+    /* //gap: 2vw; */
 }
 
 /* 인기 게시글 / 채팅방 공통 스타일 */
