@@ -18,7 +18,7 @@ onMounted(() => {
       <div
           v-for="(post, index) in posts"
           :key="index"
-          class="flex items-center px-4 py-3 border border-gray-100 rounded-lg min-w-0"
+          class="flex items-center px-4 py-3 border border-gray-100 rounded-lg min-w-0 gap-2"
       >
         <!-- 게시판 제목 -->
         <div class="w-[30%] min-w-0 truncate text-purple-800 text-sm font-medium text-center">
@@ -36,7 +36,7 @@ onMounted(() => {
         </div>
 
         <!-- 통계 -->
-        <div class="w-[15%] flex justify-between gap-0.5">
+        <div class="w-[20%] flex justify-between">
           <div class="flex items-center gap-1">
             <img src="../assets/icons/comment.png" alt="comment" class="w-4 h-4" />
             <div class="text-purple-800 text-sm">{{ post.comments }}</div>

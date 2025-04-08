@@ -1,8 +1,109 @@
+<script setup>
+import { ref, reactive, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
+import bannerData from '../assets/data/banner-slides.json';
+
+const router = useRouter();
+
+const currentIndex = ref(0);
+const slides = ref([]);
+const timer = ref(null);
+const searchQuery = ref('');
+const isPaused = ref(false);
+
+onBeforeMount(() => {
+  slides.value = bannerData.slides.map(slide => {
+    let link = null;
+
+    if (slide.events_id !== "null") {
+      link = `/events/${slide.events_id}`;
+    }
+    else {
+      link = '/events';
+    }
+
+    return {
+      ...slide,
+      link
+    };
+  });
+});
+
+onMounted(() => {
+  startSlideTimer();
+});
+
+onBeforeUnmount(() => {
+  stopSlideTimer();
+});
+
+function startSlideTimer() {
+  if (!isPaused.value) {
+    timer.value = setInterval(() => {
+      nextSlide();
+    }, 3000);
+  }
+}
+
+function stopSlideTimer() {
+  clearInterval(timer.value);
+  timer.value = null;
+}
+
+function pauseSlider() {
+  isPaused.value = true;
+  stopSlideTimer();
+}
+
+function resumeSlider() {
+  isPaused.value = false;
+  startSlideTimer();
+}
+
+function nextSlide() {
+  currentIndex.value = (currentIndex.value + 1) % slides.value.length;
+}
+
+function goToSlide(index) {
+  currentIndex.value = index;
+  stopSlideTimer();
+  startSlideTimer();
+}
+
+function goToSearch() {
+  if (searchQuery.value.trim()) {
+    router.push({
+      path: '/search',
+      query: { q: searchQuery.value }
+    });
+  }
+}
+function getBackgroundStyle(slide) {
+  if (slide.imgSrc) {
+    return {
+      backgroundImage: `url(${slide.imgSrc})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#f8f5ff' // 이미지 위에 약간 기본색 느낌 유지
+    };
+  } else {
+    return {
+      backgroundColor: '#f8f5ff'
+    };
+  }
+}
+
+</script>
+
 <template>
     <div class="banner-wrapper">
         <div class="banner-container">
-            <div class="banner-content" v-for="(slide, index) in slides" :key="index" v-show="currentIndex === index"
-                :class="{ 'clickable': slide.link }">
+            <div class="banner-content" v-for="(slide, index) in slides" :key="index"
+                 v-show="currentIndex === index"
+                :class="{ 'clickable': slide.link}"
+                :style="getBackgroundStyle(slide)">
+              <div class="overlay"></div>
                 <router-link v-if="slide.link" :to="slide.link" class="banner-link">
                     <div class="banner-text">
                         <h1 class="banner-title">{{ slide.title }}</h1>
@@ -13,7 +114,7 @@
                                 <input type="text" class="search-input" :placeholder="slide.searchPlaceholder"
                                     v-model="searchQuery" @focus="pauseSlider" @blur="resumeSlider">
                                 <button type="submit" class="search-button" @click.stop>
-                                    <span class="search-icon">🔍</span>
+                                    <span class="search-icon font-bold">검색</span>
                                 </button>
                             </form>
                         </div>
@@ -44,104 +145,17 @@
     </div>
 </template>
 
-<script>
-import bannerData from '../assets/data/banner-slides.json';
-
-export default {
-    name: 'TopBanner',
-    data() {
-        return {
-            currentIndex: 0,
-            slides: [],
-            timer: null,
-            searchQuery: '',
-            isPaused: false
-        };
-    },
-    created() {
-        // 데이터에 링크 정보 추가
-        this.slides = bannerData.slides.map(slide => {
-            // 제목에 따른 링크 매핑
-            let link = null;
-
-            if (slide.title.includes('커뮤니티')) {
-                link = '/community';
-            } else if (slide.title.includes('콘서트')) {
-                link = '/events';
-            } else if (slide.title.includes('전시회')) {
-                link = '/events';
-            } else if (slide.title.includes('박람회')) {
-                link = '/events';
-            } else if (slide.title.includes('뮤지컬')) {
-                link = '/events';
-            } else if (slide.title.includes('이벤트')) {
-                link = '/events';
-            } else if (slide.title.includes('베스트 공연')) {
-                link = '/events';
-            } else if (slide.title.includes('문화 콘텐츠')) {
-                link = '/';
-            }
-
-            return {
-                ...slide,
-                link: link
-            };
-        });
-    },
-    mounted() {
-        this.startSlideTimer();
-    },
-    beforeUnmount() {
-        this.stopSlideTimer();
-    },
-    methods: {
-        startSlideTimer() {
-            if (!this.isPaused) {
-                this.timer = setInterval(() => {
-                    this.nextSlide();
-                }, 3000); // 3초마다 슬라이드 변경
-            }
-        },
-        stopSlideTimer() {
-            clearInterval(this.timer);
-            this.timer = null;
-        },
-        pauseSlider() {
-            this.isPaused = true;
-            this.stopSlideTimer();
-        },
-        resumeSlider() {
-            this.isPaused = false;
-            this.startSlideTimer();
-        },
-        nextSlide() {
-            this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-        },
-        goToSlide(index) {
-            this.currentIndex = index;
-            // 수동으로 슬라이드 변경 시 타이머 재설정
-            this.stopSlideTimer();
-            this.startSlideTimer();
-        },
-        goToSearch() {
-            // 검색 페이지로 이동
-            if (this.searchQuery.trim()) {
-                if (this.$router) {
-                    this.$router.push({
-                        path: '/search',
-                        query: { q: this.searchQuery }
-                    });
-                } else {
-                    // 라우터가 없는 경우 직접 URL 변경
-                    window.location.href = `/search?q=${encodeURIComponent(this.searchQuery)}`;
-                }
-            }
-        }
-    }
-};
-</script>
-
 <style scoped>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.4); /* 어두운 반투명 */
+  z-index: 1;
+}
+
 /* 기존 스타일 그대로 유지 */
 .banner-link {
     display: block;
@@ -167,7 +181,7 @@ export default {
 }
 
 .banner-wrapper {
-    width: 70vw;
+    width: 70%;
     margin: 4vh auto;
     padding: 0 1vw;
 }
@@ -176,7 +190,6 @@ export default {
     width: 100%;
     height: 30vh;
     min-height: 240px;
-    background-color: #f8f5ff;
     border-radius: 1vw;
     position: relative;
     overflow: hidden;
@@ -199,13 +212,13 @@ export default {
 .banner-title {
     font-size: 2.2vw;
     font-weight: 700;
-    color: #333;
+    color: black;
     margin-bottom: 1.2vh;
 }
 
 .banner-subtitle {
     font-size: 1.2vw;
-    color: #777;
+    color: black;
     margin-bottom: 2.5vh;
 }
 
@@ -255,6 +268,7 @@ export default {
     left: 3vw;
     display: flex;
     gap: 0.8vw;
+    z-index: 2;
 }
 
 .dot {
@@ -273,14 +287,14 @@ export default {
 }
 
 /* 반응형 스타일 */
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
     .banner-wrapper {
-        width: 80vw;
+        width: 80%;
     }
 
     .banner-title {
         font-size: 2.5vw;
-        text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+        text-shadow: 0px 0px 2rem rgba(255, 255, 255, 0.5);
     }
 
     .banner-subtitle {
@@ -299,7 +313,7 @@ export default {
 
 @media (max-width: 768px) {
     .banner-wrapper {
-        width: 85vw;
+        width: 85%;
     }
 
     .banner-container {
@@ -333,14 +347,14 @@ export default {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
     .banner-wrapper {
-        width: 90vw;
+        width: 90%;
     }
 
     .banner-container {
-        height: 20vh;
-        min-height: 180px;
+        height: 18vh;
+        min-height: 10rem;
     }
 
     .banner-title {

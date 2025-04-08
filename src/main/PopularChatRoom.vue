@@ -34,14 +34,14 @@ export default {
         <div class="chat-header">
             <h2 class="chat-title">인기 채팅방</h2>
             <div class="filter-buttons">
-                <button 
-                    class="filter-btn all-time" 
+                <button
+                    class="filter-btn all-time"
                     :class="{ active: activeFilter === 'all-time' }"
                     @click="setFilter('all-time')"
                 >
                     ALL-TIME BEST
                 </button>
-                <button 
+                <button
                     class="filter-btn hot"
                     :class="{ active: activeFilter === 'hot' }"
                     @click="setFilter('hot')"
@@ -52,27 +52,27 @@ export default {
         </div>
 
         <div class="room-list">
-            <div v-for="(room, index) in filteredRooms" :key="index" class="room-item" :class="room.color">
-                <div class="room-avatar">
+            <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-4 py-2" :class="room.color">
+                <!-- <div class="room-avatar">
                     <img v-if="room.imageUrl" :src="room.imageUrl" alt="채팅방 이미지" class="room-image">
-                </div>
+                </div> -->
                 <div class="room-info">
-                    <div class="room-name">{{ room.name }}</div>
-                    <div class="room-location">{{ room.location }} | {{ room.time }}</div>
+                    <div class="room-name sm:text-sm xl:text-xs truncate">{{ room.name }}</div>
+                    <div class="room-location xs:text-xs sm:text-sm xl:text-xs truncate">{{ room.location }} | {{ room.time }}</div>
                 </div>
                 <div class="room-stats">
                     <div class="stat-item">
                         <img src="../assets/icons/participant.png" alt="">
-                        <div class="stat-count">{{ room.comments }}</div>
+                        <div class="stat-count xs:text-xs sm:text-sm xl:text-xs">{{ room.comments }}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-count">
+                        <div class="stat-item">
                             <img src="../assets/icons/heart.png" alt="">
-                            <div>{{ room.likes }}</div>
+                            <div class="stat-count xs:text-sm sm:text-sm xl:text-xs" >{{ room.likes }}</div>
                         </div>
                     </div>
-                    <button class="enter-btn">입장하기</button>
                 </div>
+              <button class="enter-btn text-xs ml-2 min-w-[3rem]">입장</button>
             </div>
         </div>
     </div>
@@ -80,228 +80,177 @@ export default {
 
 <style scoped>
 .chat-rooms {
-    width: 35vw;
-    /* 너비 고정 */
-    min-width: 0;
-    /* min-width 제거 */
-    max-width: none;
-    /* max-width 제한 제거 */
-    padding-right: 0;
-    /* 패딩 줄임 */
-    margin-top: 4vw;
-    margin-bottom: 4vw;
-    position: relative;
-    box-sizing: border-box;
-    /* 박스 사이징 추가 */
+  width: 100%;
+  margin: 2rem 0;
+  padding-right: 0;
+  box-sizing: border-box;
 }
 
 .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .chat-title {
-    font-size: 1.2vw;
-    font-weight: 700;
-    color: #27272a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #27272a;
 }
 
 .filter-buttons {
-    display: flex;
-    gap: 0.8vw;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .filter-btn {
-    padding: 0.5vw 1vw;
-    border-radius: 1.5vw;
-    border: none;
-    font-size: 0.7vw;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
+  padding: 0.5em 1.25em;
+  border-radius: 2em;
+  border: none;
+  font-weight: 700;
+  font-size: 0.625rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
 }
 
 .all-time {
-    background-color: #e9d5ff;
-    color: #6b21a8;
+  background-color: #e9d5ff;
+  color: #6b21a8;
 }
 
 .hot {
-    background-color: #f9a8d4;
-    color: #831843;
-    display: flex;
-    align-items: center;
+  background-color: #f9a8d4;
+  color: #831843;
+  display: flex;
+  align-items: center;
 }
 
-/* 버튼 active 상태 스타일 */
 .filter-btn.active {
-    background-color: #6b21a8;
-    color: #f5f0ff;
-    transform: scale(1.05);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #6b21a8;
+  color: #f5f0ff;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .room-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .room-item {
-    position: relative;
-    width: 100%;
-    height: 4vw;
-    border-radius: 1.5vw;
-    display: flex;
-    align-items: center;
-    padding: 0 0.8vw;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap; /* ✅ 줄바꿈 방지 */
+  gap: 0.1rem;
+  width: 100%;
+  border-radius: 1.5rem;
+  background-color: #ddd6fe;
 }
-
-/* 채팅방 색상 통일 */
-.room-item {
-    background-color: #ddd6fe;
-}
-
 .room-avatar {
-    width: 3vw;
-    height: 3vw;
-    background-color: #f8fafc;
-    border-radius: 50%;
-    margin-right: 1vw;
-}
-
-.room-info {
-    display: flex;
-    flex-direction: column;
-    width: 35%;
-    /* 40%에서 줄임 */
-}
-
-.room-name {
-    font-size: 0.9vw;
-    font-weight: 700;
-    color: #27272a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.room-location {
-    font-size: 0.7vw;
-    color: #27272a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.room-stats {
-    display: flex;
-    align-items: center;
-    gap: 1.5vw;
-    margin-left: auto;
-    margin-right: 2vw;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.3vw;
-}
-
-img {
-    width: 1.2vw;
-    height: 1.2vw;
-    position: relative;
-}
-
-.stat-count {
-    font-size: 0.8vw;
-    color: #27272a;
-}
-
-.enter-btn {
-    width: 6vw;
-    height: 2.5vw;
-    background-color: #6b21a8;
-    border: none;
-    border-radius: 1vw;
-    color: white;
-    font-size: 0.8vw;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
-}
-
-.room-avatar {
-    width: 3vw;
-    height: 3vw;
-    background-color: #f8fafc;
-    border-radius: 50%;
-    margin-right: 1vw;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #f8fafc;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .room-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* 반응형 스타일은 그대로 유지 */
+
+
+.room-info {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.room-stats {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+
+.room-location {
+  font-size: 0.875rem;
+  color: #27272a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.stat-count {
+  font-size: 0.75rem;
+  color: #27272a;
+}
+
+.enter-btn {
+  font-size: 0.875rem;
+  padding: 0.25em 0.25em;
+  background-color: #6b21a8;
+  border: none;
+  border-radius: 1.5rem;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* 반응형 - 태블릿 이하 */
 @media (max-width: 768px) {
-    .chat-title {
-        font-size: 3vw;
-    }
+  .chat-title {
+    font-size: 0.85rem;
+  }
 
-    .filter-btn {
-        font-size: 1.5vw;
-        padding: 1vw 2vw;
-    }
+  .filter-btn {
+    font-size: 0.75rem;
+    padding: 0.5em 1em;
+  }
 
-    .room-item {
-        height: 7vw;
-        padding: 0 1.5vw;
-    }
+  .room-name,
+  .room-location,
+  .stat-count,
+  .enter-btn {
+    font-size: 0.75rem;
+  }
 
-    .room-avatar {
-        width: 5vw;
-        height: 5vw;
-    }
+  .room-avatar {
+    width: 3rem;
+    height: 3rem;
+  }
 
-    .room-name {
-        font-size: 1.8vw;
-    }
-
-    .room-location {
-        font-size: 1.5vw;
-    }
-
-    .stat-icon {
-        width: 2vw;
-        height: 2vw;
-    }
-
-    .stat-count {
-        font-size: 1.5vw;
-    }
-
-    .enter-btn {
-        width: 10vw;
-        height: 4vw;
-        font-size: 1.5vw;
-    }
+  .enter-btn {
+    padding: 0.25em 0.25em;
+  }
 }
 
-@media (max-width: 480px) {
+
+/*
+@media (max-width: 640px) {
     .chat-header {
         flex-direction: column;
         align-items: flex-start;
@@ -309,11 +258,11 @@ img {
     }
 
     .chat-title {
-        font-size: 4vw;
+
     }
 
     .filter-btn {
-        font-size: 2.5vw;
+
         padding: 1.5vw 3vw;
     }
 
@@ -333,11 +282,11 @@ img {
     }
 
     .room-name {
-        font-size: 3vw;
+
     }
 
     .room-location {
-        font-size: 2.2vw;
+
     }
 
     .room-stats {
@@ -351,15 +300,15 @@ img {
     }
 
     .stat-count {
-        font-size: 2.5vw;
+
     }
 
     .enter-btn {
         width: 100%;
         height: 6vw;
         margin-top: 1vw;
-        font-size: 2.5vw;
+
         order: 4;
     }
-}
+}*/
 </style>

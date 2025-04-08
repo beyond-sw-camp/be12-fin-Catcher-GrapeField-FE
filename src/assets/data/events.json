@@ -175,6 +175,178 @@
       "description": "소녀시대의 최신 곡과 클래식 히트곡들을 함께 즐길 수 있는 콘서트.",
       "guidelines": ["12세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
       "detailImage": "/path/to/detail-image6.jpg"
+    },
+    {
+      "id": 7,
+      "title": "뮤지컬 알라딘",
+      "genre": "뮤지컬",
+      "posterUrl": "https://ticketimage.interpark.com/Play/image/large/24/24012498_p.gif",
+      "period": "2024.11.22 ~ 2025.06.22",
+      "isOngoing": true,
+      "score": 9.3,
+      "duration": "150분",
+      "ageLimit": "8세 이상",
+      "venue": "샤롯데씨어터",
+      "price": "VIP석 190,000원 | R석 160,000원 | S석 130,000원 | A석 90,000원",
+      "bookingEarly": {
+        "period": "2024.10.01 ~ 2024.11.14",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2024.11.15 ~ 2025.06.22",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [
+        { "name": "김준수", "role": "알라딘" },
+        { "name": "서경수", "role": "알라딘" },
+        { "name": "박강현", "role": "알라딘" },
+        { "name": "정성화", "role": "지니" },
+        { "name": "정원영", "role": "지니" },
+        { "name": "강홍석", "role": "지니" },
+        { "name": "이성경", "role": "자스민" },
+        { "name": "민경아", "role": "자스민" },
+        { "name": "최지혜", "role": "자스민" },
+        { "name": "이상준", "role": "술탄" },
+        { "name": "황만익", "role": "술탄" },
+        { "name": "윤선용", "role": "자파" },
+        { "name": "임별", "role": "자파" },
+        { "name": "방보용", "role": "밥칵" },
+        { "name": "양병철", "role": "밥칵" }
+      ],
+      "description": "디즈니의 명작을 화려한 무대에서 만나는 환상적인 한국 초연 뮤지컬 알라딘.",
+      "guidelines": ["8세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image7.jpg"
+    },
+    {
+      "id": 8,
+      "title": "뮤지컬 지킬앤하이드",
+      "genre": "뮤지컬",
+      "posterUrl": "https://ticketimage.interpark.com/Play/image/large/24/24013928_p.gif",
+      "period": "2024.11.29 ~ 2025.05.18",
+      "isOngoing": true,
+      "score": 9.8,
+      "duration": "170분",
+      "ageLimit": "14세 이상",
+      "venue": "블루스퀘어 신한카드홀",
+      "price": "VIP석 170,000원 | R석 140,000원 | S석 110,000원 | A석 80,000원",
+      "bookingEarly": {
+        "period": "2024.09.25 ~ 2024.11.10",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2024.11.11 ~ 2025.05.18",
+        "vendors": ["공식홈", "인터파크", "예스24", "티켓링크"]
+      },
+      "cast": [
+        { "name": "홍광호", "role": "지킬 / 하이드" },
+        { "name": "전동석", "role": "지킬 / 하이드" },
+        { "name": "김성철", "role": "지킬 / 하이드" },
+        { "name": "최재림", "role": "지킬 / 하이드" },
+        { "name": "신성록", "role": "지킬 / 하이드" },
+        { "name": "윤공주", "role": "루시" },
+        { "name": "선민", "role": "루시" },
+        { "name": "김환희", "role": "루시" },
+        { "name": "린아", "role": "루시" },
+        { "name": "아이비", "role": "루시" },
+        { "name": "조정은", "role": "엠마" },
+        { "name": "최수진", "role": "엠마" },
+        { "name": "손지수", "role": "엠마" },
+        { "name": "이지혜", "role": "엠마" },
+        { "name": "김봉환", "role": "댄버스 경" },
+        { "name": "김용수", "role": "댄버스 경" },
+        { "name": "이희정", "role": "어터슨" },
+        { "name": "윤영석", "role": "어터슨" }
+      ],
+      "description": "20주년을 맞이한 명작! 선과 악의 경계에 선 지킬과 하이드의 숨막히는 이야기.",
+      "guidelines": ["14세 이상 관람가", "공연 시작 후에는 입장이 제한됩니다."],
+      "detailImage": "/path/to/detail-image8.jpg"
+    },
+    {
+      "id": 9,
+      "title": "트래비스 스캇 첫 단독 내한공연",
+      "genre": "콘서트",
+      "posterUrl": "https://ticketimage.interpark.com/Play/image/large/25/25004359_p.gif",
+      "period": "2025.10.25",
+      "isOngoing": false,
+      "score": null,
+      "duration": "공연 시간: 2025년 10월 25일 오후 7시",
+      "ageLimit": "만 19세 이상",
+      "venue": "고양종합운동장",
+      "price": "스탠딩 GA 1 198,000원 | GA 2 187,000원 | GA 3 154,000원 | 지정석 P 275,000원 | R 240,000원 | S 198,000원 | A 176,000원 | B 165,000원 | C 121,000원 | D 99,000원 | E 77,000원 | 휠체어석 220,000원 | PRE-SHOW PARTY PACKAGE 1,000,000원 | EARLY ENTRY PACKAGE 518,000원 | PREMIUM SEAT PACKAGE 595,000원",
+      "bookingEarly": {
+        "period": "2025.04.07 ~ 2025.04.07",
+        "vendors": ["현대카드 선예매"]
+      },
+      "bookingNormal": {
+        "period": "2025.04.08 ~ 2025.10.25",
+        "vendors": ["인터파크"]
+      },
+      "cast": [{ "name": "Travis Scott", "role": "아티스트" }],
+      "description": "세계적인 아티스트 트래비스 스캇의 첫 내한 공연, 단 하루! 강렬한 퍼포먼스를 고양종합운동장에서 만나다.",
+      "guidelines": ["만 19세 이상 관람가", "휠체어석은 전화 예매만 가능"],
+      "detailImage": "/path/to/detail-image9.jpg"
+    },
+    {
+      "id": 10,
+      "title": "인상파, 모네에서 미국으로: 빛, 바다를 건너다",
+      "genre": "전시/행사",
+      "posterUrl": "https://ticketimage.interpark.com/Play/image/large/25/25001149_p.gif",
+      "period": "2025.02.15 ~ 2025.05.26",
+      "isOngoing": true,
+      "score": 8.4,
+      "duration": "100분",
+      "ageLimit": "전체관람가",
+      "venue": "더현대 서울 ALT.1",
+      "price": "성인 20,000원 | 청소년 15,000원 | 어린이 12,000원",
+      "bookingEarly": {
+        "period": "2025.02.07 ~ 2025.02.14",
+        "vendors": ["공식홈", "인터파크"]
+      },
+      "bookingNormal": {
+        "period": "2025.02.15 ~ 2025.05.26",
+        "vendors": ["공식홈", "인터파크", "예스24"]
+      },
+      "cast": [],
+      "description": "우스터미술관 컬렉션으로 만나는 인상주의 대가들의 걸작, 모네에서 미국 인상파로 이어지는 빛의 여정.",
+      "guidelines": ["전체관람가", "전문 장비 촬영 제한", "입장은 관람 종료 1시간 전까지"],
+      "detailImage": "/path/to/detail-image10.jpg"
+    },
+    {
+      "id": 11,
+      "title": "2025 상반기 경복궁 생과방",
+      "genre": "전시/행사",
+      "posterUrl": "/images/gyeongbokgung-dessert.jpg",
+      "period": "2025.04.16 ~ 2025.06.23",
+      "isOngoing": false,
+      "score": null,
+      "duration": "110분",
+      "ageLimit": "전체관람가",
+      "venue": "경복궁 생과방",
+      "price": "생과방 관람권 15,000원",
+      "bookingEarly": {
+        "period": "2025.03.26 ~ 2025.04.07",
+        "vendors": ["티켓링크(응모 추첨)"]
+      },
+      "bookingNormal": {
+        "period": "2025.04.09 ~ 2025.06.22",
+        "vendors": ["티켓링크"]
+      },
+      "cast": [],
+      "description": "조선왕조실록을 바탕으로 궁중병과와 약차를 체험할 수 있는 특별한 유료 프로그램. 경복궁 생과방에서 국왕과 왕비의 후식을 직접 즐겨보세요.",
+      "guidelines": [
+        "전체관람가",
+        "티켓링크 단독 응모-추첨-예매 방식",
+        "무통장입금 결제 불가",
+        "예매권 당첨자는 1인 2매까지 구매 가능",
+        "장애인 및 국가유공자 50% 할인"
+      ],
+      "detailImage": "/path/to/detail-image11.jpg"
     }
+
+
+
+
+
+
   ]
 }
