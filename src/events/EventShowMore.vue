@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 추천 콘텐츠 섹션 -->
-    <div class="mt-6">
+    <div class="mt-6 w-[100%]">
       <!-- Tailwind 기준: mt-6은 약 1.5rem (24px) -->
       <Card title="추천" :cards="combinedCards" :showMoreButton="false" />
     </div>
