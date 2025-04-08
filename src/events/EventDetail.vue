@@ -87,22 +87,42 @@
     <!-- 상세 이미지 -->
     <section>
       <h2 class="text-lg font-bold mb-3">상세 정보 (예매 사이트 이미지)</h2>
+
       <div
         class="border rounded-lg bg-gray-50 overflow-hidden transition-all duration-500"
-        :class="{ 'max-h-[600px]': !showFullImage }"
       >
-        <img
-          v-if="event.detailImage"
-          :src="event.detailImage"
-          alt="상세 이미지"
-          class="w-full object-contain"
-        />
-        <p v-else class="text-sm text-gray-400 text-center py-10">
-          이 영역에 예매 사이트에서 가져온 상세 정보 이미지가 배치됩니다
-        </p>
+        <template v-if="event.detailImages && event.detailImages.length">
+          <!-- 항상 보일 첫 번째 이미지 -->
+          <img
+            :src="event.detailImages[0]"
+            alt="상세 이미지"
+            class="w-full object-contain"
+          />
+
+          <!-- showFullImage가 true일 때만 나머지 이미지 표시 -->
+          <transition-group name="fade" tag="div">
+            <img
+              v-for="(img, i) in event.detailImages.slice(1)"
+              :key="i"
+              v-show="showFullImage"
+              :src="img"
+              alt="상세 이미지 추가"
+              class="w-full object-contain"
+            />
+          </transition-group>
+        </template>
+
+        <template v-else>
+          <p class="text-sm text-gray-400 text-center py-10">
+            이 영역에 예매 사이트에서 가져온 상세 정보 이미지가 배치됩니다
+          </p>
+        </template>
       </div>
 
-      <div v-if="event.detailImage" class="text-center mt-3">
+      <div
+        v-if="event.detailImages && event.detailImages.length > 1"
+        class="text-center mt-3"
+      >
         <button
           @click="showFullImage = !showFullImage"
           class="text-sm text-violet-600 underline hover:font-semibold transition"
@@ -125,18 +145,17 @@ const showFullImage = ref(false);
 
 const getVendorClass = (vendor) => {
   switch (vendor) {
-    case '인터파크':
-      return 'bg-red-400'
-    case '예스24':
-      return 'bg-blue-500'
-    case '티켓링크':
-      return 'bg-green-500'
-    case '공식홈':
-    case '공식홈페이지':
-      return 'bg-black'
+    case "인터파크":
+      return "bg-red-400";
+    case "예스24":
+      return "bg-blue-500";
+    case "티켓링크":
+      return "bg-green-500";
+    case "공식홈":
+    case "공식홈페이지":
+      return "bg-black";
     default:
-      return 'bg-gray-400'
+      return "bg-gray-400";
   }
-}
-
+};
 </script>
