@@ -31,7 +31,12 @@
         "공연 시작 후에는 입장이 제한됩니다.",
         "공연장 내 음식물 반입 및 사진/영상 촬영은 금지됩니다."
       ],
-      "detailImage": "/path/to/detail-image.jpg"
+      "detailImages": [
+        "https://naverbooking-phinf.pstatic.net/20250213_140/1739413655485rXg3D_JPEG/8fd74c96.jpg",
+        "https://naverbooking-phinf.pstatic.net/20250213_110/1739413655644MLHGM_JPEG/2025020516251993.jpg",
+        "https://naverbooking-phinf.pstatic.net/20250213_217/1739413655769KHwYR_JPEG/b9190192.jpg",
+        "https://naverbooking-phinf.pstatic.net/20250305_144/1741139352964yU6YM_JPEG/25%B2%C9%C0%C7%BA%F1%B9%D0_%BB%F3%BC%BC_250228_%281%29.jpg"
+      ]
     },
     {
       "id": 2,
@@ -308,7 +313,11 @@
       },
       "cast": [],
       "description": "우스터미술관 컬렉션으로 만나는 인상주의 대가들의 걸작, 모네에서 미국 인상파로 이어지는 빛의 여정.",
-      "guidelines": ["전체관람가", "전문 장비 촬영 제한", "입장은 관람 종료 1시간 전까지"],
+      "guidelines": [
+        "전체관람가",
+        "전문 장비 촬영 제한",
+        "입장은 관람 종료 1시간 전까지"
+      ],
       "detailImage": "/path/to/detail-image10.jpg"
     },
     {
@@ -342,11 +351,5 @@
       ],
       "detailImage": "/path/to/detail-image11.jpg"
     }
-
-
-
-
-
-
   ]
 }
