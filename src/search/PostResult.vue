@@ -23,7 +23,7 @@ const goToPage = (page) => {
 </script>
 
 <template>
-  <div class="wrapper mt-4 flex flex-col gap-12">
+  <div class="wrapper mt-4 flex flex-col gap-10">
     <!-- 제목 & 탭 -->
     <section class="flex flex-col gap-4">
       <h2 class="text-2xl font-bold text-neutral-800">'햄릿' 검색 결과</h2>
