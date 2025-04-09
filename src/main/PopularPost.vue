@@ -16,7 +16,7 @@ onMounted(() => {
 
     <div class="flex flex-col gap-1">
       <div
-          v-for="(post, index) in posts"
+          v-for="(post, index) in posts.slice(0,6)"
           :key="index"
           class="flex items-center px-4 py-3 border border-gray-100 rounded-lg min-w-0 gap-2"
       >
