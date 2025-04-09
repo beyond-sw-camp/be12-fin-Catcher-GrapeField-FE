@@ -75,7 +75,7 @@
             <!-- 드롭다운 메뉴 -->
             <div v-if="showMenu"
                  class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
-              <button class="text-gray-700 hover:underline whitespace-nowrap">설정</button>
+              <router-link to="/mypage" class="text-gray-700 hover:underline whitespace-nowrap">설정</router-link>
               <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
             </div>
           </div>
