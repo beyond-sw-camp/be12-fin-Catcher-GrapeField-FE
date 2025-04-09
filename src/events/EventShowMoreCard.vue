@@ -1,6 +1,6 @@
 <template>
   <router-link :to="`/events/${id}`" class="block">
-    <div class="w-56 h-80 bg-white rounded-2xl shadow-md flex flex-col overflow-hidden">
+    <div class="w-48 h-54 bg-white rounded-2xl shadow-md flex flex-col overflow-hidden">
       <div class="w-full h-56 bg-gray-100">
         <img :src="posterUrl" alt="포스터" class="w-full h-full object-cover" />
       </div>
