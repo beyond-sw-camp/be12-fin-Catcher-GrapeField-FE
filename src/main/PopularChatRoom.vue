@@ -57,7 +57,7 @@ export default {
                     <img v-if="room.imageUrl" :src="room.imageUrl" alt="채팅방 이미지" class="room-image">
                 </div> -->
                 <div class="room-info">
-                    <div class="room-name sm:text-sm xl:text-xs truncate">{{ room.name }}</div>
+                    <div class="room-name sm:text-sm xl:text-xs truncate font-semibold">{{ room.name }}</div>
                     <div class="room-location xs:text-xs sm:text-sm xl:text-xs truncate">{{ room.location }} | {{ room.time }}</div>
                 </div>
                 <div class="room-stats">
