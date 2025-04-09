@@ -17,7 +17,10 @@
                         <div class="profile-email">grapefield@example.com</div>
 
                         <div class="menu-list">
-                            <div class="menu-button">내 정보 수정</div>
+                            <router-link to="/mypage" class="menu-button">
+                                내 정보 수정
+                            </router-link>
+
                             <div class="menu-button">나의 예약 내역</div>
                             <div class="menu-button">관심 이벤트</div>
                             <div class="menu-button">알림 설정</div>
@@ -72,7 +75,7 @@
 
                             <!-- 채팅 메시지 영역 -->
                             <div class="chat-messages" ref="chatMessages">
-                                <div v-for="(message, index) in activeChatRoomMessages" :key="index" 
+                                <div v-for="(message, index) in activeChatRoomMessages" :key="index"
                                     :class="['message-container', message.isMe ? 'my-message' : '']">
                                     <div class="message-avatar" v-if="!message.isMe">
                                         <img src="/src/assets/icons/participant.png" alt="프로필" />
@@ -89,12 +92,8 @@
 
                             <!-- 채팅 입력 영역 -->
                             <div class="chat-input">
-                                <input 
-                                    type="text" 
-                                    v-model="newMessage" 
-                                    placeholder="메시지 입력..." 
-                                    @keyup.enter="sendMessage"
-                                />
+                                <input type="text" v-model="newMessage" placeholder="메시지 입력..."
+                                    @keyup.enter="sendMessage" />
                                 <button class="send-button" @click="sendMessage">전송</button>
                             </div>
                         </div>
@@ -113,9 +112,13 @@
                                 <div class="event-title">콘서트 티켓 예매</div>
                             </div>
                         </div>
-                        <div class="calendar-browse">
+                        <!-- <div class="calendar-browse">
                             <div class="calendar-button">전체 일정 보기</div>
+                        </div> -->
+                        <div class="calendar-browse">
+                            <div class="calendar-button" @click="goToMyCalendar">전체 일정 보기</div>
                         </div>
+
                     </div>
 
                     <!-- 관심목록 패널 -->
@@ -221,6 +224,7 @@
 </template>
 
 <script>
+//TODO : script setup으로 변경하기
 // chat.json 데이터 import
 import chatData from '../assets/data/chat.json'
 
@@ -302,13 +306,13 @@ export default {
         // 채팅방 보기
         showChatRoom(room) {
             this.activeChatRoom = room;
-            
+
             // 채팅방 메시지 로드
             this.activeChatRoomMessages = room.messages.map(msg => ({
                 ...msg,
                 timestamp: new Date(msg.timestamp)
             }));
-            
+
             // 메시지 영역 스크롤 맨 아래로 이동 (다음 렌더링 사이클에)
             this.$nextTick(() => {
                 this.scrollToBottom();
@@ -325,7 +329,7 @@ export default {
         // 메시지 전송
         sendMessage() {
             if (!this.newMessage.trim() || !this.activeChatRoom) return;
-            
+
             // 새 메시지 추가
             const newMsg = {
                 id: Date.now(),
@@ -334,15 +338,15 @@ export default {
                 timestamp: new Date(),
                 isMe: true
             };
-            
+
             this.activeChatRoomMessages.push(newMsg);
             this.newMessage = '';
-            
+
             // 메시지 영역 스크롤 맨 아래로 이동
             this.$nextTick(() => {
                 this.scrollToBottom();
             });
-            
+
             // 자동 응답 (실제로는 웹소켓 등으로 구현)
             setTimeout(() => {
                 const autoResponse = {
@@ -353,9 +357,9 @@ export default {
                     avatar: `../assets/icons/profile.png`,
                     isMe: false
                 };
-                
+
                 this.activeChatRoomMessages.push(autoResponse);
-                
+
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 });
@@ -681,7 +685,8 @@ export default {
     height: 100%;
 }
 
-.chat-list-view, .chat-room-view {
+.chat-list-view,
+.chat-room-view {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1157,40 +1162,40 @@ export default {
         font-size: 3.5vw;
         padding: 1.5vh 0;
     }
-    
+
     .back-button {
         font-size: 4vw;
         padding: 1vh 1.5vw;
     }
-    
+
     .fullscreen-button img {
         width: 4vw;
         height: 4vw;
     }
-    
+
     .message-avatar {
         width: 8vw;
         height: 8vw;
     }
-    
+
     .message-sender {
         font-size: 3vw;
     }
-    
+
     .message-bubble {
         font-size: 3.5vw;
         padding: 1.5vh 2vw;
     }
-    
+
     .message-time {
         font-size: 2.5vw;
     }
-    
+
     .chat-input input {
         font-size: 3.5vw;
         padding: 1.5vh 2vw;
     }
-    
+
     .send-button {
         font-size: 3.5vw;
         padding: 1.5vh 3vw;
