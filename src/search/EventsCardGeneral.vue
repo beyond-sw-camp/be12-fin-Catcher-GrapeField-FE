@@ -35,7 +35,7 @@ defineProps({
           더보기</router-link>
         </button>
         <button class="flex-1 text-xs text-violet-500 border border-violet-500 rounded-full py-1.5 font-semibold hover:bg-violet-50">
-          추가하기
+          즐겨찾기
         </button>
       </div>
     </div>
