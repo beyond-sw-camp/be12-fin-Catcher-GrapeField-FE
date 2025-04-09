@@ -145,14 +145,14 @@ export default {
 @media (max-width: 768px) {
     .category-container {
       width: 100%;
-      max-width: 70vw;
+      max-width: 90vw;
       margin: 0 auto;
       padding: 1rem;
       box-sizing: border-box;
     }
 
     .category-title {
-        font-size: 2.5vw;
+        font-size: 3vw;
     }
 
     .category-button {
