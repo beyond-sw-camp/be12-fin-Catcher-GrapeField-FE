@@ -1,7 +1,6 @@
 <script setup>
 import reviews from '/public/sample/search/reviews.js'
 import ReviewCard from './ReviewCard.vue'
-import Pagination from './Pagination.vue'
 import { ref, computed } from 'vue'
 
 const currentPage = ref(1)
@@ -30,25 +29,25 @@ currentPage.value = page
       <nav class="flex gap-2">
         <router-link
             to="/search"
-            class="w-48 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
         >
           통합검색
         </router-link>
         <router-link
             to="/search/events"
-            class="w-48 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
         >
           공연/전시
         </router-link>
         <router-link
             to="/search/post"
-            class="w-48 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
         >
           게시판
         </router-link>
         <router-link
             to="/search/review"
-            class="w-48 h-14 px-7 py-4 bg-white text-base text-violet-600 font-bold flex items-center justify-center rounded"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-violet-600 font-bold underline flex items-center justify-center rounded"
         >
           한줄평
         </router-link>

@@ -3,37 +3,37 @@ import CategoryNav from "/src/search/CategoryNav.vue";
 </script>
 
 <template>
-  <div data-v-7a7a37b1="" data-layer="검색 - 통합 결과" class="wrapper relative mt-4">
-    <div data-layer="Wrapper Frame"
-         class="inline-flex flex-col justify-start items-start gap-5">
-      <nav data-layer="검색결과 카테고리 바" class="self-stretch h-28 relative">
-        <div data-layer="Title"
-             class="left-0 top-0 absolute justify-start text-neutral-800 text-2xl font-bold font-['Inter']">'햄릿' 검색 결과
-        </div>
-        <div data-layer="Frame 1321317464"
-             class="w-100 h-14 left-0 top-[47px] absolute inline-flex justify-start items-start">
-          <router-link to="/search" data-layer="통합검색" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
-            <div data-layer="통합검색"
-                 class="text-center justify-start text-violet-600 text-base font-bold font-['Inter']">통합검색
-            </div>
-          </router-link>
-          <router-link to="/search/events" data-layer="공연/전시" class="w-48 h-14 px-7 py-5 bg-white flex justify-center items-center gap-2.5">
-            <div data-layer="공연/전시" class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">
-              공연/전시
-            </div>
-          </router-link>
-          <router-link to="/search/post" data-layer="게시판" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
-            <div data-layer="게시판" class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">
-              게시판
-            </div>
-          </router-link>
-          <router-link to="/search/review" data-layer="한줄평" class="w-48 h-14 px-9 py-5 bg-white flex justify-center items-center gap-2.5">
-            <div data-layer="한줄평" class="text-center justify-start text-zinc-600 text-base font-normal font-['Inter']">
-              한줄평
-            </div>
-          </router-link>
-        </div>
+  <div class="wrapper mt-4 flex flex-col gap-12">
+    <!-- 제목 & 탭 -->
+    <section class="flex flex-col gap-4">
+      <h2 class="text-2xl font-bold text-neutral-800">'햄릿' 검색 결과</h2>
+      <nav class="flex gap-2">
+        <router-link
+            to="/search"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-violet-600 font-bold underline flex items-center justify-center rounded"
+        >
+          통합검색
+        </router-link>
+        <router-link
+            to="/search/events"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+        >
+          공연/전시
+        </router-link>
+        <router-link
+            to="/search/post"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+        >
+          게시판
+        </router-link>
+        <router-link
+            to="/search/review"
+            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
+        >
+          한줄평
+        </router-link>
       </nav>
+    </section>
       <div data-layer="section_events_result" class="self-stretch inline-flex flex-col justify-start items-start gap-4">
         <div data-layer="title 공연/전시(n)" class="self-stretch inline-flex justify-between items-center">
           <div data-layer="공연/전시 (7)" class="justify-start text-neutral-800 text-xl font-bold font-['Inter']">공연/전시 (7)</div>
@@ -294,7 +294,6 @@ import CategoryNav from "/src/search/CategoryNav.vue";
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
