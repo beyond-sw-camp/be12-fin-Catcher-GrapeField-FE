@@ -1,5 +1,5 @@
 <script setup>
-import reviews from '/public/sample/search/reviews.js'
+import reviews from '/public/data/search/reviews.js'
 import ReviewCard from './ReviewCard.vue'
 import { ref, computed } from 'vue'
 
@@ -66,7 +66,6 @@ currentPage.value = page
         />
       </div>
     </section>
-
     <!-- 페이지네이션 -->
     <section class="flex justify-center">
       <div class="w-[1200px] h-10 flex justify-center items-center gap-2.5">
