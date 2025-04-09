@@ -29,7 +29,7 @@ import CardList from './CardList.vue'
 </template>
 
 
-<style>
+<style scoped>
 /* 상단 배너와 맞춘 content-row 너비 및 내부 아이템 너비 설정 */
 .content-row {
     width: 70vw;
@@ -39,8 +39,7 @@ import CardList from './CardList.vue'
 }
 
 /* 인기 게시글 / 채팅방 공통 스타일 */
-.popular-posts,
-.chat-rooms {
+.popular-posts{
     width: 34vw;
     padding: 1rem;
     margin: 2vh 0;
