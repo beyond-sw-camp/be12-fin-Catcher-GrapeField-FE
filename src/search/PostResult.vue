@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
-import PostList from './PostCard.vue'
-import postData from '/public/sample/search/posts.js'
+import PostCard from './PostList.vue'
+import postData from '/public/data/search/posts.js'
 
 // 페이지네이션 상태
 const currentPage = ref(1)
@@ -74,7 +74,7 @@ const goToPage = (page) => {
 
     <!-- 리스트 -->
     <section>
-      <PostList :posts="paginatedPosts" />
+      <PostCard :posts="paginatedPosts" />
     </section>
 
     <!-- 페이지네이션 -->
