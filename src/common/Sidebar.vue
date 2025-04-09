@@ -2,14 +2,14 @@
     <div class="layout-container">
         <!-- 사이드 패널 컴포넌트 -->
         <transition name="slide">
-            <div v-if="activePanel" class="side-panel">
+            <div v-if="state.activePanel" class="side-panel">
                 <div class="panel-header">
                     <h3>{{ getPanelTitle }}</h3>
                     <button class="close-btn" @click="closePanel">×</button>
                 </div>
                 <div class="panel-content">
                     <!-- 프로필 패널 -->
-                    <div v-if="activePanel === 'profile'" class="profile-panel">
+                    <div v-if="state.activePanel === 'profile'" class="profile-panel">
                         <div class="profile-avatar">
                             <img src="../assets/icons/participant.png" alt="사용자 프로필" />
                         </div>
@@ -29,9 +29,9 @@
                     </div>
 
                     <!-- 채팅 패널 -->
-                    <div v-else-if="activePanel === 'chat'" class="chat-panel">
+                    <div v-else-if="state.activePanel === 'chat'" class="chat-panel">
                         <!-- 채팅방 목록 보기 상태일 때 -->
-                        <div v-if="!activeChatRoom" class="chat-list-view">
+                        <div v-if="!state.activeChatRoom" class="chat-list-view">
                             <div class="panel-title">내 관심 채팅방</div>
 
                             <!-- 채팅방 목록 -->
@@ -67,7 +67,7 @@
                             <!-- 채팅방 헤더 -->
                             <div class="chat-room-header">
                                 <button class="back-button" @click="backToChatList">←</button>
-                                <div class="chat-room-title">{{ activeChatRoom.title }}</div>
+                                <div class="chat-room-title">{{ state.activeChatRoom.title }}</div>
                                 <button class="fullscreen-button" @click="openChatRoomNewWindow(activeChatRoom.id)">
                                     <img src="../assets/icons/expand.png" alt="전체화면" />
                                 </button>
@@ -75,7 +75,7 @@
 
                             <!-- 채팅 메시지 영역 -->
                             <div class="chat-messages" ref="chatMessages">
-                                <div v-for="(message, index) in activeChatRoomMessages" :key="index"
+                                <div v-for="(message, index) in state.activeChatRoomMessages" :key="index"
                                     :class="['message-container', message.isMe ? 'my-message' : '']">
                                     <div class="message-avatar" v-if="!message.isMe">
                                         <img src="/src/assets/icons/participant.png" alt="프로필" />
@@ -92,7 +92,7 @@
 
                             <!-- 채팅 입력 영역 -->
                             <div class="chat-input">
-                                <input type="text" v-model="newMessage" placeholder="메시지 입력..."
+                                <input type="text" v-model="state.newMessage" placeholder="메시지 입력..."
                                     @keyup.enter="sendMessage" />
                                 <button class="send-button" @click="sendMessage">전송</button>
                             </div>
@@ -100,7 +100,7 @@
                     </div>
 
                     <!-- 캘린더 패널 -->
-                    <div v-else-if="activePanel === 'calendar'" class="calendar-panel">
+                    <div v-else-if="state.activePanel === 'calendar'" class="calendar-panel">
                         <div class="calendar-upcoming">
                             <h4>다가오는 일정</h4>
                             <div class="calendar-event">
@@ -122,7 +122,7 @@
                     </div>
 
                     <!-- 관심목록 패널 -->
-                    <div v-else-if="activePanel === 'interest'" class="interest-panel">
+                    <div v-else-if="state.activePanel === 'interest'" class="interest-panel">
                         <div class="interest-categories">
                             <div class="category-tab active">공연</div>
                             <div class="category-tab">전시</div>
@@ -145,7 +145,7 @@
                     </div>
 
                     <!-- 히스토리 패널 -->
-                    <div v-else-if="activePanel === 'history'" class="history-panel">
+                    <div v-else-if="state.activePanel === 'history'" class="history-panel">
                         <div class="history-list">
                             <div class="history-item">
                                 <div class="history-title">전시 '현대미술전'</div>
@@ -174,27 +174,27 @@
         <div v-show="!isSidebarCollapsed" class="sidebar-container">
             <div class="sidebar">
                 <div class="menu-section">
-                    <div class="menu-item" :class="{ active: activePanel === 'profile' }"
+                    <div class="menu-item" :class="{ active: state.activePanel === 'profile' }"
                         @click="togglePanel('profile')">
                         <div class="menu-icon">
                             <img src="../assets/icons/profile.png" alt="프로필" />
                         </div>
                     </div>
 
-                    <div class="menu-item" :class="{ active: activePanel === 'chat' }" @click="togglePanel('chat')">
+                    <div class="menu-item" :class="{ active: state.activePanel === 'chat' }" @click="togglePanel('chat')">
                         <div class="menu-icon">
                             <img src="../assets/icons/chat.png" alt="채팅" />
                         </div>
                     </div>
 
-                    <div class="menu-item" :class="{ active: activePanel === 'calendar' }"
+                    <div class="menu-item" :class="{ active: state.activePanel === 'calendar' }"
                         @click="togglePanel('calendar')">
                         <div class="menu-icon">
                             <img src="../assets/icons/calendar.png" alt="캘린더" />
                         </div>
                     </div>
 
-                    <div class="menu-item" :class="{ active: activePanel === 'interest' }"
+                    <div class="menu-item" :class="{ active: state.activePanel === 'interest' }"
                         @click="togglePanel('interest')">
                         <div class="menu-icon">
                             <img src="../assets/icons/interest.png" alt="관심목록" />
@@ -205,7 +205,7 @@
                 <div class="divider"></div>
 
                 <div class="bottom-section">
-                    <div class="menu-item" :class="{ active: activePanel === 'history' }"
+                    <div class="menu-item" :class="{ active: state.activePanel === 'history' }"
                         @click="togglePanel('history')">
                         <div class="menu-icon">
                             <img src="../assets/icons/history.png" alt="히스토리" />
@@ -223,210 +223,173 @@
     </div>
 </template>
 
-<script>
-//TODO : script setup으로 변경하기
-// chat.json 데이터 import
+<script setup>
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import chatData from '../assets/data/chat.json'
+import { useRouter } from 'vue-router'
 
-export default {
-    name: 'SidebarPanel',
-    data() {
-        return {
-            activePanel: null,
-            isSidebarCollapsed: false,
-            chatRooms: [], // 채팅방 데이터
-            activeChatRoom: null, // 현재 활성화된 채팅방
-            activeChatRoomMessages: [], // 활성화된 채팅방의 메시지
-            newMessage: '' // 새 메시지 입력
-        };
-    },
-    computed: {
-        getPanelTitle() {
-            switch (this.activePanel) {
-                case 'profile': return '프로필';
-                case 'chat': return this.activeChatRoom ? this.activeChatRoom.title : '채팅';
-                case 'calendar': return '캘린더';
-                case 'interest': return '관심목록';
-                case 'history': return '히스토리';
-                default: return '';
-            }
-        },
+const router = useRouter()
 
-        // 관심 등록된 채팅방만 필터링
-        favoriteChatRooms() {
-            if (!this.chatRooms || this.chatRooms.length === 0) {
-                return [];
-            }
+// 상태 정의
+const state = reactive({
+  activePanel: null,
+  isSidebarCollapsed: false,
+  chatRooms: [],
+  activeChatRoom: null,
+  activeChatRoomMessages: [],
+  newMessage: ''
+})
 
-            // chatData.userFavorites 배열에 있는 id를 가진 채팅방만 필터링
-            return this.chatRooms
-                .filter(room => chatData.userFavorites.includes(room.id))
-                .slice(0, 5); // 최대 5개만 표시
-        }
-    },
-    methods: {
-        togglePanel(panelName) {
-            if (this.activePanel === panelName) {
-                this.activePanel = null;
-                this.activeChatRoom = null; // 패널 닫을 때 채팅방도 초기화
-            } else {
-                this.activePanel = panelName;
-                this.activeChatRoom = null; // 다른 패널로 이동 시 채팅방 초기화
+// 패널 제목 계산
+const getPanelTitle = computed(() => {
+  switch (state.activePanel) {
+    case 'profile': return '프로필'
+    case 'chat': return state.activeChatRoom ? state.activeChatRoom.title : '채팅'
+    case 'calendar': return '캘린더'
+    case 'interest': return '관심목록'
+    case 'history': return '히스토리'
+    default: return ''
+  }
+})
 
-                // 채팅 패널이 활성화되면 채팅방 데이터 로드
-                if (panelName === 'chat') {
-                    this.loadChatRooms();
-                }
-            }
-        },
-        closePanel() {
-            this.activePanel = null;
-            this.activeChatRoom = null;
-        },
-        toggleSidebar() {
-            this.isSidebarCollapsed = !this.isSidebarCollapsed;
-            if (this.isSidebarCollapsed) {
-                this.activePanel = null;
-                this.activeChatRoom = null;
-            }
-            // 로컬 스토리지에 상태 저장
-            localStorage.setItem('sidebarCollapsed', this.isSidebarCollapsed);
-        },
+// 관심 등록된 채팅방
+const favoriteChatRooms = computed(() => {
+  if (!state.chatRooms || state.chatRooms.length === 0) return []
+  return state.chatRooms
+    .filter(room => chatData.userFavorites.includes(room.id))
+    .slice(0, 5)
+})
 
-        // 채팅방 데이터 로드
-        loadChatRooms() {
-            // chat.json 데이터 사용
-            if (chatData && chatData.chatRooms) {
-                this.chatRooms = chatData.chatRooms.map(room => ({
-                    ...room
-                }));
-            }
-        },
-
-        // 채팅방 보기
-        showChatRoom(room) {
-            this.activeChatRoom = room;
-
-            // 채팅방 메시지 로드
-            this.activeChatRoomMessages = room.messages.map(msg => ({
-                ...msg,
-                timestamp: new Date(msg.timestamp)
-            }));
-
-            // 메시지 영역 스크롤 맨 아래로 이동 (다음 렌더링 사이클에)
-            this.$nextTick(() => {
-                this.scrollToBottom();
-            });
-        },
-
-        // 채팅방 목록으로 돌아가기
-        backToChatList() {
-            this.activeChatRoom = null;
-            this.activeChatRoomMessages = [];
-            this.newMessage = '';
-        },
-
-        // 메시지 전송
-        sendMessage() {
-            if (!this.newMessage.trim() || !this.activeChatRoom) return;
-
-            // 새 메시지 추가
-            const newMsg = {
-                id: Date.now(),
-                sender: '나',
-                content: this.newMessage,
-                timestamp: new Date(),
-                isMe: true
-            };
-
-            this.activeChatRoomMessages.push(newMsg);
-            this.newMessage = '';
-
-            // 메시지 영역 스크롤 맨 아래로 이동
-            this.$nextTick(() => {
-                this.scrollToBottom();
-            });
-
-            // 자동 응답 (실제로는 웹소켓 등으로 구현)
-            setTimeout(() => {
-                const autoResponse = {
-                    id: Date.now() + 1,
-                    sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
-                    content: this.getRandomResponse(),
-                    timestamp: new Date(),
-                    avatar: `../assets/icons/profile.png`,
-                    isMe: false
-                };
-
-                this.activeChatRoomMessages.push(autoResponse);
-
-                this.$nextTick(() => {
-                    this.scrollToBottom();
-                });
-            }, 1000);
-        },
-
-        // 메시지 스크롤 맨 아래로 이동
-        scrollToBottom() {
-            if (this.$refs.chatMessages) {
-                this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
-            }
-        },
-
-        // 랜덤 응답 메시지 생성
-        getRandomResponse() {
-            const responses = [
-                '네, 지금 공연장 분위기가 정말 좋습니다!',
-                '메인 홀 우측이 잘 보이는 것 같아요.',
-                '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
-                '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
-                '오늘 특별 게스트도 온다는 소문이 있어요!',
-                '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
-                '공연 후 사인회는 로비에서 진행된다고 합니다.'
-            ];
-            return responses[Math.floor(Math.random() * responses.length)];
-        },
-
-        // 시간 포맷팅
-        formatTime(date) {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        },
-
-        // 새 창으로 채팅방 열기
-        openChatRoomNewWindow(id) {
-            const baseUrl = window.location.origin;
-            const routeUrl = `${baseUrl}/chat-room/${id}`;
-
-            // 새 창으로 열기
-            window.open(routeUrl, '_blank');
-        },
-
-        // 전체 채팅방 목록도 새 창으로 열기
-        viewAllChatRoomsNewWindow() {
-            const baseUrl = window.location.origin;
-            const routeUrl = `${baseUrl}/chat-list`;
-
-            // 새 창으로 열기
-            window.open(routeUrl, '_blank');
-        },
-
-        logout() {
-            // 로그아웃 로직 구현
-            alert('로그아웃되었습니다.');
-            // this.$router.push('/login');
-        }
-    },
-    mounted() {
-        // 로컬 스토리지에서 사이드바 상태 복원
-        const savedState = localStorage.getItem('sidebarCollapsed');
-        if (savedState !== null) {
-            this.isSidebarCollapsed = savedState === 'true';
-        }
+// 패널 토글
+function togglePanel(panelName) {
+  if (state.activePanel === panelName) {
+    state.activePanel = null
+    state.activeChatRoom = null
+  } else {
+    state.activePanel = panelName
+    state.activeChatRoom = null
+    if (panelName === 'chat') {
+      loadChatRooms()
     }
-};
+  }
+}
+
+function closePanel() {
+  state.activePanel = null
+  state.activeChatRoom = null
+}
+
+function toggleSidebar() {
+  state.isSidebarCollapsed = !state.isSidebarCollapsed
+  if (state.isSidebarCollapsed) {
+    state.activePanel = null
+    state.activeChatRoom = null
+  }
+  localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed)
+}
+
+function loadChatRooms() {
+  if (chatData && chatData.chatRooms) {
+    state.chatRooms = chatData.chatRooms.map(room => ({ ...room }))
+  }
+}
+
+function showChatRoom(room) {
+  state.activeChatRoom = room
+  state.activeChatRoomMessages = room.messages.map(msg => ({
+    ...msg,
+    timestamp: new Date(msg.timestamp)
+  }))
+  nextTick(scrollToBottom)
+}
+
+function backToChatList() {
+  state.activeChatRoom = null
+  state.activeChatRoomMessages = []
+  state.newMessage = ''
+}
+
+function sendMessage() {
+  if (!state.newMessage.trim() || !state.activeChatRoom) return
+
+  const newMsg = {
+    id: Date.now(),
+    sender: '나',
+    content: state.newMessage,
+    timestamp: new Date(),
+    isMe: true
+  }
+
+  state.activeChatRoomMessages.push(newMsg)
+  state.newMessage = ''
+
+  nextTick(scrollToBottom)
+
+  setTimeout(() => {
+    const autoResponse = {
+      id: Date.now() + 1,
+      sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
+      content: getRandomResponse(),
+      timestamp: new Date(),
+      avatar: `../assets/icons/profile.png`,
+      isMe: false
+    }
+    state.activeChatRoomMessages.push(autoResponse)
+    nextTick(scrollToBottom)
+  }, 1000)
+}
+
+function scrollToBottom() {
+  const el = document.querySelector('.chat-messages')
+  if (el) {
+    el.scrollTop = el.scrollHeight
+  }
+}
+
+function getRandomResponse() {
+  const responses = [
+    '네, 지금 공연장 분위기가 정말 좋습니다!',
+    '메인 홀 우측이 잘 보이는 것 같아요.',
+    '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
+    '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
+    '오늘 특별 게스트도 온다는 소문이 있어요!',
+    '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
+    '공연 후 사인회는 로비에서 진행된다고 합니다.'
+  ]
+  return responses[Math.floor(Math.random() * responses.length)]
+}
+
+function formatTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+function openChatRoomNewWindow(id) {
+  const baseUrl = window.location.origin
+  const routeUrl = `${baseUrl}/chat-room/${id}`
+  window.open(routeUrl, '_blank')
+}
+
+function viewAllChatRoomsNewWindow() {
+  const baseUrl = window.location.origin
+  const routeUrl = `${baseUrl}/chat-list`
+  window.open(routeUrl, '_blank')
+}
+
+function logout() {
+  alert('로그아웃되었습니다.')
+  // router.push('/login')
+}
+
+onMounted(() => {
+  const savedState = localStorage.getItem('sidebarCollapsed')
+  if (savedState !== null) {
+    state.isSidebarCollapsed = savedState === 'true'
+  }
+})
 </script>
+
 
 <style scoped>
 .layout-container {
