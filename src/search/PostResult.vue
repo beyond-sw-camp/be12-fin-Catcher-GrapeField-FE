@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import PostList from './PostList.vue'
+import PostList from './PostCard.vue'
 import postData from '/public/sample/search/posts.js'
 
 // 페이지네이션 상태
@@ -23,7 +23,7 @@ const goToPage = (page) => {
 </script>
 
 <template>
-  <div class="wrapper mt-4 flex flex-col gap-12">
+  <div class="wrapper mt-4 flex flex-col gap-10">
     <!-- 제목 & 탭 -->
     <section class="flex flex-col gap-4">
       <h2 class="text-2xl font-bold text-neutral-800">'햄릿' 검색 결과</h2>
@@ -65,8 +65,8 @@ const goToPage = (page) => {
               placeholder="게시글 내 재검색"
               class="flex-1 text-sm text-neutral-800 bg-transparent outline-none"
           />
-          <div class="w-7 h-7 bg-violet-600 rounded-full flex items-center justify-center text-white text-xs">
-            🔍
+          <div class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+            검색
           </div>
         </div>
       </div>
