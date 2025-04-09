@@ -1,13 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import eventData from '/public/sample/search/events.js'
-import postData from "../../public/sample/search/posts.js";
-
+import EventsCard from './EventsCard.vue'
 const currentPage = ref(1)
 const itemsPerPage = 15
 
 const totalPages = computed(() => Math.ceil(eventData.length / itemsPerPage))
-const paginatedData = computed(() =>
+const paginatedEvents = computed(() =>
     eventData.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage)
 )
 
@@ -54,15 +53,15 @@ function goToPage(page) {
     <!-- 검색 + 개수 -->
     <section class="flex flex-col gap-4">
       <div class="flex justify-between items-center">
-        <h2 class="text-xl font-bold text-neutral-800">게시글 ({{ postData.length }})</h2>
+        <h2 class="text-xl font-bold text-neutral-800">공연/전시 ({{ eventData.length }})</h2>
         <div class="flex items-center px-4 py-1 border border-zinc-300 rounded-full w-80 bg-white">
           <input
               type="text"
-              placeholder="게시글 내 재검색"
+              placeholder="결과 내 재검색"
               class="flex-1 text-sm text-neutral-800 bg-transparent outline-none"
           />
-          <div class="w-7 h-7 bg-violet-600 rounded-full flex items-center justify-center text-white text-xs">
-            🔍
+          <div class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+            검색
           </div>
         </div>
       </div>
@@ -87,7 +86,7 @@ function goToPage(page) {
         </div>
       </router-link>
     </section>
-
+    <EventsCard :events="paginatedEvents" />
     <!-- 페이지네이션 -->
     <section class="flex justify-center gap-2 mt-6">
       <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
