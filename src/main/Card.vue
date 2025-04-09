@@ -260,7 +260,7 @@ export default {
 }
 
 .nav:disabled {
-  opacity: 0.4;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 </style>
