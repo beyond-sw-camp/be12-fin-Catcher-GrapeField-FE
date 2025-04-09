@@ -137,7 +137,7 @@ export default {
 .room-list {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.6rem;
 }
 
 .room-item {
