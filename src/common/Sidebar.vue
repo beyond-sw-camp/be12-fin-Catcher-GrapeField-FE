@@ -4,48 +4,50 @@
         <transition name="slide">
             <div v-if="state.activePanel"
                 class="fixed top-[20vh] right-[4vw] h-[60vh] w-[22vw] bg-white shadow-lg z-40 rounded-l-xl flex flex-col overflow-hidden max-md:hidden">
-                <!-- 헤더 -->
-                <div class="flex justify-between items-center px-[1.2vw] py-[1.2vh] border-b border-gray-200 bg-white">
-                    <h3 class="text-[1.2vw] font-semibold text-purple-700 truncate">
-                        {{ getPanelTitle }}
-                    </h3>
-                    <button
-                        class="text-[1.8vw] text-gray-600 hover:text-purple-700 w-[1.8vw] h-[1.8vw] flex items-center justify-center"
-                        @click="closePanel">
-                        ×
-                    </button>
-                </div>
-
-                <!-- 콘텐츠 -->
-                <div class="flex flex-col px-[1.2vw] py-[1.5vh] h-full overflow-y-auto">
-                    <div v-if="state.activePanel === 'profile'" class="flex flex-col items-center">
-                        <div
-                            class="w-[5vw] h-[5vw] rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-[1.5vh] flex justify-center items-center">
-                            <img :src="profileImgUrl" alt="사용자 프로필" class="w-full h-full object-contain" />
-                        </div>
-                        <div class="text-[1.2vw] font-semibold text-gray-800 mb-[0.8vh]">사용자</div>
-                        <div class="text-[1vw] text-gray-600 mb-[2.5vh]">grapefield@example.com</div>
-                        <div class="flex flex-col gap-[1vh] w-full">
-                            <router-link to="/mypage"
-                                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw]">내
-                                정보 수정</router-link>
-                            <div
-                                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
-                                나의 예약 내역</div>
-                            <div
-                                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
-                                관심 이벤트</div>
-                            <div
-                                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
-                                알림 설정</div>
-                            <div
-                                class="border border-purple-700 mt-[1vh] text-purple-700 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer hover:bg-purple-100">
-                                로그아웃</div>
-                        </div>
+                <div v-if="isLogin">
+                    <!-- 헤더 -->
+                    <div
+                        class="flex justify-between items-center px-[1.2vw] py-[1.2vh] border-b border-gray-200 bg-white">
+                        <h3 class="text-[1.2vw] font-semibold text-purple-700 truncate">
+                            {{ getPanelTitle }}
+                        </h3>
+                        <button
+                            class="text-[1.8vw] text-gray-600 hover:text-purple-700 w-[1.8vw] h-[1.8vw] flex items-center justify-center"
+                            @click="closePanel">
+                            ×
+                        </button>
                     </div>
 
-                    <!-- 채팅 패널 -->
-                    <div v-if="state.activePanel === 'chat'" class="flex flex-col h-full">
+                    <!-- 콘텐츠 -->
+                    <div class="flex flex-col px-[1.2vw] py-[1.5vh] h-full overflow-y-auto">
+                        <div v-if="state.activePanel === 'profile'" class="flex flex-col items-center">
+                            <div
+                                class="w-[5vw] h-[5vw] rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-[1.5vh] flex justify-center items-center">
+                                <img :src="profileImgUrl" alt="사용자 프로필" class="w-full h-full object-contain" />
+                            </div>
+                            <div class="text-[1.2vw] font-semibold text-gray-800 mb-[0.8vh]">사용자</div>
+                            <div class="text-[1vw] text-gray-600 mb-[2.5vh]">grapefield@example.com</div>
+                            <div class="flex flex-col gap-[1vh] w-full">
+                                <router-link to="/mypage"
+                                    class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw]">내
+                                    정보 수정</router-link>
+                                <div
+                                    class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
+                                    나의 예약 내역</div>
+                                <div
+                                    class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
+                                    관심 이벤트</div>
+                                <div
+                                    class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer">
+                                    알림 설정</div>
+                                <button @click="logout"
+                                    class="border border-purple-700 mt-[1vh] text-purple-700 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer hover:bg-purple-100">
+                                    로그아웃</button>
+                            </div>
+                        </div>
+
+                        <!-- 채팅 패널 -->
+                        <div v-if="state.activePanel === 'chat'" class="flex flex-col h-full">
                             <div v-if="!state.activeChatRoom" class="flex flex-col h-full">
                                 <div
                                     class="text-[1.1vw] font-semibold text-gray-800 mb-[1.2vh] border-l-4 border-purple-700 pl-[0.8vw]">
@@ -61,7 +63,7 @@
                                         @click="showChatRoom(room)">
                                         <div class="flex justify-between items-center mb-[0.6vh]">
                                             <div class="text-[1.1vw] font-semibold text-gray-800 truncate">{{ room.title
-                                            }}</div>
+                                                }}</div>
                                             <div :class="room.isActive ? 'bg-red-500' : 'bg-gray-400'"
                                                 class="text-white text-[0.7vw] px-[0.4vw] py-[0.2vh] rounded-full font-semibold">
                                                 {{ room.isActive ? 'LIVE' : '대기' }}
@@ -171,20 +173,26 @@
                                 </div>
                             </div>
                         </div>
-                    <div v-if="state.activePanel === 'history'" class="flex flex-col gap-[1vh]">
-                        <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
-                            <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">전시 '현대미술전'</div>
-                            <div class="text-[1vw] text-gray-600">방문일: 2025.03.15</div>
-                        </div>
-                        <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
-                            <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">뮤지컬 '레미제라블'</div>
-                            <div class="text-[1vw] text-gray-600">관람일: 2025.02.28</div>
-                        </div>
-                        <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
-                            <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">콘서트 '봄의 소리'</div>
-                            <div class="text-[1vw] text-gray-600">관람일: 2025.02.10</div>
+                        <div v-if="state.activePanel === 'history'" class="flex flex-col gap-[1vh]">
+                            <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
+                                <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">전시 '현대미술전'</div>
+                                <div class="text-[1vw] text-gray-600">방문일: 2025.03.15</div>
+                            </div>
+                            <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
+                                <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">뮤지컬 '레미제라블'</div>
+                                <div class="text-[1vw] text-gray-600">관람일: 2025.02.28</div>
+                            </div>
+                            <div class="bg-purple-100 px-[0.8vw] py-[1vh] rounded-md cursor-pointer">
+                                <div class="text-[1.1vw] font-semibold text-gray-800 mb-[0.8vh]">콘서트 '봄의 소리'</div>
+                                <div class="text-[1vw] text-gray-600">관람일: 2025.02.10</div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div v-else class="flex flex-col gap-2 justify-center items-center h-full text-center">
+                    <div>로그인 후 사용해주세요.</div>
+                    <router-link to="/login"
+                        class="border border-purple-700 mt-[1vh] text-purple-700 px-[1vw] py-[1.2vh] rounded-md text-[1.1vw] cursor-pointer hover:bg-purple-100">로그인</router-link>
                 </div>
             </div>
         </transition>
@@ -202,7 +210,8 @@
             <div class="w-[4vw] min-w-[55px] h-[60vh] bg-purple-100 flex flex-col rounded-l-xl shadow-md">
                 <div class="flex flex-col gap-[1.5vh] py-[1vh] flex-1">
                     <div v-for="panel in ['profile', 'chat', 'calendar', 'interest', 'history']" :key="panel"
-                        @click="togglePanel(panel)" :class="['flex justify-center items-center h-[4vw] cursor-pointer',
+                        @click="togglePanel(panel)"
+                        :class="['flex justify-center items-center h-[4vw] cursor-pointer',
                             state.activePanel === panel ? 'bg-purple-700 text-white' : 'hover:bg-purple-200 text-gray-600']">
                         <div class="w-[3.2vw] h-[3.2vw] flex justify-center items-center">
                             <img :src="getIconUrl(panel)" :alt="panel" class="w-[85%] h-[85%] object-contain" />
@@ -227,9 +236,15 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import chatData from '../assets/data/chat.json'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '../stores/useUserStore'
 
+const userStore = useUserStore()
+const route = useRoute()
 const router = useRouter()
+
+// 로그인 상태 확인
+const isLogin = computed(() => userStore.isLogin)
 
 // 상태 정의
 const state = reactive({
@@ -243,7 +258,7 @@ const state = reactive({
 
 //사이드바 아이콘
 const getIconUrl = (name) => {
-  return new URL(`../assets/icons/${name}.png`, import.meta.url).href
+    return new URL(`../assets/icons/${name}.png`, import.meta.url).href
 }
 //프로필 아이콘
 const profileImgUrl = new URL('../assets/icons/profile.png', import.meta.url).href
@@ -387,10 +402,14 @@ function viewAllChatRoomsNewWindow() {
     window.open(routeUrl, '_blank')
 }
 
-function logout() {
-    alert('로그아웃되었습니다.')
-    // router.push('/login')
+// 로그아웃 처리
+const logout = () => {
+    userStore.user = null
+    userStore.isLogin = false
+    showMenu.value = false
+    router.push('/')
 }
+
 
 onMounted(() => {
     const savedState = localStorage.getItem('sidebarCollapsed')
@@ -401,5 +420,4 @@ onMounted(() => {
 </script>
 
 
-<style scoped>
-</style>
+<style scoped></style>
