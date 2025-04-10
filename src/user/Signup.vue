@@ -39,7 +39,7 @@
           <div class="flex flex-col gap-4 flex-1">
             <div class="input-group">
               <label for="name">이름</label>
-              <input id="name" type="text" placeholder="이름을 입력하세요" v-model="form.name"
+              <input id="name" type="text" placeholder="이름을 입력하세요" v-model="form.username"
                 class="border border-gray-300 rounded px-3 py-2" />
             </div>
             <div class="input-group">
@@ -98,7 +98,7 @@
       </div>
 
       <!-- 회원가입 버튼 -->
-      <button class="submit-btn" @click="submitForm">회원가입</button>
+      <button class="submit-btn" @click="signup()">회원가입</button>
 
       <!-- 로그인 링크 -->
       <router-link to="/login" class="login-link">
@@ -119,13 +119,15 @@
 
 
 <script setup>
+import { useUserStore } from "../stores/useUserStore";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const form = ref({
-  name: "",
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -224,16 +226,14 @@ const toggleAllAgreements = () => {
   });
 };
 
-const sendVerificationCode = () => {
-  console.log("인증 코드 발송");
-  router.push('/emailverify');
-
-};
-
-const submitForm = () => {
-  console.log("회원가입 버튼 클릭됨, 페이지 이동 시도...");
-  router.push("/signupsuccess");
-};
+const signup = async () => {
+    const result = await userStore.signup(form.value);
+    if(result === "true"){
+      router.push('/emailverify')
+    }else{
+      alert("이미 가입한 이메일입니다.")
+    }
+}
 </script>
 
 <style scoped>
