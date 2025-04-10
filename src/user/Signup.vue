@@ -12,12 +12,7 @@
       <template v-for="(field, index) in fields" :key="'first-' + index">
         <div v-if="field.model === 'name'" class="input-group">
           <label :for="field.id">{{ field.label }}</label>
-          <input
-            :id="field.id"
-            :type="field.type"
-            :placeholder="field.placeholder"
-            v-model="form[field.model]"
-          />
+          <input :id="field.id" :type="field.type" :placeholder="field.placeholder" v-model="form[field.model]" />
         </div>
       </template>
 
@@ -25,60 +20,30 @@
       <div class="input-group">
         <label for="email">이메일</label>
         <div class="email-row">
-          <input
-            id="email"
-            type="email"
-            placeholder="이메일 주소를 입력하세요"
-            v-model="form.email"
-          />
+          <input id="email" type="email" placeholder="이메일 주소를 입력하세요" v-model="form.email" />
           <button class="verify-btn" @click="sendVerificationCode">인증</button>
         </div>
       </div>
-
-      <!-- 이메일 인증 -->
-      <div class="input-group">
-        <label for="emailVerifyCode">이메일 인증</label>
-        <div class="email-row">
-          <input
-            id="emailVerifyCode"
-            type="text"
-            placeholder="인증 코드를 입력하세요"
-            v-model="form.emailVerifyCode"
-          />
-          <button class="verify-btn" @click="verifyEmailCode">확인</button>
-        </div>
-        <div class="text-sm mt-2">
-          <p>입력하신 이메일로 전송된 인증 코드를 입력해주세요. (유효시간: 5:00)</p>
-          <button class="resend-btn" @click="resendCode">인증 코드 재발송</button>
-        </div>
-      </div>
-
       <!-- 나머지 필드 출력 (name, email 제외) -->
       <template v-for="(field, index) in fields" :key="'after-' + index">
-        <div
-          v-if="field.model !== 'name' && field.model !== 'email'"
-          class="input-group"
-        >
+        <div v-if="field.model !== 'name' && field.model !== 'email'" class="input-group">
           <label :for="field.id">{{ field.label }}</label>
-          <input
-            :id="field.id"
-            :type="field.type"
-            :placeholder="field.placeholder"
-            v-model="form[field.model]"
-          />
+          <input :id="field.id" :type="field.type" :placeholder="field.placeholder" v-model="form[field.model]" />
         </div>
+        <!-- 비밀번호 확인용 에러 메시지 -->
+        <p v-if="field.model === 'confirmPassword' && isPasswordMismatch" style="color: red; font-size: 0.875rem;">
+          비밀번호가 일치하지 않습니다
+        </p>
       </template>
+
 
       <!-- 관심 분야 -->
       <div class="section">
         <label class="section-label">관심 분야 (선택)</label>
-        <div class="events_interest-grid">
-          <button
-            v-for="item in interests"
-            :key="item"
+        <div class="events_interest-grid truncate">
+          <button v-for="item in interests" :key="item"
             :class="['events_interest-btn', { selected: selectedInterests.includes(item) }]"
-            @click="toggleInterest(item)"
-          >
+            @click="toggleInterest(item)">
             {{ item }}
           </button>
         </div>
@@ -89,12 +54,7 @@
         <label class="section-label">약관 동의</label>
         <div class="checkbox-group">
           <div>
-            <input
-              type="checkbox"
-              id="allAgree"
-              v-model="agreeAll"
-              @change="toggleAllAgreements"
-            />
+            <input type="checkbox" id="allAgree" v-model="agreeAll" @change="toggleAllAgreements" />
             <label for="allAgree">전체 동의</label>
           </div>
           <div v-for="(agree, key) in agreements" :key="key">
@@ -126,7 +86,7 @@
 
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -176,6 +136,11 @@ const fields = [
     model: "phone",
   },
 ];
+
+// 실시간 비밀번호 불일치 여부 확인
+const isPasswordMismatch = computed(() => {
+  return form.value.confirmPassword.length > 0 && form.value.password !== form.value.confirmPassword;
+});
 
 const interests = ["뮤지컬", "연극", "콘서트", "전시회", "박람회"];
 const selectedInterests = ref([]);
@@ -260,7 +225,7 @@ const submitForm = () => {
   background-color: #fff;
   padding: 2.5rem;
   border-radius: 0.5rem;
-  width: 24rem;
+  width: 30rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -298,7 +263,8 @@ const submitForm = () => {
 
 .events_interest-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 한 줄에 5개 */
+  grid-template-columns: repeat(5, 1fr);
+  /* 한 줄에 5개 */
   gap: 0.5rem;
 }
 
@@ -341,6 +307,7 @@ const submitForm = () => {
   margin-top: 0.5rem;
   text-decoration: none;
 }
+
 .email-row {
   display: flex;
   gap: 0.5rem;
@@ -367,5 +334,4 @@ const submitForm = () => {
 .verify-btn:hover {
   background-color: #6f1ab6;
 }
-
 </style>
