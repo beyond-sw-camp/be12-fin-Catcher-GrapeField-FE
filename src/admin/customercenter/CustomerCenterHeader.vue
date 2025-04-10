@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import Search from './Search.vue';
 
 const tabs = [
