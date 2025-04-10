@@ -42,7 +42,6 @@ export const useUserStore = defineStore('user', {
       });
       return response.data;
     },
-
     setRole(newRole) {
       this.role = newRole
     },

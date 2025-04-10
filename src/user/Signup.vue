@@ -253,7 +253,7 @@ const signup = async () => {
   }
   const result = await userStore.signup(form.value);
   if (result === true) {
-    router.push('/emailverify');
+    router.push('/email_verify');
   } else {
     toast("이미 가입한 이메일입니다.", {
             "theme": "auto",
