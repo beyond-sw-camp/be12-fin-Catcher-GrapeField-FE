@@ -79,7 +79,7 @@ const userStore = useUserStore()
 const login = async () => {
   const success = await userStore.login(email.value, password.value)
   if (success) router.push('/')
-  else alert('로그인 실패. 이메일이나 비밀번호를 확인해주세요.')
+  else alert('로그인 실패. 이메일 혹은 비밀번호를 확인해주세요.')
 }
 
 const kakaoLogin = () => {

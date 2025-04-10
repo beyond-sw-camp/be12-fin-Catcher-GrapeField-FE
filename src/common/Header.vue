@@ -16,15 +16,15 @@
           </li>
           <li class="nav-item">
             <router-link to="/events" :class="{ 'router-link-active': isActive('/events') }"
-                         class="truncate">공연/전시</router-link>
+              class="truncate">공연/전시</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/community" :class="{ 'router-link-active': isActive('/community') }"
-                         class="truncate">커뮤니티</router-link>
+              class="truncate">커뮤니티</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/calendar_detail" :class="{ 'router-link-active': isActive('/calendar_detail') }"
-                         class="truncate">캘린더</router-link>
+              class="truncate">캘린더</router-link>
           </li>
         </ul>
       </nav>
@@ -34,7 +34,7 @@
         <router-link to="/search" class="search-button">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -60,21 +60,21 @@
 
           <!-- 알림 버튼 -->
           <button
-              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
+            class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
             🔔
           </button>
 
           <!-- 점 세 개 메뉴 버튼 -->
           <div class="relative">
             <button
-                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
-                @click="toggleMenu">
+              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
+              @click="toggleMenu">
               ⋯
             </button>
 
             <!-- 드롭다운 메뉴 -->
             <div v-if="showMenu"
-                 class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
+              class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
               <router-link to="/mypage" class="text-gray-700 hover:underline whitespace-nowrap">설정</router-link>
               <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
             </div>
@@ -247,7 +247,8 @@ const isActive = (path) => {
 
 .search-box input {
   padding: 0.5rem 1rem;
-  padding-right: 2.5rem; /* 검색 버튼을 위한 여백 추가 */
+  padding-right: 2.5rem;
+  /* 검색 버튼을 위한 여백 추가 */
   border: 0.07rem solid #e0e0e0;
   border-radius: 1.5rem;
   background-color: #f5f0ff;
@@ -265,7 +266,8 @@ const isActive = (path) => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #7c4dff; /* 보라색 배경 */
+  background-color: #7c4dff;
+  /* 보라색 배경 */
   cursor: pointer;
   text-decoration: none;
 }
@@ -281,7 +283,8 @@ const isActive = (path) => {
 .search-icon svg {
   width: 100%;
   height: 100%;
-  stroke: #ffffff; /* 흰색 아이콘 */
+  stroke: #ffffff;
+  /* 흰색 아이콘 */
 }
 
 .auth-buttons {
