@@ -12,6 +12,7 @@ import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
 import EventsRegister from "../events/register/Register.vue";
 import EmailVerification from "../user/EmailVerification.vue";
+import EmailVerificationView from "@/user/EmailVerificationView.vue";
 import EventShowMore from "../events/EventShowMore.vue";
 import Detail from "../events/Detail.vue";
 import ChatRoom from "../events/chat/Detail.vue";
@@ -41,7 +42,8 @@ const routes = [
         meta: { standalone: true },
       },
     {path: "/signupsuccess", name: 'SignupSuccess', component: SignupSuccess},
-    {path: '/emailverify', name: EmailVerification, component: EmailVerification },
+    {path: '/email_verify', name: EmailVerification, component: EmailVerification },
+    {path: '/email_verify/:uuid',name: 'EmailVerify',component: () => import('@/user/EmailVerificationView.vue')},
     //관리자 페이지(공연/전시 등록)
     { path: '/events/register', component: EventsRegister },
     //사용자 페이지(공연/전시 신청)

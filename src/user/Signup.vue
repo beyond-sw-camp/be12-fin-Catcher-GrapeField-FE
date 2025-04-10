@@ -6,79 +6,77 @@
     </div>
 
     <div class="signup-box">
-      <h2 class="title">회원가입</h2>
+      <div class="flex flex-col gap-6">
+        <!-- 첫 줄: 이미지 + 이름/전화번호 -->
+        <div class="flex gap-6 items-start">
+          <!-- 프로필 이미지 업로드 + preview + 제거 버튼 -->
+<div class="w-24 h-36 bg-gray-100 rounded-md overflow-hidden relative flex items-center justify-center">
+  <label v-if="!form.profileImg" class="cursor-pointer w-full h-full flex items-center justify-center">
+    <input type="file" class="hidden" @change="onProfileImageChange" accept="image/*" />
+    <span class="text-gray-400 text-sm">이미지 선택</span>
+  </label>
 
-      <!-- 이름만 먼저 출력 -->
-      <template v-for="(field, index) in fields" :key="'first-' + index">
-        <div v-if="field.model === 'name'" class="input-group">
-          <label :for="field.id">{{ field.label }}</label>
-          <input
-            :id="field.id"
-            :type="field.type"
-            :placeholder="field.placeholder"
-            v-model="form[field.model]"
-          />
+  <!-- preview 상태 -->
+  <div v-else class="relative w-full h-full">
+    <img
+      :src="previewUrl"
+      alt="프로필 이미지"
+      class="object-cover w-full h-full"
+    />
+    <!-- ❌ 제거 버튼 -->
+    <button
+      @click="removeProfileImage"
+      type="button"
+      class="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full w-5 h-5 text-xs text-gray-700 hover:text-red-500"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+
+          <!-- 이름 + 전화번호 입력 -->
+          <div class="flex flex-col gap-4 flex-1">
+            <div class="input-group">
+              <label for="name">이름</label>
+              <input id="name" type="text" placeholder="이름을 입력하세요" v-model="form.username"
+                class="border border-gray-300 rounded px-3 py-2" />
+            </div>
+            <div class="input-group">
+              <label for="phone">전화번호</label>
+              <input id="phone" type="tel" placeholder="전화번호를 입력하세요" v-model="form.phone"
+                class="border border-gray-300 rounded px-3 py-2" />
+            </div>
+          </div>
         </div>
-      </template>
 
-      <!-- 이메일 입력 -->
-      <div class="input-group">
-        <label for="email">이메일</label>
-        <div class="email-row">
-          <input
-            id="email"
-            type="email"
-            placeholder="이메일 주소를 입력하세요"
-            v-model="form.email"
-          />
-          <button class="verify-btn" @click="sendVerificationCode">인증</button>
+        <!--이메일, 비밀번호, 비밀번호 확인-->
+        <div class="input-group">
+            <label for="email">이메일</label>
+            <input id="email" type="email" placeholder="이메일 주소를 입력하세요" v-model="form.email"
+              class="border border-gray-300 rounded px-3 py-2 w-full" />
+          </div>
+          <div class="input-group">
+            <label for="password">비밀번호</label>
+            <input id="password" type="password" placeholder="비밀번호 (8자 이상)" v-model="form.password"
+              class="border border-gray-300 rounded px-3 py-2 w-full" />
+          </div>
+        <!-- 셋째 줄: 비밀번호 확인 -->
+        <div class="input-group">
+          <label for="confirmPassword">비밀번호 확인</label>
+          <input id="confirmPassword" type="password" placeholder="비밀번호를 다시 입력해주세요" v-model="form.confirmPassword"
+            class="border border-gray-300 rounded px-3 py-2 w-full" />
+          <p v-if="isPasswordMismatch" class="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다</p>
         </div>
       </div>
-
-      <!-- 이메일 인증 -->
-      <div class="input-group">
-        <label for="emailVerifyCode">이메일 인증</label>
-        <div class="email-row">
-          <input
-            id="emailVerifyCode"
-            type="text"
-            placeholder="인증 코드를 입력하세요"
-            v-model="form.emailVerifyCode"
-          />
-          <button class="verify-btn" @click="verifyEmailCode">확인</button>
-        </div>
-        <div class="text-sm mt-2">
-          <p>입력하신 이메일로 전송된 인증 코드를 입력해주세요. (유효시간: 5:00)</p>
-          <button class="resend-btn" @click="resendCode">인증 코드 재발송</button>
-        </div>
-      </div>
-
-      <!-- 나머지 필드 출력 (name, email 제외) -->
-      <template v-for="(field, index) in fields" :key="'after-' + index">
-        <div
-          v-if="field.model !== 'name' && field.model !== 'email'"
-          class="input-group"
-        >
-          <label :for="field.id">{{ field.label }}</label>
-          <input
-            :id="field.id"
-            :type="field.type"
-            :placeholder="field.placeholder"
-            v-model="form[field.model]"
-          />
-        </div>
-      </template>
 
       <!-- 관심 분야 -->
       <div class="section">
         <label class="section-label">관심 분야 (선택)</label>
-        <div class="events_interest-grid">
-          <button
-            v-for="item in interests"
-            :key="item"
+        <div class="events_interest-grid truncate">
+          <button v-for="item in interests" :key="item"
             :class="['events_interest-btn', { selected: selectedInterests.includes(item) }]"
-            @click="toggleInterest(item)"
-          >
+            @click="toggleInterest(item)">
             {{ item }}
           </button>
         </div>
@@ -89,12 +87,7 @@
         <label class="section-label">약관 동의</label>
         <div class="checkbox-group">
           <div>
-            <input
-              type="checkbox"
-              id="allAgree"
-              v-model="agreeAll"
-              @change="toggleAllAgreements"
-            />
+            <input type="checkbox" id="allAgree" v-model="agreeAll" @change="toggleAllAgreements" />
             <label for="allAgree">전체 동의</label>
           </div>
           <div v-for="(agree, key) in agreements" :key="key">
@@ -105,7 +98,7 @@
       </div>
 
       <!-- 회원가입 버튼 -->
-      <button class="submit-btn" @click="submitForm">회원가입</button>
+      <button class="submit-btn" @click="signup()">회원가입</button>
 
       <!-- 로그인 링크 -->
       <router-link to="/login" class="login-link">
@@ -126,17 +119,21 @@
 
 
 <script setup>
-import { ref } from "vue";
+import { useUserStore } from "../stores/useUserStore";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { toast } from 'vue3-toastify';
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const form = ref({
-  name: "",
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
   phone: "",
+  profileImg: null,
 });
 
 const fields = [
@@ -177,6 +174,30 @@ const fields = [
   },
 ];
 
+// 실시간 비밀번호 불일치 여부 확인
+const isPasswordMismatch = computed(() => {
+  return form.value.confirmPassword.length > 0 &&
+    form.value.password !== form.value.confirmPassword
+})
+
+const previewUrl = ref('')
+const onProfileImageChange = (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    form.value.profileImg = file
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      previewUrl.value = event.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const removeProfileImage = () => {
+  form.value.profileImg = null
+  previewUrl.value = ''
+}
 const interests = ["뮤지컬", "연극", "콘서트", "전시회", "박람회"];
 const selectedInterests = ref([]);
 
@@ -206,16 +227,46 @@ const toggleAllAgreements = () => {
   });
 };
 
-const sendVerificationCode = () => {
-  console.log("인증 코드 발송");
-  router.push('/emailverify');
-
+const signup = async () => {
+  const { email, password, username } = form.value;
+  if (!email || !password || !username) {
+    toast("이름, 이메일, 비밀번호는 필수입니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
+  if (isPasswordMismatch.value) {
+    toast("비밀번호가 일치하지 않습니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
+  const result = await userStore.signup(form.value);
+  if (result === true) {
+    router.push('/email_verify');
+  } else {
+    toast("이미 가입한 이메일입니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
 };
 
-const submitForm = () => {
-  console.log("회원가입 버튼 클릭됨, 페이지 이동 시도...");
-  router.push("/signupsuccess");
-};
 </script>
 
 <style scoped>
@@ -260,7 +311,7 @@ const submitForm = () => {
   background-color: #fff;
   padding: 2.5rem;
   border-radius: 0.5rem;
-  width: 24rem;
+  width: 30rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -298,7 +349,8 @@ const submitForm = () => {
 
 .events_interest-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 한 줄에 5개 */
+  grid-template-columns: repeat(5, 1fr);
+  /* 한 줄에 5개 */
   gap: 0.5rem;
 }
 
@@ -341,6 +393,7 @@ const submitForm = () => {
   margin-top: 0.5rem;
   text-decoration: none;
 }
+
 .email-row {
   display: flex;
   gap: 0.5rem;
@@ -367,5 +420,4 @@ const submitForm = () => {
 .verify-btn:hover {
   background-color: #6f1ab6;
 }
-
 </style>
