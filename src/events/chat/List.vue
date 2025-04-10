@@ -146,6 +146,7 @@ export default {
 
 <style scoped>
 .chat-list-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -204,12 +205,14 @@ export default {
 }
 
 .chat-rooms {
+
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
 .chat-room-card {
+    width: 22.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     overflow: hidden;
