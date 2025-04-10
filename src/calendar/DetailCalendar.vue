@@ -15,7 +15,7 @@ import CalendarHeader from './CalendarHeader.vue'
 import CalendarGrid from './CalendarGrid.vue'
 import BookingInfoSection from './BookingInfoSection.vue'
 import eventData from '../assets/data/calendarData.json'
-import bookingInfoData from '../assets/data/bookinginfo.json'
+import bookingInfoData from '../assets/data/bookingInfo.json'
 
 const today = new Date()
 const year = ref(today.getFullYear())
