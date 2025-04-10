@@ -6,36 +6,69 @@
     </div>
 
     <div class="signup-box">
-      <h2 class="title">회원가입</h2>
+      <div class="flex flex-col gap-6">
+        <!-- 첫 줄: 이미지 + 이름/전화번호 -->
+        <div class="flex gap-6 items-start">
+          <!-- 프로필 이미지 업로드 + preview + 제거 버튼 -->
+<div class="w-24 h-36 bg-gray-100 rounded-md overflow-hidden relative flex items-center justify-center">
+  <label v-if="!form.profileImg" class="cursor-pointer w-full h-full flex items-center justify-center">
+    <input type="file" class="hidden" @change="onProfileImageChange" accept="image/*" />
+    <span class="text-gray-400 text-sm">이미지 선택</span>
+  </label>
 
-      <!-- 이름만 먼저 출력 -->
-      <template v-for="(field, index) in fields" :key="'first-' + index">
-        <div v-if="field.model === 'name'" class="input-group">
-          <label :for="field.id">{{ field.label }}</label>
-          <input :id="field.id" :type="field.type" :placeholder="field.placeholder" v-model="form[field.model]" />
+  <!-- preview 상태 -->
+  <div v-else class="relative w-full h-full">
+    <img
+      :src="previewUrl"
+      alt="프로필 이미지"
+      class="object-cover w-full h-full"
+    />
+    <!-- ❌ 제거 버튼 -->
+    <button
+      @click="removeProfileImage"
+      type="button"
+      class="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full w-5 h-5 text-xs text-gray-700 hover:text-red-500"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+
+          <!-- 이름 + 전화번호 입력 -->
+          <div class="flex flex-col gap-4 flex-1">
+            <div class="input-group">
+              <label for="name">이름</label>
+              <input id="name" type="text" placeholder="이름을 입력하세요" v-model="form.name"
+                class="border border-gray-300 rounded px-3 py-2" />
+            </div>
+            <div class="input-group">
+              <label for="phone">전화번호</label>
+              <input id="phone" type="tel" placeholder="전화번호를 입력하세요" v-model="form.phone"
+                class="border border-gray-300 rounded px-3 py-2" />
+            </div>
+          </div>
         </div>
-      </template>
 
-      <!-- 이메일 입력 -->
-      <div class="input-group">
-        <label for="email">이메일</label>
-        <div class="email-row">
-          <input id="email" type="email" placeholder="이메일 주소를 입력하세요" v-model="form.email" />
-          <button class="verify-btn" @click="sendVerificationCode">인증</button>
+        <!--이메일, 비밀번호, 비밀번호 확인-->
+        <div class="input-group">
+            <label for="email">이메일</label>
+            <input id="email" type="email" placeholder="이메일 주소를 입력하세요" v-model="form.email"
+              class="border border-gray-300 rounded px-3 py-2 w-full" />
+          </div>
+          <div class="input-group">
+            <label for="password">비밀번호</label>
+            <input id="password" type="password" placeholder="비밀번호 (8자 이상)" v-model="form.password"
+              class="border border-gray-300 rounded px-3 py-2 w-full" />
+          </div>
+        <!-- 셋째 줄: 비밀번호 확인 -->
+        <div class="input-group">
+          <label for="confirmPassword">비밀번호 확인</label>
+          <input id="confirmPassword" type="password" placeholder="비밀번호를 다시 입력해주세요" v-model="form.confirmPassword"
+            class="border border-gray-300 rounded px-3 py-2 w-full" />
+          <p v-if="isPasswordMismatch" class="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다</p>
         </div>
       </div>
-      <!-- 나머지 필드 출력 (name, email 제외) -->
-      <template v-for="(field, index) in fields" :key="'after-' + index">
-        <div v-if="field.model !== 'name' && field.model !== 'email'" class="input-group">
-          <label :for="field.id">{{ field.label }}</label>
-          <input :id="field.id" :type="field.type" :placeholder="field.placeholder" v-model="form[field.model]" />
-        </div>
-        <!-- 비밀번호 확인용 에러 메시지 -->
-        <p v-if="field.model === 'confirmPassword' && isPasswordMismatch" style="color: red; font-size: 0.875rem;">
-          비밀번호가 일치하지 않습니다
-        </p>
-      </template>
-
 
       <!-- 관심 분야 -->
       <div class="section">
@@ -97,6 +130,7 @@ const form = ref({
   password: "",
   confirmPassword: "",
   phone: "",
+  profileImg: null,
 });
 
 const fields = [
@@ -139,9 +173,28 @@ const fields = [
 
 // 실시간 비밀번호 불일치 여부 확인
 const isPasswordMismatch = computed(() => {
-  return form.value.confirmPassword.length > 0 && form.value.password !== form.value.confirmPassword;
-});
+  return form.value.confirmPassword.length > 0 &&
+    form.value.password !== form.value.confirmPassword
+})
 
+const previewUrl = ref('')
+const onProfileImageChange = (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    form.value.profileImg = file
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      previewUrl.value = event.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const removeProfileImage = () => {
+  form.value.profileImg = null
+  previewUrl.value = ''
+}
 const interests = ["뮤지컬", "연극", "콘서트", "전시회", "박람회"];
 const selectedInterests = ref([]);
 
