@@ -11,21 +11,23 @@ export const useUserStore = defineStore('user', {
   actions: {
     //로그인
     async login(email, password) {
-      // 백엔드 연동해야 함! (현재는 mock)
-      if (email === 'test@test.com' && password === '1234') {
-        this.isLogin=true,
-        this.user = { email }
-        this.role= 'user'
-        return true
+      try {
+        const response = await axios.post("/api/login", {
+          email,
+          password,
+        });
+    
+        this.isLogin = true;
+        this.user = { email };
+        this.role = 'user';
+        return { success: true };
+      } catch (error) {
+        // 백엔드에서 보낸 메시지 추출
+        const message = error.response?.data?.message || '로그인 실패';
+        return { success: false, message };
       }
-      else if (email === 'admin@test.com' && password === '1234') {
-        this.isLogin=true,
-        this.user = { email }
-        this.role= 'admin'
-        return true
-      }
-      return false
     },
+  //회원가입
     async signup(signupReq) {
       const formData = new FormData();
       formData.append("email", signupReq.email);

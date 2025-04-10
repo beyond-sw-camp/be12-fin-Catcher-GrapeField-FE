@@ -23,7 +23,7 @@
         <input type="checkbox" id="remember" v-model="remember" />
         <label for="remember">로그인 상태 유지</label>
       </div>
-      <button class="login-btn" @click="login">로그인</button>
+      <button class="login-btn" @click="login()">로그인</button>
 
       <div class="divider-wrapper">
         <div class="divider-line"></div>
@@ -77,9 +77,12 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const login = async () => {
-  const success = await userStore.login(email.value, password.value)
-  if (success) router.push('/')
-  else alert('로그인 실패. 이메일 혹은 비밀번호를 확인해주세요.')
+  const result = await userStore.login(email.value, password.value);
+  if (result.success) {
+    router.push('/');
+  } else {
+    alert(result.message); //로그인 실패 사유
+  }
 }
 
 const kakaoLogin = () => {
