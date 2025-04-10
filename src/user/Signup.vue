@@ -122,6 +122,7 @@
 import { useUserStore } from "../stores/useUserStore";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { toast } from 'vue3-toastify';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -227,13 +228,45 @@ const toggleAllAgreements = () => {
 };
 
 const signup = async () => {
-    const result = await userStore.signup(form.value);
-    if(result === "true"){
-      router.push('/emailverify')
-    }else{
-      alert("이미 가입한 이메일입니다.")
-    }
-}
+  const { email, password, username } = form.value;
+  if (!email || !password || !username) {
+    toast("이름, 이메일, 비밀번호는 필수입니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
+  if (isPasswordMismatch.value) {
+    toast("비밀번호가 일치하지 않습니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
+  const result = await userStore.signup(form.value);
+  if (result === true) {
+    router.push('/emailverify');
+  } else {
+    toast("이미 가입한 이메일입니다.", {
+            "theme": "auto",
+            "type": "error",
+            "autoClose": 1500,
+            "hideProgressBar": true,
+            "position": "bottom-center",
+            "dangerouslyHTMLString": true
+        })
+    return;
+  }
+};
+
 </script>
 
 <style scoped>
