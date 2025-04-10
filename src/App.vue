@@ -3,7 +3,7 @@ import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
-import SideBar from './common/SideBar.vue'
+import Sidebar from './common/Sidebar.vue'
 
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
 const route = useRoute()
@@ -24,7 +24,7 @@ const layoutClass = computed(() => {
     <div :class="layoutClass">
       <router-view />
     </div>
-    <SideBar v-if="showSidebar && !isStandalonePage" />
+    <Sidebar v-if="showSidebar && !isStandalonePage" />
     <Footer v-if="!isStandalonePage" />
   </div>
 </template>
