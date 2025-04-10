@@ -27,6 +27,17 @@ export const useUserStore = defineStore('user', {
         return { success: false, message };
       }
     },
+    //로그아웃
+    async logout() {
+      const response = await axios.post("/api/logout",)
+          .catch((error) => {
+              console.error(error);
+          })
+      console.log(response);
+      this.isLogin = false;
+      if (response === null) return false;
+      return true;
+  },
   //회원가입
     async signup(signupReq) {
       const formData = new FormData();
