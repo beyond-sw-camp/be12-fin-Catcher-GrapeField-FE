@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     isLogin: false,
     user: null, // 사용자 정보를 저장할 객체
     role: '', // 사용자 역할
-    token: null, // JWT 토큰
   }),
   persist: {
     storage: sessionStorage,
@@ -18,35 +16,35 @@ export const useUserStore = defineStore('user', {
     email: (state) => state.user?.email,
     username: (state) => state.user?.username,
   },
-  actions: {
+  actions: {  // actions 객체 추가
     // 로그인
     async login(email, password) {
       try {
         const response = await axios.post("/api/login", {
           email,
           password,
+        }, {
+          withCredentials: true // 쿠키를 요청/응답에 포함시킵니다
         });
         
-        // 백엔드에서 JWT 토큰을 받았다고 가정
-        const token = response.data.token;
-        this.token = token;
+        // 로그인 응답에서 사용자 정보 가져오기
+        if (response.data && response.data.authenticated) {
+          this.user = {
+            userIdx: response.data.userIdx,
+            email: response.data.email,
+            username: response.data.username,
+          };
+          this.role = response.data.role || 'user';
+          this.isLogin = true;
+          
+          // axios의 모든 요청에 쿠키 포함 설정
+          axios.defaults.withCredentials = true;
+          
+          return { success: true };
+        }
         
-        // 토큰에서 사용자 정보 추출 (실제 구현 시)
-        const decoded = jwtDecode(token);
-        this.user = {
-          userIdx: decoded.userIdx,
-          email: decoded.email,
-          username: decoded.username,
-          // 기타 필요한 정보
-        };
-        this.role = decoded.role || 'user';
-        
-        // 토큰을 헤더에 자동 추가하도록 설정
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        return { success: true };
+        return { success: false, message: '로그인 실패' };
       } catch (error) {
-        // 백엔드에서 보낸 메시지 추출
         const message = error.response?.data?.message || '로그인 실패';
         return { success: false, message };
       }
@@ -55,12 +53,15 @@ export const useUserStore = defineStore('user', {
     // 로그아웃
     async logout() {
       try {
-        const response = await axios.post("/api/logout");
+        // 로그아웃 URL을 SecurityConfig와 일치시킴
+        const response = await axios.post("/api/logout", {}, {
+          withCredentials: true  // 쿠키 포함하여 요청
+        });
         
         // 로그인 상태 초기화
         this.resetUserState();
         
-        // 인증 헤더 제거
+        // axios 기본 설정 초기화
         delete axios.defaults.headers.common['Authorization'];
         
         return true;
@@ -88,6 +89,7 @@ export const useUserStore = defineStore('user', {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true  // CSRF 토큰이 필요한 경우를 위해 추가
         });
         return { success: true, data: response.data };
       } catch (error) {
@@ -99,35 +101,36 @@ export const useUserStore = defineStore('user', {
     // 토큰 갱신 (필요시)
     async refreshToken() {
       try {
-        const response = await axios.post("/api/refresh-token", {
-          token: this.token
+        const response = await axios.post("/api/refresh-token", {}, {
+          withCredentials: true  // 쿠키 기반 인증을 위해 추가
         });
         
-        const newToken = response.data.token;
-        this.token = newToken;
-        
-        // 토큰 정보 갱신
-        // const decoded = jwtDecode(newToken);
-        // this.user = { ...this.user, ...필요한 정보 업데이트 };
-        
-        // 헤더 업데이트
-        axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        // 쿠키 기반 인증에서는 토큰 관리가 필요 없음
+        // 세션 정보만 업데이트
+        if (response.data) {
+          this.user = {
+            userIdx: response.data.userIdx,
+            email: response.data.email,
+            username: response.data.username,
+          };
+          this.role = response.data.role || 'user';
+        }
         
         return true;
       } catch (error) {
-        console.error("토큰 갱신 실패:", error);
-        // 토큰 갱신 실패 시 로그아웃 처리
+        console.error("세션 갱신 실패:", error);
+        // 갱신 실패 시 로그아웃 처리
         this.resetUserState();
         return false;
       }
     },
     
-    // 사용자 상태 초기화 (재사용 가능한 헬퍼 메서드)
+    // 사용자 상태 초기화 (로그아웃시 사용, 재사용 가능한 헬퍼 메서드)
     resetUserState() {
       this.isLogin = false;
       this.user = null;
       this.role = '';
-      this.token = null;
+      sessionStorage.removeItem('user');
     },
     
     // 사용자 정보 업데이트 (프로필 수정 등에 사용)
