@@ -6,7 +6,8 @@
       :id="event.id"
       :title="event.title"
       :venue="event.venue"
-      :period="event.period"
+      :startDate="event.startDate"
+      :endDate="event.endDate"
       :posterUrl="event.posterUrl"
     />
   </div>

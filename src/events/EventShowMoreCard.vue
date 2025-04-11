@@ -7,18 +7,29 @@
       <div class="px-3 py-2">
         <p class="text-purple-800 text-base font-semibold truncate">{{ title }}</p>
         <p class="text-neutral-500 text-sm truncate">{{ venue }}</p>
-        <p class="text-neutral-500 text-sm">{{ period }}</p>
+        <p class="text-neutral-500 text-sm">{{ formattedStartDate }}~{{ formattedEndDate }}</p>
       </div>
     </div>
   </router-link>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   id: Number,
   title: String,
   venue: String,
-  period: String,
+  startDate: String,
+  endDate: String,
   posterUrl: String
 })
+
+// 날짜만 추출
+const formatDate = (dateStr) => {
+  return dateStr?.split('T')[0] ?? ''
+}
+
+const formattedStartDate = computed(() => formatDate(props.startDate))
+const formattedEndDate = computed(() => formatDate(props.endDate))
 </script>
