@@ -74,6 +74,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useCalendarStore } from '@/stores/uesCalendarStore'
+
+const CalendarStore = useCalendarStore();
 
 // 상수 정의
 const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
@@ -186,13 +189,8 @@ const nextMonth = () => {
   fetchEventsForCurrentMonth();
 };
 
-// 현재 월의 이벤트 데이터 가져오기 (백엔드 호출 시뮬레이션)
 const fetchEventsForCurrentMonth = () => {
-  // 실제 구현에서는 여기서 API 호출
-  // axios.get(`/api/events?year=${currentYear.value}&month=${currentMonth.value}`)
-  //   .then(response => {
-  //     processEventData(response.data);
-  //   });
+  const response = CalendarStore.mainList(displayYear.value, displayMonth.value);
   
   // 예시 데이터 (실제 구현에서는 API 응답으로 대체)
   const mockEvents = {};
