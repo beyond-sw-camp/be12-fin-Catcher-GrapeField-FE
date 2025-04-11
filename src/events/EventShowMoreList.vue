@@ -2,8 +2,7 @@
   <div class="wrapper grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 mt-10">
     <EventShowMoreCard
       v-for="event in events"
-      :key="event.id"
-      :id="event.id"
+      :idx="event.idx"
       :title="event.title"
       :venue="event.venue"
       :startDate="event.startDate"

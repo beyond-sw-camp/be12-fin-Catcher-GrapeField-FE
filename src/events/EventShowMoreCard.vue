@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/events/${id}`" class="block">
+  <router-link :to="`/events/${idx}`" class="block">
     <div class="w-48 h-54 bg-white rounded-2xl shadow-md flex flex-col overflow-hidden">
       <div class="w-full h-56 bg-gray-100">
         <img :src="posterUrl" alt="포스터" class="w-full h-full object-cover" />
@@ -17,7 +17,7 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  id: Number,
+  idx: Number,
   title: String,
   venue: String,
   startDate: String,
@@ -29,7 +29,6 @@ const props = defineProps({
 const formatDate = (dateStr) => {
   return dateStr?.split('T')[0] ?? ''
 }
-
 const formattedStartDate = computed(() => formatDate(props.startDate))
 const formattedEndDate = computed(() => formatDate(props.endDate))
 </script>
