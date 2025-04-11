@@ -17,15 +17,31 @@ export const useEventsStore = defineStore('events', {
             }
         },
 
-        async getRecommendEventList(category, page, size){
+        //추천(현재 진행중 or 진행 예정인 공연 중에서 즐겨찾기가 많은 이벤트)
+        //인기(진행 여부와 상관 없이 즐겨찾기가 많은 이벤트)
+        //신규(진행 예정인 공연)
+        async getRecommendEventList(category){
             try {
-                const response = await axios.get("/api/events/contents/list", {
+                const response = await axios.get("/api/events/contents/recommend", {
                     params: {category: category, page:page, size:size}})
                 return response.data;
             }catch (error) {
                 console.error("공연/전시 목록 불러오기 에러:", error);
                 return false;
             }
-        }
+        },
+
+        //오픈 예정(티켓팅 오픈이 7일 이내인 공
+        // //종료 예정(티켓팅 종료가 3일 이내인 공연)연)
+        async getOpenAndCloseEventList(category, page, size){
+            try {
+                const response = await axios.get("/api/events/contents/open", {
+                    params: {category: category, page:page, size:size}})
+                return response.data;
+            }catch (error) {
+                console.error("공연/전시 목록 불러오기 에러:", error);
+                return false;
+            }
+        },
     }
 })

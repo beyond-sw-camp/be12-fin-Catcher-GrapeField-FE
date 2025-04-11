@@ -13,6 +13,11 @@
 <script setup>
 import Card from './Card.vue'
 import cardData from '../assets/data/card.json'
+
+import { useEventsStore } from '@/stores/useEventsStore';
+const eventsStore = useEventsStore();
+
+
 </script>
 
 <style scoped>

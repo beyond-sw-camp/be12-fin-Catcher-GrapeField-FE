@@ -81,11 +81,6 @@ const goToShowMore = () => router.push('/events')
   border: none;
 }
 
-.nav:hover {
-  background-color: #f3f4f6;
-  transform: scale(1.1);
-}
-
 /* 스크롤바 숨기기 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
