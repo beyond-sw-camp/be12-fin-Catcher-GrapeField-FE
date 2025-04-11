@@ -23,7 +23,7 @@
           <div class="flex flex-col gap-4">
             <ReviewCard
                 v-for="review in paginatedReviews"
-                :key="review.id"
+                :key="review.idx"
                 v-bind="review"
             />
           </div>
@@ -106,12 +106,12 @@
   
   // 1. 라우터에서 id 가져오기
   const route = useRoute()
-  const id = Number(route.params.id)
+  const idx = Number(route.params.idx)
   
   // 2. JSON에서 이벤트 찾기
   const event = ref(null)
   onMounted(() => {
-  const found = eventsData.events.find(e => e.id === id)
+  const found = eventsData.events.find(e => e.idx === idx)
   event.value = found
 })
   

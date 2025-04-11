@@ -12,7 +12,6 @@ import Admin from "../admin/Admin.vue"
 import SignupSuccess from "../user/SignupSuccess.vue";
 import EventsRegister from "../events/register/Register.vue";
 import EmailVerification from "../user/EmailVerification.vue";
-import EmailVerificationView from "@/user/EmailVerificationView.vue";
 import EventShowMore from "../events/EventShowMore.vue";
 import Detail from "../events/Detail.vue";
 import ChatRoom from "../events/chat/Detail.vue";
@@ -49,7 +48,7 @@ const routes = [
     //사용자 페이지(공연/전시 신청)
     { path: '/events/request', component: EventsRegister },
     {path: "/events", name: 'EventShowMore', component: EventShowMore},
-    { path: "/events/:id", name: 'Detail', component: Detail, props: true },
+    { path: "/events/:idx", name: 'Detail', component: Detail, props: true },
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
     { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
     // { path:"/mypage", component: MyPage},
