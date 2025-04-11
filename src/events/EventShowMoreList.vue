@@ -6,18 +6,73 @@
       :id="event.id"
       :title="event.title"
       :venue="event.venue"
-      :period="event.period"              
+      :period="event.period"
       :posterUrl="event.posterUrl"
     />
   </div>
+  <InfiniteLoading :key="infiniteKey" @infinite="loadEvents">
+  <template #complete>
+    <div></div>
+  </template>
+</InfiniteLoading>
+
 </template>
 
 <script setup>
-import EventShowMoreCard from './EventShowMoreCard.vue'
-import eventsData from '../assets/data/events.json'
+import { ref, watch } from 'vue';
+import EventShowMoreCard from './EventShowMoreCard.vue';
+import { useEventsStore } from '@/stores/useEventsStore';
 
-const events = eventsData.events
+const props = defineProps({
+  category: {
+    type: String,
+    default: '',
+  },
+});
 
+const eventsStore = useEventsStore();
+const events = ref([]);
+const slice = ref({
+  category: props.category,
+  page: 0,
+  size: 30,
+  hasNext: true,
+});
+
+const loadEvents = async ($state) => {
+  try {
+    const response = await eventsStore.getEventList(
+      slice.value.category,
+      slice.value.page,
+      slice.value.size
+    );
+    const content = response.content || [];
+
+    if (content.length < 1) {
+      console.log('더 이상 불러올 데이터 없음.');
+      $state.complete();
+    } else {
+      events.value.push(...content);
+      $state.loaded();
+    }
+    slice.value.page++;
+  } catch (error) {
+    console.error('공연/전시 목록 불러오기 실패:', error);
+    $state.error();
+  }
+};
+
+// 카테고리 변경 시 초기화 + 무한스크롤 reset
+const infiniteKey = ref(0)
+
+watch(() => props.category, (newCategory) => {
+  slice.value.category = newCategory
+  slice.value.page = 0
+  events.value = []
+
+  // InfiniteLoading을 강제로 재실행
+  infiniteKey.value++
+})
 
 </script>
 

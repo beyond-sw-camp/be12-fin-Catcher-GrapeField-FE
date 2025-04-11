@@ -5,7 +5,6 @@ import { createPinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate";
 import Vue3Toastify from 'vue3-toastify';
 import "vue3-toastify/dist/index.css";
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import InfiniteLoading from "v3-infinite-loading";
 
 const app = createApp(App);
