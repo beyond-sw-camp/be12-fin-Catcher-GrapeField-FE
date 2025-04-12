@@ -22,13 +22,20 @@
 import { ref, watch } from 'vue';
 import EventShowMoreCard from './EventShowMoreCard.vue';
 import { useEventsStore } from '@/stores/useEventsStore';
+import { useLoadingStore } from '@/stores/useLoadingStore'
+const loadingStore = useLoadingStore()
 
 const props = defineProps({
   category: {
     type: String,
-    default: '',
+    default: 'ALL',
+  },
+  array: {
+    type: String,
+    default: 'recommend',
   },
 });
+
 
 const eventsStore = useEventsStore();
 const events = ref([]);
@@ -42,6 +49,7 @@ const slice = ref({
 
 const loadEvents = async ($state) => {
   try {
+    loadingStore.startLoading()
     const response = await eventsStore.getMoreEventList(
       slice.value.category,
       slice.value.array,
@@ -61,20 +69,23 @@ const loadEvents = async ($state) => {
   } catch (error) {
     console.error('공연/전시 목록 불러오기 실패:', error);
     $state.error();
+  } finally {
+    loadingStore.stopLoading()
   }
 };
 
 // 카테고리 변경 시 초기화 + 무한스크롤 reset
 const infiniteKey = ref(0)
 
-watch(() => props.category, (newCategory) => {
+// category or array 변경될 때 모두 반응
+watch([() => props.category, () => props.array], ([newCategory, newArray]) => {
   slice.value.category = newCategory
+  slice.value.array = newArray
   slice.value.page = 0
   events.value = []
-
-  // InfiniteLoading을 강제로 재실행
   infiniteKey.value++
 })
+
 
 </script>
 
