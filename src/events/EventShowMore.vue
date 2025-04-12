@@ -29,7 +29,7 @@ import cardData from '../assets/data/card.json'
 const route = useRoute()
 
 // 카테고리 선택 상태
-const category = ref('')
+const category = ref('ALL')
 // 추천, 인기, 신규 선택
 const array=ref('recommend')
 onMounted(() => {

@@ -3,7 +3,7 @@ import axios from "axios";
 export const useEventsStore = defineStore('events', {
     state: () => ({
     }),
-        //추천(현재 진행중 oQr 진행 예정인 공연 중에서 즐겨찾기가 많은 이벤트)
+        //추천(현재 진행중 or 진행 예정인 공연 중에서 즐겨찾기가 많은 이벤트)
         //인기(진행 여부와 상관 없이 즐겨찾기가 많은 이벤트)
         //신규(진행 예정인 공연)
     actions: {

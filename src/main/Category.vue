@@ -25,7 +25,7 @@ import { ref, watch } from 'vue';
 const props = defineProps({
     modelValue: {
         type: String,
-        default: ''
+        default: 'ALL'
     }
 });
 const emit = defineEmits(['update:modelValue']);
@@ -39,7 +39,7 @@ watch(() => props.modelValue, (newVal) => {
 
 //TODO: count부분 고쳐야함
 const categories = ref([
-    { id: "", name: "전체", count: "113개의 행사" },
+    { id: "ALL", name: "전체", count: "113개의 행사" },
     { id: "MUSICAL", name: "뮤지컬", count: "12개의 공연" },
     { id: "PLAY", name: "연극", count: "30개의 공연" },
     { id: "CONCERT", name: "콘서트", count: "30개의 공연" },

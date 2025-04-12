@@ -21,7 +21,7 @@ const eventsStore = useEventsStore();
 const props = defineProps({
     category: {
         type: String,
-        default: '',
+        default: 'ALL',
     },
 });
 
