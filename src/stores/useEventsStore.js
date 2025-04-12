@@ -32,8 +32,8 @@ export const useEventsStore = defineStore('events', {
         },
 
 
-        //오픈 예정(티켓팅 오픈이 7일 이내인 공
-        // //종료 예정(티켓팅 종료가 3일 이내인 공연)연)
+        //오픈 예정(티켓팅 오픈이 7일 이내인 공연)
+        // //종료 예정(티켓팅 종료가 3일 이내인 공연)
         async getOpenAndCloseEventList(category, page, size){
             try {
                 const response = await axios.get("/api/events/contents/open", {
