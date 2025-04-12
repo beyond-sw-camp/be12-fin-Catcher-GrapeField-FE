@@ -60,7 +60,22 @@ const scroll = (direction) => {
   }
 }
 
-const goToShowMore = () => router.push('/events')
+const goToShowMore = () => {
+  router.push({ path: '/events', query: { sort: titleToSortKey(props.title) } })
+}
+
+const titleToSortKey = (title) => {
+  switch (title) {
+    case '추천':
+      return 'recommend'
+    case '인기':
+      return 'popular'
+    case '신규':
+      return 'new'
+    default:
+      return 'recommend'
+  }
+}
 </script>
 
 <style scoped>

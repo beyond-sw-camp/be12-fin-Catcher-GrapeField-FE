@@ -9,23 +9,22 @@ import CardList from './CardList.vue'
 </script>
 
 <template>
-  <TopBanner />
-  <div>
-    <div class="content-row flex flex-col lg:flex-row w-full max-w-[1200px] mx-auto gap-y-4 lg:gap-x-8">
-      <div class="w-full lg:w-3/5 h-full">
-        <PopularPost />
-      </div>
-      <div class="w-full lg:w-2/5 h-full">
-        <PopularChatRoom />
-      </div>
+    <TopBanner />
+    <div>
+        <div class="content-row flex flex-col lg:flex-row w-full max-w-[1200px] mx-auto gap-y-4 lg:gap-x-8">
+            <div class="w-full lg:w-3/5 h-full">
+                <PopularPost />
+            </div>
+            <div class="w-full lg:w-2/5 h-full">
+                <PopularChatRoom />
+            </div>
+        </div>
+        <Category />
+        <Card />
+        <Calendar />
+        <CardList title="오픈" index="1" />
+        <CardList title="종료" index="6" />
     </div>
-
-    <Category />
-    <Card />
-    <Calendar />
-    <CardList title="오픈" index="1" />
-    <CardList title="종료" index="6"/>
-  </div>
 </template>
 
 
@@ -39,7 +38,7 @@ import CardList from './CardList.vue'
 }
 
 /* 인기 게시글 / 채팅방 공통 스타일 */
-.popular-posts{
+.popular-posts {
     width: 34vw;
     padding: 1rem;
     margin: 2vh 0;
