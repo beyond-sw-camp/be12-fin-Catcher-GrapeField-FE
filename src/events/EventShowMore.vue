@@ -13,7 +13,7 @@
     <Array v-model="array"/>
 
     <!-- 이벤트 카드 리스트: category를 prop으로 전달 -->
-    <EventShowMoreList :category="category" />
+    <EventShowMoreList :category="category" :array="array" />
   </div>
 </template>
 

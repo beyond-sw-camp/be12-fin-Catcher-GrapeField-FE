@@ -34,6 +34,7 @@ const eventsStore = useEventsStore();
 const events = ref([]);
 const slice = ref({
   category: props.category,
+  array: props.array,
   page: 0,
   size: 30,
   hasNext: true,
@@ -41,10 +42,11 @@ const slice = ref({
 
 const loadEvents = async ($state) => {
   try {
-    const response = await eventsStore.getEventList(
+    const response = await eventsStore.getMoreEventList(
       slice.value.category,
+      slice.value.array,
       slice.value.page,
-      slice.value.size
+      slice.value.size,
     );
     const content = response.content || [];
 
