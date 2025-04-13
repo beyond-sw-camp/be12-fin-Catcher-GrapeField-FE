@@ -33,11 +33,22 @@ export const useEventsStore = defineStore('events', {
 
 
         //오픈 예정(티켓팅 오픈이 7일 이내인 공연)
-        // //종료 예정(티켓팅 종료가 3일 이내인 공연)
-        async getOpenAndCloseEventList(category, page, size){
+        //종료 예정(티켓팅 종료가 7일 이내인 공연)
+        async getMainEventsTicketSchedule(category, page, size){
             try {
-                const response = await axios.get("/api/events/contents/open", {
+                const response = await axios.get("/api/events/ticket/main", {
                     params: {category: category, page:page, size:size}})
+                return response.data;
+            }catch (error) {
+                console.error("공연/전시 목록 불러오기 에러:", error);
+                return false;
+            }
+        },
+        //오픈예정, 종료예정 더보기 페이지에서 무한 스크롤 형식
+        async getMoreEventsTicketSchedule(type, page, size){
+            try {
+                const response = await axios.get("/api/events/ticket/list", {
+                    params: {type: type, page:page, size:size}})
                 return response.data;
             }catch (error) {
                 console.error("공연/전시 목록 불러오기 에러:", error);
