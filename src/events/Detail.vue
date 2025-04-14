@@ -70,31 +70,44 @@
         </div>
       </section>
     </div>
-  </template>
-  
-  
-  <script setup>
-  import { useRoute } from 'vue-router'
-  import { ref, onMounted, computed } from 'vue'
-  import EventHeaderInfo from './EventHeaderInfo.vue'
-  import EventTabs from './EventDetailTab.vue'
-  import EventDetail from './EventDetail.vue'
-  import eventsData from '../assets/data/events.json'
-  import EventPost from './EventPost.vue'
-  import EventReview from "./EventReview.vue";
+  </div>
+  <!-- 데이터 로드 실패 또는 데이터 없음 (로딩 중이 아닐 때만 표시) -->
+  <div v-else-if="!loadingStore.isLoading" class="error-container">
+    <p>이벤트 정보를 불러올 수 없습니다.</p>
+    <button @click="retryLoading" class="retry-button">다시 시도</button>
+  </div>
+</template>
 
-  import reviews from '/src/assets/data/search/reviews.js'
-  import ReviewCard from '/src/search/ReviewCard.vue'
-  
-  // 1. 라우터에서 id 가져오기
-  const route = useRoute()
-  const id = Number(route.params.id)
-  
-  // 2. JSON에서 이벤트 찾기
-  const event = ref(null)
-  onMounted(() => {
-  const found = eventsData.events.find(e => e.id === id)
-  event.value = found
+
+<script setup>
+import { useRoute } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import EventHeaderInfo from './EventHeaderInfo.vue'
+import EventTabs from './EventDetailTab.vue'
+import EventDetail from './EventDetail.vue'
+import eventsData from '../assets/data/events.json'
+import EventPost from './EventPost.vue'
+import EventReview from "./EventReview.vue";
+
+import reviews from '/public/data/search/reviews.js'
+import ReviewCard from '/src/search/ReviewCard.vue'
+
+import { useEventsStore } from '@/stores/useEventsStore'
+import { useLoadingStore } from '@/stores/useLoadingStore'
+const loadingStore = useLoadingStore()
+
+const eventStore = useEventsStore();
+
+// 1. 라우터에서 id 가져오기
+const route = useRoute()
+const idx = Number(route.params.idx)
+
+// 2. JSON에서 이벤트 찾기
+const event = ref(null)
+const error = ref(null)
+// 초기 데이터 로드
+onMounted(() => {
+  loadEventDetail()
 })
 
 const loadEventDetail = async () => {

@@ -3,9 +3,9 @@ import EventCard from './EventsCardGeneral.vue'
 import PostRow from './PostRow.vue'
 import ReviewCard from './ReviewCard.vue'
 
-import events from '/src/assets/data/search/events.js'
-import posts from '/src/assets/data/search/posts.js'
-import reviews from '/src/assets/data/search/reviews.js'
+import events from '/public/data/search/events.js'
+import posts from '/public/data/search/posts.js'
+import reviews from '/public/data/search/reviews.js'
 </script>
 
 <template>
