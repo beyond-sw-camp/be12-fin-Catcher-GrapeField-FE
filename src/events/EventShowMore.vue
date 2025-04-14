@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isSortView">
+  <div v-if="!queryType">
     <!-- 추천 콘텐츠 섹션 -->
     <div class="mt-6 w-[100%]">
       <!-- <Card title="추천" :cards="combinedCards" :showMoreButton="false" /> -->
@@ -15,8 +15,9 @@
     <!-- 이벤트 카드 리스트: category를 prop으로 전달 -->
     <EventShowMoreList :category="category" :array="array" />
   </div>
-  <div v-else-if="isTypeView">
-    <CardList/>
+  <div v-else class="w-full max-w-[1200px] mx-auto my-8 px-4">
+    <!-- 타입 뷰 (오픈 예정/종료 예정) -->
+    <TypeEventList :type="queryType" />
   </div>
 </template>
 
@@ -27,14 +28,16 @@ import Card from '../main/Card.vue'
 import Category from '../main/Category.vue'
 import EventShowMoreList from './EventShowMoreList.vue'
 import Array from './Array.vue'
-import CardList from '@/main/CardList.vue'
+import TypeEventList from './TypeEventList.vue'
 import cardData from '../assets/data/card.json'
 
 const route = useRoute()
 
-const isSortView = computed(() => !isTypeView.value)  //기본값으로 동작
-const isTypeView = computed(() => !!route.query.type)
+// route.query.type을 직접 참조하는 ref 생성
+const queryType = computed(() => route.query.type || '')
 
+// 타입에 따른 타이틀 계산
+const currentType = computed(() => route.query.type || '')
 // 카테고리 선택 상태
 const category = ref('ALL')
 // 추천, 인기, 신규 선택
@@ -47,7 +50,6 @@ onMounted(() => {
   }
 })
 
-//TODO:오픈 예정, 종료예정 더보기 이동 추가
 // 추천 카드 데이터
 const combinedCards = [
   ...cardData.recommendedCards,

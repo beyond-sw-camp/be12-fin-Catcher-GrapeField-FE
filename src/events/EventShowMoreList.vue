@@ -85,8 +85,6 @@ watch([() => props.category, () => props.array], ([newCategory, newArray]) => {
   events.value = []
   infiniteKey.value++
 })
-
-
 </script>
 
 <style scoped>

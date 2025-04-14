@@ -12,6 +12,7 @@ export const useEventsStore = defineStore('events', {
             try {
                 const response = await axios.get("/api/events/contents/main", {
                     params: { category: category}})
+                console.log(response.data)
                 return response.data;
             }catch (error) {
                 console.error("공연/전시 목록 불러오기 에러:", error);
@@ -31,13 +32,11 @@ export const useEventsStore = defineStore('events', {
             }
         },
 
-
         //오픈 예정(티켓팅 오픈이 7일 이내인 공연)
         //종료 예정(티켓팅 종료가 7일 이내인 공연)
-        async getMainEventsTicketSchedule(category, page, size){
+        async getMainEventsTicketSchedule(){
             try {
-                const response = await axios.get("/api/events/ticket/main", {
-                    params: {category: category, page:page, size:size}})
+                const response = await axios.get("/api/events/ticket/main", {})
                 return response.data;
             }catch (error) {
                 console.error("공연/전시 목록 불러오기 에러:", error);
