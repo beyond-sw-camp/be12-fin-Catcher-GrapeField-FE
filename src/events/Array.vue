@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue'
+import { useLoadingStore } from '@/stores/useLoadingStore'
+const loadingStore = useLoadingStore();
 
 const currentPage = ref(1)
 

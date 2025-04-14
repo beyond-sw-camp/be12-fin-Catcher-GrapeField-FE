@@ -11,13 +11,13 @@
       <div ref="sliderRef" class="flex gap-4 overflow-x-auto scroll-smooth no-scrollbar py-2">
         <div
           v-for="(card, index) in cards"
-          :key="card.id"
+          :key="card.idx"
           class="min-w-[240px] max-w-[240px] bg-white rounded-xl shadow-md flex-shrink-0 flex flex-col"
         >
           <!-- 포스터 비율 2:3 (가로:세로) 영역 설정 -->
-          <router-link :to="`/events/${idx}`" class="w-full pt-[150%] relative rounded-t-xl overflow-hidden">
+          <router-link :to="`/events/${card.idx}`" class="w-full pt-[150%] relative rounded-t-xl overflow-hidden">
             <img 
-              :src="card.imageUrl" 
+              :src="card.posterImgUrl" 
               class="absolute top-0 left-0 w-full h-full object-cover" 
               alt="이벤트 포스터"
             />

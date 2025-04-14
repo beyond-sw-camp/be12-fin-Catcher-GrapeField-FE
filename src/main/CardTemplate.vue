@@ -10,13 +10,14 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import Card from './Card.vue'
-import cardData from '../assets/data/card.json'
 import { useEventsStore } from '@/stores/useEventsStore';
+import { useLoadingStore } from '@/stores/useLoadingStore';
+
 const eventsStore = useEventsStore();
+const loadingStore = useLoadingStore();
 
 const props = defineProps({
     category: {
@@ -29,24 +30,33 @@ const recommendedCards = ref([])
 const popularCards = ref([])
 const newCards = ref([])
 
-const loadEvents = async () => {
+const loadEvents = async (category) => {
     try {
-        const response = await eventsStore.getMainEvents(props.category)
+        loadingStore.startLoading();
+        
+        const response = await eventsStore.getMainEvents(category)
 
         if (response) {
-            recommendedCards.value = response.recommend.content
-            popularCards.value = response.popular.content
-            newCards.value = response.new.content
+            recommendedCards.value = response.recommend?.content || [];
+            popularCards.value = response.popular?.content || [];
+            newCards.value = response.new?.content || [];
         }
     } catch (error) {
-        console.error('공연/전시 목록 불러오기 실패:', error)
+        console.error('공연/전시 목록 불러오기 실패:', error);
+    } finally {
+        loadingStore.stopLoading();
     }
 }
 
 // 최초 1회 로딩
-onMounted(loadEvents)
-// category가 바뀔 때마다 다시 호출
-watch(() => props.category, loadEvents)
+onMounted(() => {
+    loadEvents(props.category);
+})
+
+// category prop이 바뀔 때마다 다시 호출
+watch(() => props.category, (newCategory) => {
+    loadEvents(newCategory);
+}, { immediate: false })
 
 </script>
 
