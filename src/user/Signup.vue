@@ -252,7 +252,8 @@ const signup = async () => {
     return;
   }
   const result = await userStore.signup(form.value);
-  if (result === true) {
+  console.log(result);
+  if (result == true) {
     router.push('/email_verify');
   } else {
     toast("이미 가입한 이메일입니다.", {

@@ -4,6 +4,7 @@ import {useRoute} from 'vue-router'
 import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
 import Sidebar from './common/Sidebar.vue'
+import GlobalLoading from './common/GlobalLoading.vue'
 
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
 const route = useRoute()
@@ -23,6 +24,7 @@ const layoutClass = computed(() => {
     <Header v-if="!isStandalonePage" />
     <div :class="layoutClass">
       <router-view />
+      <GlobalLoading />
     </div>
     <Sidebar v-if="showSidebar && !isStandalonePage" />
     <Footer v-if="!isStandalonePage" />

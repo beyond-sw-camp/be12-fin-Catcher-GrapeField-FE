@@ -1,266 +1,111 @@
 <template>
-  <div class="slider-wrapper">
-    <div class="slider-header">
-      <h2>{{ title }}</h2>
-      <button v-if="showMoreButton" class="more-btn" @click="goToShowMore">더보기</button>
+  <div class="w-full max-w-[70vw] mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-zinc-900">{{ title }}</h2>
+      <button v-if="showMoreButton" @click="goToShowMore" class="text-purple-800 font-bold">더보기</button>
     </div>
 
-    <div class="slider">
-      <button class="nav prev" @click="prevPage" :disabled="currentPage === 0">
-        &#10094;
-      </button>
-
-      <div class="cards-view">
-        <div class="card" v-for="(card, index) in visibleCards" :key="card.id">
-          <div class="image-wrapper">
-            <img :src="card.imageUrl" alt="이미지" />
-            <div v-if="card.badge" class="badge" :class="card.badgeType">
-              {{ card.badge }}
-            </div>
-          </div>
-          <div class="info">
-            <h3 class="title">{{ card.title }}</h3>
-            <p class="meta">{{ card.location }} | {{ card.date }}</p>
-            <div class="bottom">
-              <button class="details-btn">더보기</button>
-              <div class="stats">
-                <span><img src="../assets/icons/empty-heart.png" /> {{ card.likes }}</span>
-                <span><img src="../assets/icons/comment2.png" /> {{ card.comments }}</span>
-              </div>
-            </div>
+    <div class="relative px-12"> <!-- 좌우 버튼 공간 확보를 위해 패딩 추가 -->
+      <button class="nav absolute left-0 top-1/2 -translate-y-1/2" @click="scroll('left')">&#10094;</button>
+      
+      <div ref="sliderRef" class="flex gap-4 overflow-x-auto scroll-smooth no-scrollbar py-2">
+        <div
+          v-for="(card, index) in cards"
+          :key="card.idx"
+          class="min-w-[240px] max-w-[240px] bg-white rounded-xl shadow-md flex-shrink-0 flex flex-col"
+        >
+          <!-- 포스터 비율 2:3 (가로:세로) 영역 설정 -->
+          <router-link :to="`/events/${card.idx}`" class="w-full pt-[150%] relative rounded-t-xl overflow-hidden">
+            <img 
+              :src="BASE_IMAGE_URL + encodeURIComponent(card.posterImgUrl)"
+              class="absolute top-0 left-0 w-full h-full object-cover" 
+              alt="이벤트 포스터"
+            />
+          </router-link>
+          <div class="p-3 flex-grow">
+            <h3 class="font-semibold text-zinc-800 truncate">{{ card.title }}</h3>
+            <p class="text-sm text-zinc-500 truncate">{{ card.location }}</p>
+            <p class="text-sm text-zinc-500 truncate">{{ card.date }}</p>
           </div>
         </div>
       </div>
-
-      <button class="nav next" @click="nextPage" :disabled="currentPage >= maxPage">
-        &#10095;
-      </button>
+      
+      <button class="nav absolute right-0 top-1/2 -translate-y-1/2" @click="scroll('right')">&#10095;</button>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: String,
-    cards: Array,
-    showMoreButton: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  data() {
-    return {
-      currentPage: 0,
-      windowWidth: window.innerWidth,
-    };
-  },
-  computed: {
-    itemsPerPage() {
-      if (this.windowWidth < 768) return 1;
-      else if (this.windowWidth < 1024) return 2;
-      else return 3;
-    },
-    maxPage() {
-      return Math.ceil(this.cards.length / this.itemsPerPage) - 1;
-    },
-    visibleCards() {
-      const start = this.currentPage * this.itemsPerPage;
-      return this.cards.slice(start, start + this.itemsPerPage);
-    },
-  },
-  mounted() {
-    window.addEventListener("resize", this.onResize);
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.onResize);
-  },
-  methods: {
-    onResize() {
-      this.windowWidth = window.innerWidth;
-      if (this.currentPage > this.maxPage) {
-        this.currentPage = this.maxPage;
-      }
-    },
-    prevPage() {
-      if (this.currentPage > 0) this.currentPage--;
-    },
-    nextPage() {
-      if (this.currentPage < this.maxPage) this.currentPage++;
-    },
-    goToShowMore() {
-      this.$router.push("/events");
-    },
-  },
-};
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const props = defineProps({
+  title: String,
+  cards: Array,
+  showMoreButton: { type: Boolean, default: true },
+})
+
+const router = useRouter()
+const sliderRef = ref(null)
+
+//NOTE: 이미지 링크 임의 설정
+const BASE_IMAGE_URL = 'http://192.0.10.101/img/'
+
+const scroll = (direction) => {
+  const container = sliderRef.value
+  const cardWidth = container.querySelector('div')?.offsetWidth || 240
+  const scrollAmount = cardWidth + 16 // 카드 너비 + gap
+  
+  if (direction === 'left') {
+    container.scrollLeft -= scrollAmount
+  } else {
+    container.scrollLeft += scrollAmount
+  }
+}
+
+const goToShowMore = () => {
+  router.push({ path: '/events', query: { sort: titleToSortKey(props.title) } })
+}
+
+const titleToSortKey = (title) => {
+  switch (title) {
+    case '추천':
+      return 'recommend'
+    case '인기':
+      return 'popular'
+    case '신규':
+      return 'new'
+    default:
+      return 'recommend'
+  }
+}
 </script>
 
 <style scoped>
-.slider-wrapper {
-  width: 100%;
-  max-width: 70vw;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.slider-header h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #27272a;
-}
-
-.more-btn {
-  background: none;
-  border: none;
-  color: #6b21a8;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.slider {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.cards-view {
-  display: flex;
-  gap: 1rem;
-  overflow: hidden;
-  flex: 1;
-}
-
-.card {
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  min-width: 100%;
-  max-width: 100%;
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  height: 400px;
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .card {
-    min-width: calc(50% - 0.5rem);
-    max-width: calc(50% - 0.5rem);
-  }
-}
-
-@media (min-width: 1024px) {
-  .card {
-    min-width: calc(33.333% - 0.67rem);
-    max-width: calc(33.333% - 0.67rem);
-  }
-}
-
-.image-wrapper {
-  height: 60%;
-  position: relative;
-}
-
-.image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.badge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  background: #22c55e;
-  color: white;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-.info {
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  height: 40%;
-}
-
-.title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #27272a;
-}
-
-.meta {
-  font-size: 0.85rem;
-  color: #737373;
-  margin-bottom: auto;
-}
-
-.bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.details-btn {
-  background: #6b21a8;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.4rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.details-btn:hover {
-  background: #581c87;
-}
-
-.stats {
-  display: flex;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: #737373;
-}
-
-.stats img {
-  height: 1rem;
-  width: 1rem;
-  vertical-align: middle;
-}
-
 .nav {
-  background: white;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  color: #6b21a8;
   width: 2.5rem;
   height: 2.5rem;
-  font-size: 1.5rem;
-  color: #6b21a8;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 1;
+  z-index: 10;
+  border: none;
 }
 
-.nav:hover:not(:disabled) {
-  background: #f3f4f6;
-  transform: scale(1.1);
+/* 스크롤바 숨기기 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.nav:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
