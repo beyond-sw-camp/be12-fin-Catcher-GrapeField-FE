@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import chatData from '@/assets/data/chat.json'
+import { connect, stompClient } from '@/utils/webSocketClient'
 
 const props = defineProps({
   id: {
@@ -19,6 +20,9 @@ const highlightedTimes = ref([])
 const newMessage = ref('')
 const chatBody = ref(null)
 const room = ref(null)
+const sendUserIdx = 5 // 🟡 테스트용 사용자, JWT 로그인 연동 전까지 더미로 사용
+
+let subscription = null
 
 function loadChatRoomData() {
   const roomId = Number(props.id)
@@ -57,51 +61,30 @@ function formatHighlightTime(date) {
 }
 
 function sendMessage() {
-  if (!newMessage.value.trim()) return
+  console.log('[sendMessage 호출]', newMessage.value); // ✅ 호출 확인 로그
+  // if (!newMessage.value.trim() || !stompClient?.connected) return
 
-  const message = {
-    id: Date.now(),
-    sender: '나',
-    content: newMessage.value,
-    timestamp: new Date(),
-    isMe: true
+  if (!newMessage.value.trim()) {
+    console.warn('빈 메시지입니다.');
+    return;
   }
-
-  messages.value.push(message)
-  newMessage.value = ''
-
-  nextTick(() => {
-    scrollToBottom()
+    if (!stompClient || !stompClient.connected) {
+    console.error('STOMP 연결이 안되어 있음');
+    return;
+  }
+  const messagePayload = {
+    roomIdx: props.id,
+    sendUserIdx: sendUserIdx,
+    content: newMessage.value
+  }
+  console.log('[전송할 메시지]', messagePayload); // ✅ 전송 직전 확인
+  // STOMP 경로로 메시지 전송
+  stompClient.publish({
+    destination: `/app/chat.send.${props.id}`,
+    body: JSON.stringify(messagePayload)
   })
 
-  setTimeout(() => {
-    const autoResponse = {
-      id: Date.now() + 1,
-      sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
-      content: getRandomResponse(),
-      timestamp: new Date(),
-      avatar: `/assets/icons/avatar${Math.floor(Math.random() * 6) + 1}.png`,
-      isMe: false
-    }
-
-    messages.value.push(autoResponse)
-    nextTick(() => {
-      scrollToBottom()
-    })
-  }, 1000)
-}
-
-function getRandomResponse() {
-  const responses = [
-    '네, 지금 공연장 분위기가 정말 좋습니다!',
-    '메인 홀 우측이 잘 보이는 것 같아요.',
-    '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
-    '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
-    '오늘 특별 게스트도 온다는 소문이 있어요!',
-    '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
-    '공연 후 사인회는 로비에서 진행된다고 합니다.'
-  ]
-  return responses[Math.floor(Math.random() * responses.length)]
+  newMessage.value = ''
 }
 
 function scrollToBottom() {
@@ -118,11 +101,41 @@ function goBack() {
   router.push('/chat-list')
 }
 
+// ✅ 메시지 수신 시 처리 함수
+function handleIncomingMessage(frame) {
+  const msg = JSON.parse(frame.body)
+  const newMsg = {
+    id: Date.now(),
+    sender: `관람객 ${msg.sendUserIdx}`,
+    content: msg.content,
+    timestamp: new Date(),
+    isMe: msg.sendUserIdx === sendUserIdx
+  }
+  messages.value.push(newMsg)
+  nextTick(scrollToBottom)
+}
+
 onMounted(() => {
   loadChatRoomData()
   scrollToBottom()
+
+  connect((client) => {
+    const topic = `/topic/chat.room.${props.id}`
+    subscription = client.subscribe(topic, handleIncomingMessage)
+    console.log(`[STOMP] 구독 완료: ${topic}`)
+  })
+})
+
+// 🧹 컴포넌트 종료 시 구독 해제
+onBeforeUnmount(() => {
+  if (subscription) {
+    subscription.unsubscribe()
+    console.log(`[STOMP] 구독 해제됨`)
+  }
 })
 </script>
+
+
 
 <template>
   <div class="chat-room-container">
