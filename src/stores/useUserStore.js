@@ -89,12 +89,11 @@ export const useUserStore = defineStore('user', {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true  // CSRF 토큰이 필요한 경우를 위해 추가
         });
-        return { success: true, data: response.data };
+        return response.data;
       } catch (error) {
         const message = error.response?.data?.message || '회원가입 실패';
-        return { success: false, message };
+        console.log(error);
       }
     },
     
