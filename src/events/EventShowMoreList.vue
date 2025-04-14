@@ -7,7 +7,7 @@
       :venue="event.venue"
       :startDate="event.startDate"
       :endDate="event.endDate"
-      :posterUrl="event.posterUrl"
+      :posterUrl="BASE_IMAGE_URL + encodeURIComponent(event.posterImgUrl)"
     />
   </div>
   <InfiniteLoading :key="infiniteKey" @infinite="loadEvents">
@@ -85,6 +85,9 @@ watch([() => props.category, () => props.array], ([newCategory, newArray]) => {
   events.value = []
   infiniteKey.value++
 })
+
+//NOTE: 이미지 링크 임의 설정
+const BASE_IMAGE_URL = 'http://192.0.10.101/img/'
 </script>
 
 <style scoped>

@@ -54,6 +54,21 @@
       </div>
       <hr class="mt-6 border-gray-300" />
     </section>
+    <!--제작, 후원-->
+    <section>
+      <h2 class="text-lg font-bold mb-3">제작, 후원</h2>
+      <div class="flex flex-wrap gap-4">
+        <div
+          v-for="member in event.cast"
+          :key="member.name"
+          class="bg-gray-100 px-4 py-2 rounded-md"
+        >
+          <p class="font-semibold">{{ member.name }}</p>
+          <p class="text-sm text-gray-600">{{ member.role }}</p>
+        </div>
+      </div>
+      <hr class="mt-6 border-gray-300" />
+    </section>
 
     <!-- 공연 소개 -->
     <section>

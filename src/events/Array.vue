@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 const loadingStore = useLoadingStore();
-
 const currentPage = ref(1)
 
 const props = defineProps({
@@ -16,9 +15,6 @@ const emit = defineEmits(['update:modelValue'])
 // 정렬 옵션 선택 시 상태 업데이트 및 데이터 불러오기
 const selectOption = async (option) => {
     emit('update:modelValue', option) // 외부에도 반영
-    loadingStore.startLoading()
-    await portfolioList.getPortfolioList(currentPage.value - 1, option)
-    loadingStore.stopLoading()
 }
 </script>
 

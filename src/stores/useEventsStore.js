@@ -54,5 +54,17 @@ export const useEventsStore = defineStore('events', {
                 return false;
             }
         },
+
+        async getEventDetail(idx) {
+            try {
+                const response = await axios.get("/api/events/detail", {
+                    params: { idx: idx}})
+                console.log(response.data)
+                return response.data;
+            }catch (error) {
+                console.error("상세 정보 불러오기 에러:", error);
+                return false;
+            }
+        },
     }
 })

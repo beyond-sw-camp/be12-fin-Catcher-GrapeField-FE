@@ -17,7 +17,7 @@
           <!-- 포스터 비율 2:3 (가로:세로) 영역 설정 -->
           <router-link :to="`/events/${card.idx}`" class="w-full pt-[150%] relative rounded-t-xl overflow-hidden">
             <img 
-              :src="card.posterImgUrl" 
+              :src="BASE_IMAGE_URL + encodeURIComponent(card.posterImgUrl)"
               class="absolute top-0 left-0 w-full h-full object-cover" 
               alt="이벤트 포스터"
             />
@@ -47,6 +47,9 @@ const props = defineProps({
 
 const router = useRouter()
 const sliderRef = ref(null)
+
+//NOTE: 이미지 링크 임의 설정
+const BASE_IMAGE_URL = 'http://192.0.10.101/img/'
 
 const scroll = (direction) => {
   const container = sliderRef.value
