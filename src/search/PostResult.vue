@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import PostCard from './PostList.vue'
-import postData from '/public/data/search/posts.js'
+import postData from '/src/assets/data/search/posts.js'
 
 // 페이지네이션 상태
 const currentPage = ref(1)
