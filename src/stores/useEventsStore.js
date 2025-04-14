@@ -57,12 +57,31 @@ export const useEventsStore = defineStore('events', {
 
         async getEventDetail(idx) {
             try {
-                const response = await axios.get("/api/events/detail", {
-                    params: { idx: idx}})
+                const response = await axios.get(`/api/events/${idx}`, {})
                 console.log(response.data)
                 return response.data;
             }catch (error) {
                 console.error("상세 정보 불러오기 에러:", error);
+                return false;
+            }
+        },
+
+        async getParticipantDetail(idx) {
+            try {
+                const response = await axios.get(`/api/participant/${idx}`, {});
+                return response.data;
+            }catch (error) {
+                console.error("출연진, 기업 정보 불러오기 에러:", error);
+                return false;
+            }
+        },
+
+        async getEventDetailImages(idx) {
+            try {
+                const response = await axios.get(`/api/events/images/${idx}`, {});
+                return response.data;
+            }catch (error) {
+                console.error("출연진, 기업 정보 불러오기 에러:", error);
                 return false;
             }
         },

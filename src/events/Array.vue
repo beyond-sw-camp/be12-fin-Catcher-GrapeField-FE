@@ -19,7 +19,7 @@ const selectOption = async (option) => {
 </script>
 
 <template>
-    <div class="mb-0 px-4 py-2 box-border w-full max-w-[70vw] mx-auto p-4 box-border">
+    <div class="mb-0 px-4 py-2 box-border w-full max-w-[70vw] mx-auto p-4">
         <div class="inline-flex rounded-md overflow-hidden">
             <label data-cy="showView"
                 class="px-3 py-2 text-xs font-normal text-center cursor-pointer select-none bg-white text-gray-900 border border-gray-200 shadow-sm transition-all hover:bg-gray-100 first:rounded-l-md last:rounded-r-md"
