@@ -101,7 +101,7 @@
   import EventPost from './EventPost.vue'
   import EventReview from "./EventReview.vue";
 
-  import reviews from '/public/data/search/reviews.js'
+  import reviews from '/src/assets/data/search/reviews.js'
   import ReviewCard from '/src/search/ReviewCard.vue'
   
   // 1. 라우터에서 id 가져오기
