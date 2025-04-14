@@ -1,5 +1,5 @@
 <script setup>
-import reviews from '/src/assets/data/search/reviews.js'
+import reviews from '/public/data/search/reviews.js'
 import ReviewCard from './ReviewCard.vue'
 import { ref, computed } from 'vue'
 
