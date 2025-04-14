@@ -1,7 +1,7 @@
 {
   "events": [
     {
-      "id": 1,
+      "idx": 1,
       "title": "꽃의 비밀",
       "genre": "연극",
       "posterUrl": "/images/flower-secret.jpg",
