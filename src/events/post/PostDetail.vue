@@ -37,11 +37,21 @@
                 </div>
             </div>
         </div>
+        <!-- 버튼 영역 -->
+        <div class="flex justify-end mt-6 mb-4 space-x-2">
+            <button v-if="post.editable" @click="editPost"
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                수정
+            </button>
+            <button v-if="post.editable" @click="deletePost"
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-red-600 hover:text-white">
+                삭제
+            </button>
+        </div>
 
         <!-- 게시글 내용 -->
-        <div class="mb-8">
+        <div class="mb-8 px-5">
             <div class="prose max-w-none mb-6" v-html="formattedContent"></div>
-
             <!-- 이미지 첨부파일 -->
             <div v-if="post.images && post.images.length > 0" class="my-6">
                 <div v-for="(image, index) in post.images" :key="index" class="my-4">
@@ -67,21 +77,6 @@
                 </ul>
             </div>
         </div>
-
-        <!-- 버튼 영역 -->
-        <div class="flex justify-between mt-8 mb-6">
-            <div class="space-x-2">
-                <button v-if="post.editable" @click="deletePost"
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-                    삭제
-                </button>
-                <button v-if="post.editable" @click="editPost"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-                    수정
-                </button>
-            </div>
-        </div>
-
         <!-- 구분선 -->
         <hr class="my-6 border-gray-200">
 
