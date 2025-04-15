@@ -5,6 +5,9 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  define: {
+    global: 'window', // 꼭 'window'로 해줘야 >> 안 그러면 sockJS 충돌해서 연결 안 됨.
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -20,3 +23,7 @@ export default defineConfig({
     }
   }
 })
+
+
+
+
