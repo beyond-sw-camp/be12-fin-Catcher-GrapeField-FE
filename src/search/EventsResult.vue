@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import eventData from '/src/assets/data/search/events.js'
+import eventData from '/public/data/search/events.js'
 import EventsCard from './EventsCard.vue'
 const currentPage = ref(1)
 const itemsPerPage = 12

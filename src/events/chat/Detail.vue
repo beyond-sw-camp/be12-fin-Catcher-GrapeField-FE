@@ -134,63 +134,55 @@ onBeforeUnmount(() => {
   }
 })
 </script>
-
-
-
 <template>
-  <div class="chat-room-container">
-    <div class="chat-header">
-      <div class="chat-title">
-        <button class="back-button" @click="goBack">
-          <span>&larr;</span>
-        </button>
-        <h2 style="color: white">{{ roomTitle }}</h2>
-      </div>
-      <div class="chat-info">
-        <span class="participant-count">{{ participantCount }}명 참여중</span>
-      </div>
-    </div>
+    <div class="chat-room-container">
+        <div class="chat-header">
+            <div class="chat-title">
+                <button class="back-button" @click="goBack">
+                    <span>&larr;</span>
+                </button>
+                <h2 style="color: white">{{ roomTitle }}</h2>
 
-    <div class="chat-body" ref="chatBody">
-      <div class="message-list">
-        <div
-            v-for="(message, index) in messages"
-            :key="index"
-            :class="['message-container', message.isMe ? 'my-message' : '']"
-        >
-          <div class="message-avatar" v-if="!message.isMe">
-            <img :src="message.avatar || '../assets/icons/default-avatar.png'" alt="프로필" />
-          </div>
-          <div class="message-content">
-            <div class="message-sender" v-if="!message.isMe">{{ message.sender }}</div>
-            <div class="message-bubble">{{ message.content }}</div>
-            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
-          </div>
+            </div>
+            <div class="chat-info">
+                <span class="participant-count">{{ participantCount }}명 참여중</span>
+            </div>
         </div>
-      </div>
 
-      <div v-if="highlightedTimes.length > 0" class="highlight-section">
-        <h3>🔥 하이라이트 시간대</h3>
-        <div class="highlight-list">
-          <div
-              v-for="(highlight, index) in highlightedTimes"
-              :key="index"
-              class="highlight-item"
-              @click="scrollToHighlight(highlight.id)"
-          >
-            {{ formatHighlightTime(highlight.time) }}
-          </div>
+        <div class="chat-body" ref="chatBody">
+            <div class="message-list">
+                <div v-for="(message, index) in messages" :key="index"
+                    :class="['message-container', message.isMe ? 'my-message' : '']">
+                    <div class="message-avatar" v-if="!message.isMe">
+                        <img :src="message.avatar || '../assets/icons/default-avatar.png'" alt="프로필" />
+                    </div>
+                    <div class="message-content">
+                        <div class="message-sender" v-if="!message.isMe">{{ message.sender }}</div>
+                        <div class="message-bubble">
+                            {{ message.content }}
+                        </div>
+                        <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="highlightedTimes.length > 0" class="highlight-section">
+                <h3>🔥 하이라이트 시간대</h3>
+                <div class="highlight-list">
+                    <div v-for="(highlight, index) in highlightedTimes" :key="index" class="highlight-item"
+                        @click="scrollToHighlight(highlight.id)">
+                        {{ formatHighlightTime(highlight.time) }}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="chat-input">
-      <input type="text" v-model="newMessage" placeholder="메시지 입력..." @keyup.enter="sendMessage" />
-      <button class="send-button" @click="sendMessage">전송</button>
+        <div class="chat-input">
+            <input type="text" v-model="newMessage" placeholder="메시지 입력..." @keyup.enter="sendMessage" />
+            <button class="send-button" @click="sendMessage">전송</button>
+        </div>
     </div>
-  </div>
 </template>
-
 
 <style scoped>
 .chat-room-container {
