@@ -10,7 +10,7 @@
     <Category v-model="category" />
 
     <!--콘텐츠 정렬 기준-->
-    <Array v-model="array"/>
+    <Array v-model="array" />
 
     <!-- 이벤트 카드 리스트: category를 prop으로 전달 -->
     <EventShowMoreList :category="category" :array="array" />
@@ -41,7 +41,7 @@ const currentType = computed(() => route.query.type || '')
 // 카테고리 선택 상태
 const category = ref('ALL')
 // 추천, 인기, 신규 선택
-const array=ref('recommend')
+const array = ref('recommend')
 onMounted(() => {
   const validSorts = ['recommend', 'popular', 'new']
   const q = route.query.sort
