@@ -4,10 +4,10 @@ export const usePostStore = defineStore('post', {
     state: () => ({
     }),
     actions: {
-        async getPostList(idx, page) {
+        async getPostList(idx, page, type) {
             try {
             const response = await axios.get(`/api/post/list/${idx}`, {
-                params: { page: page }
+                params: { page: page, type:type}
             })
             return response.data;
             } catch (error) {
