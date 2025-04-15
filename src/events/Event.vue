@@ -14,8 +14,7 @@
     </div>
     <!--게시판 탭-->
     <div v-if="selectedTab === '게시판'">
-      <EventPost v-if="isListMode" />
-      <EventDetail v-else />
+      <router-view :idx="idx"></router-view>
     </div>
     <div v-if="selectedTab === '한줄평'" class="flex flex-col gap-y-3">
       <!-- 리뷰 카드 리스트 -->
@@ -31,13 +30,13 @@
 
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import EventHeaderInfo from './EventHeaderInfo.vue'
 import EventTabs from './EventDetailTab.vue'
 import EventDetail from './EventDetail.vue'
 import EventPost from './post/EventPost.vue'
-import PostDetail from "@/events/post/Detail.vue"
+import PostDetail from "@/events/post/PostDetail.vue"
 import EventReview from "./EventReview.vue";
 
 import { useEventsStore } from '@/stores/useEventsStore'
@@ -48,7 +47,8 @@ const eventStore = useEventsStore();
 
 // 1. 라우터에서 id 가져오기
 const route = useRoute()
-const idx = Number(route.params.idx)
+const router = useRouter();
+const idx = Number(route.params.idx) //이벤트 idx
 
 const event = ref(null)
 const error = ref(null)
@@ -80,7 +80,6 @@ const retryLoading = () => {
 
 // 탭 상태 관리
 const selectedTab = ref('상세 정보')
-const isListMode = ref(true)
 </script>
 
 <style scoped>

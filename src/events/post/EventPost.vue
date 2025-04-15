@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6 pb-3 w-full">
+  <div class="w-full">
     <!-- 탭 버튼 -->
     <div class="flex space-x-3 mb-4">
       <button v-for="tab in tabs" :key="tab" class="px-4 py-1 rounded-full text-sm"
@@ -15,7 +15,8 @@
         <input type="text" placeholder="제목, 내용, 작성자 검색" class="border px-4 py-2 rounded w-full" />
         <button class="bg-purple-600 text-white px-4 py-2 rounded whitespace-nowrap">검색</button>
       </div>
-      <button class="bg-purple-600 text-white px-4 py-2 rounded">글쓰기</button>
+      <!--TODO : 게시글 등록 페이지 추가 필요-->
+      <button class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister()">글쓰기</button>
     </div>
 
     <!-- 게시판 테이블 -->
@@ -37,7 +38,11 @@
               {{ getPostTypeDisplay(row.postType) }}
             </span>
           </td>
-          <td class="text-left pl-4">{{ row.title }}</td>
+          <td class="text-left pl-4">
+            <router-link :to="`/events/${idx}/post/${row.idx}`">
+              {{ row.title }}
+            </router-link>
+          </td>
           <td>{{ row.writer }}</td>
           <td>{{ formatDate(row.createdAt) }}</td>
           <td>{{ row.viewCnt }}</td>
@@ -76,17 +81,20 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { usePostStore } from '@/stores/usePostStore'
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
+const router = useRouter();
 const postStore = usePostStore();
 
 // 한글 표시와 enum 값 매핑
 const tabMapping = {
   '전체': 'ALL',
   '공지': 'NOTICE',
+  '정보': 'INFO',
+  '잡담': 'CHAT',
   '후기': 'REVIEW',
   '질문': 'QUESTION',
-  '정보': 'INFO',
-  '잡담': 'CHAT'
 };
 
 // 화면에 표시할 탭 목록 (한글)
@@ -159,6 +167,11 @@ function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
+}
+
+function goPostRegister() {
+  postStore.setCurrentBoardIdx(props.idx);
+  router.push({ name: 'PostRegister' });
 }
 </script>
 <style scoped>
