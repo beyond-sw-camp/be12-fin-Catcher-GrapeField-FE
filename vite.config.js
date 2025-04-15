@@ -20,6 +20,13 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, "")
       },
+    },
+    ws: { //웹소켓용 프록시
+      "/ws": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        ws: true,
+      }
     }
   }
 })
