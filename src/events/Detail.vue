@@ -86,7 +86,7 @@ import EventHeaderInfo from './EventHeaderInfo.vue'
 import EventTabs from './EventDetailTab.vue'
 import EventDetail from './EventDetail.vue'
 import eventsData from '../assets/data/events.json'
-import EventPost from './EventPost.vue'
+import EventPost from './post/EventPost.vue'
 import EventReview from "./EventReview.vue";
 
 import reviews from '/public/data/search/reviews.js'
