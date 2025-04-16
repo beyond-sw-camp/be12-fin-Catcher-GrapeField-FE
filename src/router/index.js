@@ -50,15 +50,18 @@ const routes = [
     //사용자 페이지(공연/전시 신청)
     { path: '/events/request', component: EventsRegister },
     { path: "/events", name: 'EventShowMore', component: EventShowMore},
-    { path: '/events/:idx',
+    { path: '/events/:eventIdx',
       component: Event,
       children: [
         { path: '', // 기본 경로 (게시글 목록)
           name: 'EventPostList',
           component: () => import('@/events/post/EventPost.vue')},
-        { path: 'post/:idx', // 게시글 상세
+        { path: 'post/:postIdx', // 게시글 상세
           name: 'EventPostDetail',
-          component: () => import('@/events/post/PostDetail.vue'), props: true}
+          component: () => import('@/events/post/PostDetail.vue'), props: route => ({
+            postIdx: Number(route.params.postIdx),
+            eventIdx: Number(route.params.eventIdx),
+          }),}
       ]
     },
     { path: "/post/register", name:'PostRegister', component: PostRegister},

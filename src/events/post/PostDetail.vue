@@ -51,32 +51,18 @@
 
         <!-- 게시글 내용 -->
         <div class="mb-8 px-5">
+            <!-- 마크다운 또는 HTML 본문 -->
             <div class="prose max-w-none mb-6" v-html="formattedContent"></div>
-            <!-- 이미지 첨부파일 -->
+
+            <!-- 이미지 렌더링 (이미지 서버 baseURL + 상대경로) -->
             <div v-if="post.images && post.images.length > 0" class="my-6">
-                <div v-for="(image, index) in post.images" :key="index" class="my-4">
-                    <div class="bg-purple-50 p-4 rounded-lg flex justify-center">
-                        <img :src="image.url" :alt="image.name || '첨부 이미지'" class="max-h-96 object-contain">
-                    </div>
+                <div v-for="(image, index) in post.images" :key="index"
+                    class="my-4 bg-purple-50 p-4 rounded-lg flex justify-center">
+                    <img :src="baseImageUrl + image" alt="본문 이미지" class="max-h-96 object-contain" />
                 </div>
             </div>
-
-            <!-- 첨부파일 -->
-            <div v-if="post.attachments && post.attachments.length > 0" class="mt-8 bg-gray-50 p-4 rounded-lg">
-                <h3 class="font-medium mb-2">첨부파일</h3>
-                <ul class="space-y-2">
-                    <li v-for="(file, index) in post.attachments" :key="index" class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                        </svg>
-                        <a :href="file.url" class="text-blue-600 hover:underline truncate">{{ file.name }}</a>
-                        <span class="ml-2 text-xs text-gray-500">{{ formatFileSize(file.size) }}</span>
-                    </li>
-                </ul>
-            </div>
         </div>
+
         <!-- 구분선 -->
         <hr class="my-6 border-gray-200">
 
@@ -88,7 +74,7 @@
         </div>
 
         <!-- 게시글 목록 -->
-        <EventPost :idx="idx" :isSubComponent="true" />
+        <EventPost :eventIdx="eventIdx" :isSubComponent="true" />
     </div>
 </template>
 
@@ -106,10 +92,14 @@ const router = useRouter();
 const postStore = usePostStore();
 const userStore = useUserStore();
 
-const props = defineProps({ idx: Number });
+const props = defineProps({
+    eventIdx: Number,
+    postIdx: Number
+});
+
 
 const post = ref({
-    idx: null,
+    postIdx: null,
     title: '',
     content: '',
     username: '',
@@ -158,25 +148,15 @@ const formattedContent = computed(() => {
     return DOMPurify.sanitize(rawHtml);
 });
 
-// 게시글 불러오기
+//NOTE: 이미지 링크 임의 설정(.env파일)
+const baseImageUrl = import.meta.env.VITE_BASE_IMAGE_URL;
+
 const fetchPost = async () => {
     try {
         loading.value = true;
-        const postIdx = route.params.idx;
-        const data = await postStore.getPostDetail(postIdx);
-
+        const data = await postStore.getPostDetail(props.postIdx);
         if (data) {
             post.value = data;
-            console.log(post.value);
-            // 이미지와 일반 첨부파일 분리 (API 응답에 따라 조정 필요)
-            if (data.attachments) {
-                post.value.images = data.attachments.filter(file =>
-                    file.contentType && file.contentType.startsWith('image/')
-                );
-                post.value.attachments = data.attachments.filter(file =>
-                    !file.contentType || !file.contentType.startsWith('image/')
-                );
-            }
         }
     } catch (err) {
         error.value = '게시글을 불러오는 중 오류가 발생했습니다.';
@@ -185,14 +165,15 @@ const fetchPost = async () => {
         loading.value = false;
     }
 };
+
 // 컴포넌트 마운트 시 게시글 불러오기
 onMounted(fetchPost);
 
 // 라우트 파라미터가 변경될 때마다 게시글 다시 불러오기
-watch(() => route.params.idx, (newIdx, oldIdx) => {
+watch(() => props.postIdx, (newIdx, oldIdx) => {
     if (newIdx !== oldIdx) {
         fetchPost();
-        window.scrollTo(0, 0); // 페이지 상단으로 스크롤
+        window.scrollTo(0, 0);
     }
 }, { immediate: true });
 
@@ -204,24 +185,14 @@ const formatDate = (dateString) => {
     return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
-// 파일 크기 포맷팅
-const formatFileSize = (bytes) => {
-    if (!bytes) return '';
-
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 Byte';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-};
-
 // 목록으로 돌아가기
 function backToList() {
-    router.push(`/events/${props.idx}`);
+    router.push(`/events/${props.eventIdx}`);
 }
 
 // 게시글 수정
 const editPost = () => {
-    router.push(`/post/edit/${post.value.idx}`);
+    router.push(`/post/edit/${props.postIdx}`);
 };
 
 // 게시글 삭제
@@ -229,7 +200,7 @@ const deletePost = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-        await postStore.deletePost(post.value.idx);
+        await postStore.deletePost(post.value.postIdx);
         alert('게시글이 삭제되었습니다.');
         backToList();
     } catch (err) {

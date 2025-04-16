@@ -141,11 +141,13 @@ import { ref, reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePostStore } from '@/stores/usePostStore'
 import { useUserStore } from '@/stores/useUserStore'
+import { useEventsStore } from '@/stores/useEventsStore';
 
 const route = useRoute()
 const router = useRouter();
 const postStore = usePostStore();
 const userStore = useUserStore();
+const eventStore = useEventsStore();
 
 const boardIdx = postStore.currentBoardIdx;
 
@@ -179,7 +181,6 @@ const postData = reactive({
   postType: isAdmin.value ? 'NOTICE' : 'CHAT', // 관리자면 기본값을 공지로, 아니면 잡담
   title: '',
   content: '',
-  isVisible: true
 });
 
 // 첨부 파일 관련
@@ -275,36 +276,40 @@ const submitPost = async () => {
     alert('내용을 입력해주세요.');
     return;
   }
-
   // 권한 검증
   if (postData.postType === 'NOTICE' && !isAdmin.value) {
     alert('공지사항은 관리자만 작성할 수 있습니다.');
     return;
   }
-
   try {
     // FormData 생성
     const formData = new FormData();
-    formData.append('postType', postData.postType);
-    formData.append('title', postData.title);
-    formData.append('content', postData.content);
-    formData.append('isVisible', postData.isVisible);
-    formData.append('boardIdx', boardIdx);
-
-    // 첨부 파일 추가
-    attachedFiles.value.forEach(file => {
-      formData.append('files', file);
+    const requestData = {
+      postType: postData.postType,
+      title: postData.title,
+      content: postData.content,
+      boardIdx: boardIdx
+    };
+    const requestBlob = new Blob([JSON.stringify(requestData)], {
+      type: 'application/json'
     });
+    formData.append('request', requestBlob);
 
+    // 첨부 파일 추가 - 이름을 'images'로 변경
+    attachedFiles.value.forEach(file => {
+      formData.append('images', file);
+    });
     // API 호출
     const response = await postStore.setPost(formData);
-
+    const postIdx = response;
     alert('게시글이 등록되었습니다.');
-    router.push(`/events/${boardIdx}`);
+    eventStore.setTab('게시판');
+    router.push(`/events/${boardIdx}/post/${postIdx}`);
   } catch (error) {
-    console.error('게시글 등록 오류:', error);
-    alert('게시글 등록 중 오류가 발생했습니다.');
-  }
+  console.error('게시글 등록 오류:', error);
+  const errorMsg = error.response?.data?.message || '게시글 등록 중 오류가 발생했습니다.';
+  alert(errorMsg);
+}
 };
 
 // 취소 - 이전 페이지로 이동
