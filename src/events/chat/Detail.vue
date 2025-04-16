@@ -10,8 +10,29 @@ const props = defineProps({
     required: true
   }
 })
+const router = useRouter();
 
-const router = useRouter()
+/*
+// 토큰 변수 설정
+const token = ref(null);
+const cookieToken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('ATOKEN='));
+if (cookieToken) {
+  token.value = cookieToken.split('=')[1];
+  console.log('✅ 쿠키에 토큰 있음:', token.value);
+} else {
+  console.log('❌ ATOKEN 없음 (쿠키에 없음)');
+}*/
+
+// 세션 변수 설정
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user;
+const currentUserIdx = loginUser?.userIdx;
+if(loginUser) {
+  console.log('✅ 세션에 로그인 유저 있음:', loginUser);
+} else {
+  console.log('❌ 세션에 로그인 유저 없음');
+}
 
 const roomTitle = ref('')
 const participantCount = ref(0)
@@ -20,7 +41,6 @@ const highlightedTimes = ref([])
 const newMessage = ref('')
 const chatBody = ref(null)
 const room = ref(null)
-const sendUserIdx = 5 // 🟡 테스트용 사용자, JWT 로그인 연동 전까지 더미로 사용
 
 let subscription = null
 
@@ -74,7 +94,7 @@ function sendMessage() {
   }
   const messagePayload = {
     roomIdx: props.id,
-    sendUserIdx: sendUserIdx,
+    /* sendUserIdx: currentUserIdx, */ // 서버에서 자동으로 처리하도록 제거하기
     content: newMessage.value
   }
   console.log('[전송할 메시지]', messagePayload); // ✅ 전송 직전 확인
@@ -103,13 +123,15 @@ function goBack() {
 
 // ✅ 메시지 수신 시 처리 함수
 function handleIncomingMessage(frame) {
-  const msg = JSON.parse(frame.body)
+  const msg = JSON.parse(frame.body); // 서버에서(인증마치고 publish) 보낸 KafkaReq DTO 기준 메세지
+  const authenticatedUser = JSON.parse(sessionStorage.getItem('user'))?.user;
+  const authenticatedIdx = authenticatedUser?.userIdx;
   const newMsg = {
     id: Date.now(),
-    sender: `관람객 ${msg.sendUserIdx}`,
+    sender: `사용자 ${msg.sendUserIdx}`,
     content: msg.content,
     timestamp: new Date(),
-    isMe: msg.sendUserIdx === sendUserIdx
+    isMe: msg.sendUserIdx === authenticatedIdx // 화면표시용!! 신뢰하는 정보는 서버의 것만
   }
   messages.value.push(newMsg)
   nextTick(scrollToBottom)
@@ -123,7 +145,7 @@ onMounted(() => {
     const topic = `/topic/chat.room.${props.id}`
     subscription = client.subscribe(topic, handleIncomingMessage)
     console.log(`[STOMP] 구독 완료: ${topic}`)
-  })
+  } /*, token */)
 })
 
 // 🧹 컴포넌트 종료 시 구독 해제
