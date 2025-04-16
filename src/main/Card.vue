@@ -49,7 +49,7 @@ const router = useRouter()
 const sliderRef = ref(null)
 
 //NOTE: 이미지 링크 임의 설정
-const BASE_IMAGE_URL = 'http://192.0.10.101/img/'
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
 const scroll = (direction) => {
   const container = sliderRef.value

@@ -10,15 +10,15 @@
 
     <!-- 상세 정보 탭 -->
     <div v-if="selectedTab === '상세 정보'">
-      <EventDetail :event="event" :idx="idx" />
+      <EventDetail :event="event" :idx="eventIdx" />
     </div>
     <!--게시판 탭-->
     <div v-if="selectedTab === '게시판'">
-      <router-view :idx="idx"></router-view>
+      <router-view :eventIdx="eventIdx"></router-view>
     </div>
     <div v-if="selectedTab === '한줄평'" class="flex flex-col gap-y-3">
       <!-- 리뷰 카드 리스트 -->
-      <EventReview :idx="idx"/>
+      <EventReview :idx="eventIdx"/>
     </div>
   </div>
   <!-- 데이터 로드 실패 또는 데이터 없음 (로딩 중이 아닐 때만 표시) -->
@@ -31,12 +31,10 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import EventHeaderInfo from './EventHeaderInfo.vue'
 import EventTabs from './EventDetailTab.vue'
 import EventDetail from './EventDetail.vue'
-import EventPost from './post/EventPost.vue'
-import PostDetail from "@/events/post/PostDetail.vue"
 import EventReview from "./EventReview.vue";
 
 import { useEventsStore } from '@/stores/useEventsStore'
@@ -47,8 +45,7 @@ const eventStore = useEventsStore();
 
 // 1. 라우터에서 id 가져오기
 const route = useRoute()
-const router = useRouter();
-const idx = Number(route.params.idx) //이벤트 idx
+const eventIdx = Number(route.params.eventIdx) //이벤트 idx
 
 const event = ref(null)
 const error = ref(null)
@@ -61,7 +58,7 @@ const loadEventDetail = async () => {
   try {
     loadingStore.startLoading()
     error.value = null
-    const response = await eventStore.getEventDetail(idx)
+    const response = await eventStore.getEventDetail(eventIdx)
     event.value = response
     console.log(response)
   } catch (err) {
@@ -79,7 +76,10 @@ const retryLoading = () => {
 }
 
 // 탭 상태 관리
-const selectedTab = ref('상세 정보')
+const selectedTab = ref(eventStore.selectedTab);
+watch(selectedTab, (newVal) => {
+  eventStore.setTab(newVal);
+});
 </script>
 
 <style scoped>

@@ -194,7 +194,7 @@ const props = defineProps({
 });
 
 // NOTE: 임시 이미지 링크
-const BASE_IMAGE_URL = 'http://192.0.10.101/img/'
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
 // 이미지 관련 상태
 const descriptionImages = ref([]);

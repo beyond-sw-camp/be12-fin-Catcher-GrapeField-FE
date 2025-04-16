@@ -39,7 +39,7 @@
             </span>
           </td>
           <td class="text-left pl-4">
-            <router-link :to="`/events/${idx}/post/${row.idx}`">
+            <router-link :to="`/events/${eventIdx}/post/${row.idx}`">
               {{ row.title }}
             </router-link>
           </td>
@@ -100,7 +100,7 @@ const tabMapping = {
 // 화면에 표시할 탭 목록 (한글)
 const tabs = Object.keys(tabMapping);
 const selectedTab = ref('전체')
-const props = defineProps({ idx: Number })
+const eventIdx = Number(route.params.eventIdx)
 
 const boardRows = ref([])
 const currentPage = ref(1)
@@ -118,7 +118,7 @@ const loadPostList = async () => {
   // 선택된 탭에 해당하는 enum 값으로 변환
   const selectedEnum = tabMapping[selectedTab.value];
 
-  const response = await postStore.getPostList(props.idx, currentPage.value - 1, selectedEnum); // 백엔드로 enum 값 전송
+  const response = await postStore.getPostList(eventIdx, currentPage.value - 1, selectedEnum); // 백엔드로 enum 값 전송
   if (response && response.instances) {
     boardRows.value = response.instances;
     totalPages.value = response.totalPages;
@@ -170,7 +170,7 @@ function goToPage(page) {
 }
 
 function goPostRegister() {
-  postStore.setCurrentBoardIdx(props.idx);
+  postStore.setCurrentBoardIdx(eventIdx);
   router.push({ name: 'PostRegister' });
 }
 </script>

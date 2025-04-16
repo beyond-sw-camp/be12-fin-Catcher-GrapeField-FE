@@ -2,11 +2,15 @@ import { defineStore } from 'pinia'
 import axios from "axios";
 export const useEventsStore = defineStore('events', {
     state: () => ({
+        selectedTab: '상세 정보',
     }),
         //추천(현재 진행중 or 진행 예정인 공연 중에서 즐겨찾기가 많은 이벤트)
         //인기(진행 여부와 상관 없이 즐겨찾기가 많은 이벤트)
         //신규(진행 예정인 공연)
     actions: {
+        setTab(tab) {
+            this.selectedTab = tab;
+        },
         //메인페이지 전용, 최대 10개만 가져오기
         async getMainEvents(category) {
             try {

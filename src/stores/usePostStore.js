@@ -41,18 +41,7 @@ export const usePostStore = defineStore('post', {
             }
         },
 
-        async setPost(postData, files) {
-            const formData = new FormData();
-            formData.append('postType', postData.postType);
-            formData.append('title', postData.title);
-            formData.append('content', postData.content);
-            formData.append('isVisible', postData.isVisible);
-            // 파일이 있는 경우 추가
-            if (files && files.length > 0) {
-                files.forEach(file => {
-                    formData.append('files', file);
-                });
-            }
+        async setPost(formData) {
             try {
                 const response = await axios.post("/api/post/register", formData, {
                     headers: {
@@ -63,7 +52,7 @@ export const usePostStore = defineStore('post', {
             } catch (error) {
                 const message = error.response?.data?.message || '게시글 등록 실패';
                 console.error(message);
-                throw error; // 에러를 다시 던져서 호출한 쪽에서 처리할 수 있게 함
+                throw error;
             }
         },
     }
