@@ -65,7 +65,8 @@
 
         <!-- 구분선 -->
         <hr class="my-6 border-gray-200">
-
+        <Comment :postIdx="props.postIdx" :eventIdx="props.eventIdx"/>
+        <hr class="my-6 border-gray-200">
         <!-- 게시글 목록 섹션 제목 -->
         <div class="flex justify-between items-center mb-4">
             <button @click="backToList" class="text-sm text-purple-600 hover:text-purple-800">
@@ -86,6 +87,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import EventPost from './EventPost.vue';
+import Comment from './Comment.vue';
 
 const route = useRoute();
 const router = useRouter();

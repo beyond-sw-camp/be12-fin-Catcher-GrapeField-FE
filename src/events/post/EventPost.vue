@@ -69,7 +69,6 @@
         </button>
         <span v-else-if="n === currentPage - 2 || n === currentPage + 2" class="px-1">...</span>
       </template>
-
       <button @click="goToPage(currentPage + 1)" :disabled="!hasNext" class="px-3 py-1 rounded border text-sm"
         :class="hasNext ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
         다음
@@ -109,6 +108,15 @@ const totalElements = ref(0)
 const hasNext = ref(false)
 const hasPrevious = ref(false)
 
+const resetPagination = () => {
+  boardRows = [],
+    currentPage = 1
+  totalPages = 1
+  totalElements = 0
+  hasNext = false
+  hasPrevious = false
+}
+
 const loadPostList = async () => {
   // 탭 변경 시 무조건 1페이지로 초기화
   if (selectedTab.value !== '전체') {
@@ -126,11 +134,7 @@ const loadPostList = async () => {
     hasNext.value = currentPage.value < totalPages.value;
     hasPrevious.value = currentPage.value > 1;
   } else {
-    boardRows.value = [];
-    totalPages.value = 1;
-    totalElements.value = 0;
-    hasNext.value = false;
-    hasPrevious.value = false;
+    resetPagination();
   }
 };
 

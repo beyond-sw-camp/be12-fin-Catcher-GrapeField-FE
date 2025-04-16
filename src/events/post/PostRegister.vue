@@ -306,10 +306,10 @@ const submitPost = async () => {
     eventStore.setTab('게시판');
     router.push(`/events/${boardIdx}/post/${postIdx}`);
   } catch (error) {
-  console.error('게시글 등록 오류:', error);
-  const errorMsg = error.response?.data?.message || '게시글 등록 중 오류가 발생했습니다.';
-  alert(errorMsg);
-}
+    console.error('게시글 등록 오류:', error);
+    const errorMsg = error.response?.data?.message || '게시글 등록 중 오류가 발생했습니다.';
+    alert(errorMsg);
+  }
 };
 
 // 취소 - 이전 페이지로 이동
