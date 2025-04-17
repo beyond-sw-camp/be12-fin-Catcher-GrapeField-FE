@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue';
-import chatRooms from '../assets/data/popular-chatroom.json';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 
 // 반응형 상태 정의
 const activeFilter = ref('all-time');
@@ -16,66 +16,58 @@ const colorClasses = [
   'bg-purple-200',
   'bg-indigo-100'
 ];
+
 // 랜덤하게 색상을 선택하되, 이전 색상은 피하는 함수
 const getRandomColorExcept = (previousColor) => {
-  // 사용 가능한 색상 목록 (이전 색상 제외)
-  const availableColors = colorClasses.filter(color => color !== previousColor);
-  // 랜덤 인덱스 생성
-  const randomIndex = Math.floor(Math.random() * availableColors.length);
-  // 선택된 색상 반환
-  return availableColors[randomIndex];
+  const available = colorClasses.filter(c => c !== previousColor);
+  return available[Math.floor(Math.random() * available.length)];
 };
 
-// 초기 데이터 설정 - 랜덤 색상 할당하되 인접 색상 중복 방지
 let previousColor = null;
 
-// 초기 데이터 설정
-rooms.value = chatRooms.chatRooms.map(room => {
-  // 랜덤하게 색상 선택 (이전 색상 제외)
-  const colorClass = getRandomColorExcept(previousColor);
-  // 선택된 색상을 다음 반복에서 제외하기 위해 저장
-  previousColor = colorClass;
-  
+// 서버에서 받은 DTO를 UI에 맞게 매핑
+function mapRoomDto(dto) {
+  const color = getRandomColorExcept(previousColor);
+  previousColor = color;
   return {
-    ...room,
-    colorClass
+    name: dto.roomName,
+    location: dto.venue,
+    comments: dto.memberCount,
+    likes: dto.heartCount,
+    colorClass: color
   };
-});
+}
 
-// computed 속성
-const filteredRooms = computed(() => {
-  // 필터링 및 정렬된 방 목록 생성
-  let sortedRooms;
-  if (activeFilter.value === 'all-time') {
-    // ALL-TIME BEST: 좋아요 기준 정렬
-    sortedRooms = [...rooms.value].sort((a, b) => b.likes - a.likes);
-  } else {
-    // 지금 HOT: 댓글 기준 정렬
-    sortedRooms = [...rooms.value].sort((a, b) => b.comments - a.comments);
+// 필터에 따라 API 호출 및 데이터 설정
+async function fetchRooms() {
+  try {
+    // Vite proxy 설정을 고려해 /api 프리픽스를 사용
+    const url = activeFilter.value === 'all-time'
+        ? '/api/chat/list/all-time-best'
+        : '/api/chat/list/hot-now';
+    const resp = await axios.get(url);
+    // 초기 할당: 매핑 및 색상 부여
+    previousColor = null;
+    rooms.value = resp.data.map(mapRoomDto);
+  } catch (err) {
+    console.error('채팅방 목록 불러오기 실패', err);
   }
-  
-  // 정렬 후 색상 재할당 (인접 항목이 같은 색상을 가지지 않도록)
-  let prevColor = null;
-  
-  return sortedRooms.map(room => {
-    // 이전 정렬 상태의 색상 저장
-    const originalColor = room.colorClass;
-    
-    // 이전 색상과 같다면 새 색상 할당
-    if (originalColor === prevColor) {
-      room.colorClass = getRandomColorExcept(prevColor);
-    }
-    
-    // 현재 색상을 다음 반복에서 제외하기 위해 저장
-    prevColor = room.colorClass;
-    
-    return room;
-  });
+}
+
+onMounted(() => {
+  fetchRooms();
 });
 
-// 메소드
+const filteredRooms = computed(() => {
+  // 이미 서버에서 필터링/정렬 완료, 추가 로직 불필요
+  return rooms.value;
+});
+
 const setFilter = (filter) => {
-  activeFilter.value = filter;
+  if (activeFilter.value !== filter) {
+    activeFilter.value = filter;
+    fetchRooms();
+  }
 };
 </script>
 
@@ -99,7 +91,7 @@ const setFilter = (filter) => {
         :class="room.colorClass">
         <div class="room-info">
           <div class="room-name sm:text-sm xl:text-sm truncate font-semibold">{{ room.name }}</div>
-          <div class="room-location xs:text-xs sm:text-sm xl:text-xs truncate">{{ room.location }} | {{ room.time }}
+          <div class="room-location xs:text-xs sm:text-sm xl:text-xs truncate">{{ room.location }} <!-- | {{ room.time }} -->
           </div>
         </div>
         <div class="room-stats">

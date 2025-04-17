@@ -175,7 +175,7 @@ function handleIncomingMessage(frame) {
   const newMsg = {
     id: msg.messageIdx,
     sender: msg.username,
-    avatar:      msg.profileImageUrl,
+    avatar: msg.profileImageUrl,
     content: msg.content,
     timestamp: new Date(msg.createdAt),
     isMe: msg.userIdx === currentUserIdx, // 🔴 화면표시용 세션정보사용!! 신뢰하는 정보는 서버의 것만받도록 나중에 변경하기
