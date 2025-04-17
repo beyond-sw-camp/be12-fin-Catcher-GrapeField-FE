@@ -9,74 +9,140 @@
     <div class="w-full bg-white rounded-[1vmin] shadow-sm mb-[3vh]">
       <!-- 캘린더 헤더 -->
       <div class="flex items-center py-[1.5vh] px-[2vw] bg-gray-100 rounded-t-[1vmin]">
-        <button 
+        <button
           class="bg-transparent border-none text-[2.5vmin] cursor-pointer w-[3vmin] h-[3vmin] flex items-center justify-center"
-          @click="prevMonth"
-        >&lt;</button>
+          @click="prevMonth">&lt;</button>
         <div class="flex-1 text-[2.5vmin] font-bold text-center">{{ displayYear }}년 {{ displayMonth }}월</div>
-        <button 
+        <button
           class="bg-transparent border-none text-[2.5vmin] cursor-pointer w-[3vmin] h-[3vmin] flex items-center justify-center"
-          @click="nextMonth"
-        >&gt;</button>
+          @click="nextMonth">&gt;</button>
       </div>
 
       <!-- 요일 헤더 -->
       <div class="grid grid-cols-7 border-b border-gray-100 py-[1vh]">
-        <div 
-          v-for="day in weekdays" 
-          :key="day" 
-          class="text-[2vmin] text-stone-500 text-center"
-        >
+        <div v-for="day in weekdays" :key="day" class="text-[2vmin] text-stone-500 text-center">
           {{ day }}
         </div>
       </div>
 
       <!-- 날짜 그리드 -->
       <div class="grid grid-cols-7 grid-rows-6">
-        <div 
-          v-for="(day, index) in calendarDays" 
-          :key="index" 
-          @click="toggleEvent(day)"
-          class="h-[7vh] flex justify-center items-center relative cursor-pointer"
-        >
-          <span 
-            class="text-[2.5vmin] text-center flex justify-center items-center w-[5vmin] h-[5vmin]"
-            :class="{
-              'text-gray-300': !day.currentMonth,
-              'bg-purple-800 text-white font-bold rounded-full': day.date === selectedDate && day.currentMonth,
-              'bg-red-200 text-white font-bold rounded-full': day.isToday && day.date !== selectedDate
-            }"
-          >{{ day.date }}</span>
-          <div 
-            v-if="day.hasEvent" 
-            class="absolute bottom-[0.8vh] w-[0.8vmin] h-[0.8vmin] bg-purple-800 rounded-full"
-          ></div>
+        <div v-for="(day, index) in calendarDays" :key="index" @click="toggleEvent(day)"
+          class="h-[7vh] flex justify-center items-center relative cursor-pointer">
+          <span class="text-[2.5vmin] text-center flex justify-center items-center w-[5vmin] h-[5vmin]" :class="{
+            'text-gray-300': !day.currentMonth,
+            'bg-purple-800 text-white font-bold rounded-full': day.date === selectedDate && day.currentMonth,
+            'bg-red-200 text-white font-bold rounded-full': day.isToday && day.date !== selectedDate
+          }">{{ day.date }}</span>
+          <div v-if="day.hasEvent" class="absolute bottom-[0.8vh] w-[0.8vmin] h-[0.8vmin] bg-purple-800 rounded-full">
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 선택된 이벤트 표시 -->
     <div v-if="selectedDate && eventList.length > 0" class="flex flex-col gap-[1vh]">
-      <div 
-        v-for="(event, index) in eventList" 
-        :key="index" 
-        class="flex items-center bg-gray-100 px-[2vw] h-[5vh] rounded-[0.8vmin]"
-      >
-        <div class="font-bold mr-[2vw] min-w-[8vw] text-[2.2vmin]">{{ formatDate(selectedDate) }}</div>
-        <div class="flex-grow text-[2.0vmin]">{{ event.title }}</div>
-        <button class="bg-transparent border-none text-purple-800 font-bold text-[2vmin] cursor-pointer py-[0.5vh] px-[1vw]">
+      <div v-for="(event, index) in eventList" :key="index"
+        class="flex items-center bg-gray-100 px-[2vw] h-[5vh] rounded-[0.8vmin]">
+        <a :href="`/events/${event.id}`" class="flex items-center flex-grow no-underline text-inherit">
+          <div class="font-bold mr-[2vw] min-w-[8vw] text-[2.2vmin]">
+            {{ formatDate(selectedDate) }}
+          </div>
+          <div class="text-[2.0vmin]">
+            {{ event.title }}
+          </div>
+        </a>
+
+        <button
+          class="bg-transparent border-none text-purple-800 font-bold text-[2vmin] cursor-pointer py-[0.5vh] px-[1vw]"
+          @click.stop>
           알림 설정
         </button>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarStore } from '@/stores/uesCalendarStore'
+import axios from 'axios'
 
 const CalendarStore = useCalendarStore();
+
+const fetchEventsForCurrentMonth = async () => {
+  const targetDate = new Date(displayYear.value, displayMonth.value, 1); 
+  const isoDateString = targetDate.toISOString().slice(0, 19);
+
+  try {
+    const response = await axios.get('/api/events/calendar', {
+      params: {
+        date: isoDateString
+      }
+    });
+
+    // API 응답에서 이벤트 데이터 추출
+    const eventData = response.data.startEvents || [];
+
+    // 날짜별로 이벤트를 그룹화 (키: 일, 값: 이벤트 배열)
+    const groupedEvents = {};
+
+    eventData.forEach(event => {
+      
+      if (events.isPresale == null) {
+
+        const saleStartDate = new Date(event.saleStart);
+        const day = saleStartDate.getDate();
+        const eventMonth = saleStartDate.getMonth() + 1;
+        const eventYear = saleStartDate.getFullYear();
+
+        // 현재 표시중인 달력의 연월과 일치하는 이벤트만 필터링
+        if (eventYear === displayYear.value && eventMonth === displayMonth.value) {
+          if (!groupedEvents[day]) {
+            groupedEvents[day] = [];
+          }
+
+          // 이벤트 시간 추출
+          const hours = saleStartDate.getHours();
+          const minutes = saleStartDate.getMinutes();
+          const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+          // 이벤트 정보 가공
+          groupedEvents[day].push({
+            id: event.idx,
+            title: `${event.title} 예매 오픈 (${timeString})`,
+            category: event.category,
+            ticketVendor: event.ticketVendor,
+            isPresale: event.isPresale,
+            saleEnd: event.saleEnd
+          });
+        }
+      }
+    });
+
+    events.value = groupedEvents;
+
+    // 캘린더 날짜에 이벤트 표시 업데이트
+    calendarDays.value = calendarDays.value.map(day => {
+      return {
+        ...day,
+        hasEvent: day.currentMonth && events.value[day.date] ? true : false
+      };
+    });
+  } catch (error) {
+    console.error('이벤트 데이터 로딩 실패:', error);
+  }
+};
+
+onMounted(async () => {
+  // 현재 날짜로 초기화
+  currentYear.value = new Date().getFullYear();
+  currentMonth.value = new Date().getMonth() + 1;
+
+  calculateCalendarDays();
+  await fetchEventsForCurrentMonth();
+});
 
 // 상수 정의
 const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
@@ -119,17 +185,17 @@ const toggleEvent = (day) => {
 const calculateCalendarDays = () => {
   const year = currentYear.value;
   const month = currentMonth.value;
-  
+
   // 해당 월의 첫날과 마지막 날 구하기
   const firstDay = new Date(year, month - 1, 1);
   const lastDay = new Date(year, month, 0);
-  
+
   // 이전 달의 날짜들 추가
   const daysFromPrevMonth = firstDay.getDay();
   const prevMonthLastDate = new Date(year, month - 1, 0).getDate();
-  
+
   const days = [];
-  
+
   // 이전 달의 날짜 추가
   for (let i = daysFromPrevMonth - 1; i >= 0; i--) {
     days.push({
@@ -138,11 +204,11 @@ const calculateCalendarDays = () => {
       hasEvent: false
     });
   }
-  
+
   // 현재 달의 날짜 추가
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() + 1 === month;
-  
+
   for (let i = 1; i <= lastDay.getDate(); i++) {
     days.push({
       date: i,
@@ -151,7 +217,7 @@ const calculateCalendarDays = () => {
       isToday: isCurrentMonth && today.getDate() === i
     });
   }
-  
+
   // 다음 달의 날짜 추가 (6주 캘린더를 만들기 위해)
   const remainingDays = 42 - days.length; // 6주 * 7일 = 42
   for (let i = 1; i <= remainingDays; i++) {
@@ -161,7 +227,7 @@ const calculateCalendarDays = () => {
       hasEvent: false
     });
   }
-  
+
   calendarDays.value = days;
 };
 
@@ -189,58 +255,14 @@ const nextMonth = () => {
   fetchEventsForCurrentMonth();
 };
 
-const fetchEventsForCurrentMonth = () => {
-  const response = CalendarStore.mainList(displayYear.value, displayMonth.value);
-  
-  // 예시 데이터 (실제 구현에서는 API 응답으로 대체)
-  const mockEvents = {};
-  
-  // 각 월마다 다른 예시 이벤트 생성
-  if (currentMonth.value === 4 && currentYear.value === 2025) {
-    mockEvents[4] = [{ title: '뮤지컬 라이온킹 예매 오픈 (12:00)' }];
-    mockEvents[5] = [{ title: '박람회 예매 오픈 (14:00)' }];
-    mockEvents[9] = [{ title: '전시회 예매 오픈 (10:00)' }];
-    mockEvents[12] = [{ title: '콘서트 예매 오픈 (11:00)' }];
-    mockEvents[15] = [
-      { title: '뮤지컬 햄릿 예매 오픈 (12:00)' },
-      { title: '고양이 박람회 예매 오픈 (12:00)' }
-    ];
-    mockEvents[17] = [{ title: '마술쇼 예매 오픈 (13:00)' }];
-  } else if (currentMonth.value === 5 && currentYear.value === 2025) {
-    mockEvents[2] = [{ title: '오페라 카르멘 예매 오픈 (10:00)' }];
-    mockEvents[7] = [{ title: '재즈 페스티벌 티켓 오픈 (09:00)' }];
-    mockEvents[14] = [{ title: '미술 전시회 오픈 (11:00)' }];
-    mockEvents[21] = [{ title: '클래식 콘서트 시리즈 (19:30)' }];
-  } else {
-    // 다른 월에는 임의의 이벤트 생성
-    const randomDays = [
-      Math.floor(Math.random() * 28) + 1,
-      Math.floor(Math.random() * 28) + 1,
-      Math.floor(Math.random() * 28) + 1
-    ];
-    
-    randomDays.forEach(day => {
-      mockEvents[day] = [{ title: `${currentYear.value}년 ${currentMonth.value}월 이벤트 (${Math.floor(Math.random() * 12) + 9}:00)` }];
-    });
-  }
-  
-  events.value = mockEvents;
-  
-  // 캘린더 날짜에 이벤트 표시 업데이트
-  calendarDays.value = calendarDays.value.map(day => {
-    return {
-      ...day,
-      hasEvent: day.currentMonth && events.value[day.date] ? true : false
-    };
-  });
-};
+
 
 // 컴포넌트 마운트 시 초기화
 onMounted(() => {
   // 현재 날짜로 초기화 (예시에서는 2025년 4월로 설정)
   currentYear.value = 2025;
   currentMonth.value = 4;
-  
+
   calculateCalendarDays();
   fetchEventsForCurrentMonth();
 });
