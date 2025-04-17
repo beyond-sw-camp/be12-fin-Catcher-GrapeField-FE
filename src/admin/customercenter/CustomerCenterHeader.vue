@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import Search from './Search.vue';
 
 const tabs = [
@@ -23,7 +22,7 @@ const selectType = (type) => {
 </script>
 
 <template>
-    <div class="w-[1320px] flex flex-col">
+    <div class="w-[100%] flex flex-col">
         <div class="w-full h-10 px-10 py-5 bg-violet-700 inline-flex items-center gap-2.5">
             <div class="justify-start text-white text-2xl font-bold font-['Inter']">고객센터</div>
         </div>

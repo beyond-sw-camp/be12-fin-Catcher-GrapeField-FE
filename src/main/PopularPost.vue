@@ -1,52 +1,73 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import postData from '../assets/data/popular-post.json'
+
+const posts = ref([])
+
+onMounted(() => {
+  posts.value = postData.posts
+})
+</script>
+
+
 <template>
-    <div class="popular-posts">
-        <h2 class="popular-title">인기 게시글</h2>
+  <div class="w-full p-4 bg-white shadow rounded-lg">
+    <h2 class="text-lg font-bold text-zinc-900 mb-4">인기 게시글</h2>
 
-        <div class="post-list">
-            <div v-for="(post, index) in posts" :key="index" class="post-item">
-                <div class="post-event">{{ post.event }}</div>
-                <div class="post-title">{{ post.title }}</div>
-                <div class="post-date">{{ post.date }}</div>
-
-                <div class="post-stats">
-                    <div class="stat-item">
-                        
-                        <img src="../assets/icons/comment.png" alt="">
-                        <div class="stat-count">{{ post.comments }}</div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <img src="../assets/icons/like.png" alt="">
-                        <div class="stat-count">{{ post.likes }}</div>
-                    </div>
-                </div>
-            </div>
+    <div class="flex flex-col gap-1">
+      <div
+          v-for="(post, index) in posts.slice(0,6)"
+          :key="index"
+          class="flex items-center px-4 py-3 border border-gray-100 rounded-lg min-w-0 gap-2"
+      >
+        <!-- 게시판 제목 -->
+        <div class="w-[30%] min-w-0 truncate text-purple-800 text-sm font-medium text-center">
+          {{ post.event }}
         </div>
+
+        <!-- 게시글 제목 -->
+        <div class="w-[40%] min-w-0 truncate text-zinc-900 text-sm font-medium text-center">
+          {{ post.title }}
+        </div>
+
+        <!-- 날짜 -->
+        <div class="w-[10%] text-center text-gray-400 text-sm">
+          {{ post.date }}
+        </div>
+
+        <!-- 통계 -->
+        <div class="w-[20%] flex justify-between">
+          <div class="flex items-center gap-1">
+            <img src="../assets/icons/comment.png" alt="comment" class="w-4 h-4" />
+            <div class="text-purple-800 text-sm">{{ post.comments }}</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <img src="../assets/icons/like.png" alt="like" class="w-4 h-4" />
+            <div class="text-purple-800 text-sm">{{ post.likes }}</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
-<script>
-import postData from '../assets/data/popular-post.json'
-export default {
-    data() {
-        return {
-            posts: []
-        }
-    }, created() {
-        this.posts = postData.posts;
-    }
-}
-</script>
 
 <style scoped>
 .popular-posts {
-    width: 43%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-left: 7vw;
+  /* 일단 사용 안 하는 중 */
+    width: 35vw;
+    /* 너비 통일 */
+    min-width: 0;
+    /* min-width 제거 */
+    max-width: 35vw;
+    /* max-width 유지 */
+    padding-left: 0;
+    /* 왼쪽 패딩 제거 또는 줄임 */
     margin-top: 4vw;
     margin-bottom: 4vw;
-}
+    box-sizing: border-box;
+    /* 패딩이 너비에 포함되도록 설정 */
+}   
 
 .popular-title {
     font-size: 1.2vw;

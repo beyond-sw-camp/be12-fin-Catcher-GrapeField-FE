@@ -1,3 +1,72 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import chatData from '../../assets/data/chat.json'
+
+const chatRooms = ref([])
+const searchQuery = ref('')
+const activeTab = ref('all')
+const router = useRouter()
+
+const loadChatRooms = () => {
+  try {
+    if (!chatData || !chatData.chatRooms) {
+      console.error('채팅 데이터가 올바른 형식이 아닙니다:', chatData)
+      return
+    }
+
+    const allRooms = chatData.chatRooms.map(room => ({
+      ...room,
+      isFavorite: chatData.userFavorites.includes(room.id),
+    }))
+
+    chatRooms.value = allRooms
+  } catch (error) {
+    console.error('채팅방 목록 로드 중 오류 발생:', error)
+  }
+}
+
+const filteredRooms = computed(() => {
+  let result = [...chatRooms.value]
+
+  if (activeTab.value === 'performances') {
+    result = result.filter(room => room.category === 'performances')
+  } else if (activeTab.value === 'exhibitions') {
+    result = result.filter(room => room.category === 'exhibitions')
+  } else if (activeTab.value === 'favorites') {
+    result = result.filter(room => room.isFavorite)
+  }
+
+  if (searchQuery.value.trim() !== '') {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(room =>
+        room.title.toLowerCase().includes(query) ||
+        room.preview.toLowerCase().includes(query)
+    )
+  }
+
+  return result
+})
+
+const openChatRoom = (id) => {
+  router.push(`/chat-room/${id}`)
+}
+
+const toggleFavorite = (id) => {
+  const room = chatRooms.value.find(r => r.id === id)
+  if (room) {
+    room.isFavorite = !room.isFavorite
+  }
+}
+
+onMounted(() => {
+  console.log('원본 데이터:', chatData)
+  loadChatRooms()
+  console.log('처리된 데이터:', chatRooms.value)
+})
+</script>
+
+
 <template>
     <div class="chat-list-container">
         <div class="chat-header">
@@ -49,103 +118,9 @@
     </div>
 </template>
 
-<script>
-import chatData from '../../assets/data/chat.json'
-export default {
-    
-    data() {
-        return {
-            chatRooms: [],
-            searchQuery: '',
-            activeTab: 'all',
-        };
-    },
-    created() {
-        console.log('원본 데이터:', chatData); // 디버깅용
-        this.loadChatRooms();
-        console.log('처리된 데이터:', this.chatRooms); // 디버깅용
-    },
-    computed: {
-        filteredRooms() {
-            let result = this.chatRooms;
-
-            // 탭 필터링
-            if (this.activeTab === 'performances') {
-                result = result.filter(room => room.category === 'performances');
-            } else if (this.activeTab === 'exhibitions') {
-                result = result.filter(room => room.category === 'exhibitions');
-            } else if (this.activeTab === 'favorites') {
-                result = result.filter(room => room.isFavorite);
-            }
-
-            // 검색어 필터링
-            if (this.searchQuery.trim() !== '') {
-                const query = this.searchQuery.toLowerCase();
-                result = result.filter(room =>
-                    room.title.toLowerCase().includes(query) ||
-                    room.preview.toLowerCase().includes(query)
-                );
-            }
-
-            return result;
-        }
-    },
-    methods: {
-        loadChatRooms() {
-            try {
-                // 로컬 JSON 파일에서 직접 데이터 로드
-                if (!chatData || !chatData.chatRooms) {
-                    console.error('채팅 데이터가 올바른 형식이 아닙니다:', chatData);
-                    return;
-                }
-
-                const allRooms = chatData.chatRooms.map(room => ({
-                    ...room,
-                    isFavorite: chatData.userFavorites.includes(room.id)
-                }));
-
-                // 필터링 적용
-                let result = [...allRooms];
-
-                // 카테고리 필터링
-                if (this.activeTab === 'performances') {
-                    result = result.filter(room => room.category === 'performances');
-                } else if (this.activeTab === 'exhibitions') {
-                    result = result.filter(room => room.category === 'exhibitions');
-                } else if (this.activeTab === 'favorites') {
-                    result = result.filter(room => chatData.userFavorites.includes(room.id));
-                }
-
-                // 검색어 필터링
-                if (this.searchQuery.trim() !== '') {
-                    const query = this.searchQuery.toLowerCase();
-                    result = result.filter(room =>
-                        room.title.toLowerCase().includes(query) ||
-                        room.preview.toLowerCase().includes(query)
-                    );
-                }
-
-                this.chatRooms = result;
-            } catch (error) {
-                console.error('채팅방 목록 로드 중 오류 발생:', error);
-            }
-        },
-        openChatRoom(id) {
-            // 현재 창에서 채팅방으로 이동
-            this.$router.push(`/chat-room/${id}`);
-        },
-        toggleFavorite(id) {
-            const room = this.chatRooms.find(room => room.id === id);
-            if (room) {
-                room.isFavorite = !room.isFavorite;
-            }
-        }
-    }
-};
-</script>
-
 <style scoped>
 .chat-list-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -204,12 +179,14 @@ export default {
 }
 
 .chat-rooms {
+
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
 .chat-room-card {
+    width: 22.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     overflow: hidden;

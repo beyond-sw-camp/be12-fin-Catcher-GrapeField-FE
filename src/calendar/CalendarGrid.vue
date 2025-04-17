@@ -47,9 +47,9 @@
                 <div v-if="getEventsForDate(date.fullDate).length > 3" class="flex justify-center items-center h-6">
                     <div class="text-xs font-bold text-zinc-800 cursor-pointer hover:underline">
                         ...
+
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

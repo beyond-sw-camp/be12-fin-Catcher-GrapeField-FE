@@ -1,133 +1,133 @@
 <template>
-    <div class="category-container">
-        <h2 class="category-title">카테고리</h2>
-
-        <div class="category-buttons">
-            <button v-for="category in categories" :key="category.id" class="category-button"
-                :class="{ active: selectedCategory === category.id }" @click="selectCategory(category.id)">
-                <div class="category-name">{{ category.name }}</div>
-                <div class="category-count">{{ category.count }}</div>
+    <div class="w-full max-w-[70vw] mx-auto p-4 box-border">
+        <h2 class="text-[2vw] font-bold text-zinc-800 mb-[1vw]">카테고리</h2>
+        <div class="flex justify-between overflow-x-auto pb-[1vw] scrollbar-thin">
+            <button v-for="category in categories" :key="category.id"
+                class="min-w-[10vw] h-[6vw] flex-shrink-0 rounded-[0.5vw] flex flex-col items-center justify-center cursor-pointer transition-all duration-200 shadow-sm"
+                :class="selectedCategory === category.id ? 'bg-purple-800' : 'bg-white'"
+                @click="selectCategory(category.id)">
+                <div class="text-[1.2vw] font-bold mb-[0.5vw]"
+                    :class="selectedCategory === category.id ? 'text-white' : 'text-zinc-600'">
+                    {{ category.name }}
+                </div>
+                <div class="text-[0.8vw]" :class="selectedCategory === category.id ? 'text-white' : 'text-zinc-500'">
+                    {{ category.count }}
+                </div>
             </button>
         </div>
     </div>
 </template>
 
-<script>
-import categoryData from '../assets/data/category.json'
-export default {
-    data() {
-        return {
-            selectedCategory: 'all',
-            categories: []
-        };
-    },
-    created() {
-        this.categories = categoryData.categories;
-    },
-    methods: {
-        selectCategory(categoryId) {
-            this.selectedCategory = categoryId;
-            this.$emit('category-changed', categoryId);
-        }
+<!-- Category.vue -->
+<script setup>
+import { ref, watch } from 'vue';
+
+const props = defineProps({
+    modelValue: {
+        type: String,
+        default: 'ALL'
     }
+});
+const emit = defineEmits(['update:modelValue']);
+
+const selectedCategory = ref(props.modelValue);
+
+// 외부에서 변경됐을 경우 내부에도 반영
+watch(() => props.modelValue, (newVal) => {
+    selectedCategory.value = newVal;
+});
+
+//TODO: count부분 고쳐야함
+const categories = ref([
+    { id: "ALL", name: "전체", count: "113개의 행사" },
+    { id: "MUSICAL", name: "뮤지컬", count: "12개의 공연" },
+    { id: "PLAY", name: "연극", count: "30개의 공연" },
+    { id: "CONCERT", name: "콘서트", count: "30개의 공연" },
+    { id: "EXHIBITION", name: "전시회", count: "30개의 전시회" },
+    { id: "FAIR", name: "박람회", count: "11개의 박람회" }
+]);
+
+const selectCategory = (categoryId) => {
+    selectedCategory.value = categoryId;
+    emit('update:modelValue', categoryId); // v-model 반영
 };
 </script>
 
+
 <style scoped>
-.category-container {
-    width: 100%;
-    margin-bottom: 2vw;
+/* 스크롤바 스타일링 - Tailwind에서 완전히 지원하지 않는 부분만 CSS로 유지 */
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
 }
 
-.category-title {
-    font-size: 1.5vw;
-    font-weight: 700;
-    color: #27272a;
-    margin-bottom: 1vw;
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
 }
 
-.category-buttons {
-    display: flex;
-    gap: 1vw;
-    overflow-x: auto;
-    padding-bottom: 0.5vw;
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
 }
 
-.category-button {
-    min-width: 10vw;
-    height: 6vw;
-    background-color: white;
-    border: none;
-    border-radius: 0.5vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
-.category-button.active {
-    background-color: #6b21a8;
-}
-
-.category-name {
-    font-size: 1.2vw;
-    font-weight: 700;
-    color: #525252;
-    margin-bottom: 0.5vw;
-}
-
-.category-count {
-    font-size: 0.8vw;
-    color: #737373;
-}
-
-.category-button.active .category-name,
-.category-button.active .category-count {
-    color: white;
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-    .category-title {
-        font-size: 2.5vw;
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+    button.min-w-\[10vw\] {
+        min-width: 10vw;
+        height: 7vw;
     }
 
-    .category-button {
+    .text-\[1\.2vw\] {
+        font-size: 1.4vw;
+    }
+
+    .text-\[0\.8vw\] {
+        font-size: 1vw;
+    }
+}
+
+@media (max-width: 768px) {
+    div.max-w-\[70vw\] {
+        max-width: 90vw;
+    }
+
+    h2.text-\[2vw\] {
+        font-size: 3vw;
+    }
+
+    button.min-w-\[10vw\] {
         min-width: 15vw;
         height: 8vw;
     }
 
-    .category-name {
+    .text-\[1\.2vw\] {
         font-size: 2vw;
     }
 
-    .category-count {
+    .text-\[0\.8vw\] {
         font-size: 1.2vw;
     }
 }
 
 @media (max-width: 480px) {
-    .category-title {
-        font-size: 4vw;
+    h2.text-\[2vw\] {
+        font-size: 7vw;
     }
 
-    .category-buttons {
-        gap: 2vw;
-    }
-
-    .category-button {
+    button.min-w-\[10vw\] {
         min-width: 25vw;
         height: 12vw;
     }
 
-    .category-name {
+    .text-\[1\.2vw\] {
         font-size: 3vw;
     }
 
-    .category-count {
+    .text-\[0\.8vw\] {
         font-size: 2vw;
     }
 }

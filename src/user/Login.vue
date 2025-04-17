@@ -23,7 +23,7 @@
         <input type="checkbox" id="remember" v-model="remember" />
         <label for="remember">로그인 상태 유지</label>
       </div>
-      <button class="login-btn" @click="login">로그인</button>
+      <button class="login-btn" @click="login()">로그인</button>
 
       <div class="divider-wrapper">
         <div class="divider-line"></div>
@@ -32,17 +32,17 @@
       </div>
 
       <!-- 소셜 로그인 버튼들 -->
-      <button class="social-btn kakao"  @click="kakaoLogin">
+      <button class="social-btn kakao" @click="kakaoLogin">
         <span class="icon">💬</span>
         카카오 계정으로 로그인
       </button>
 
-      <button class="social-btn naver"  @click="naverLogin">
+      <button class="social-btn naver" @click="naverLogin">
         <span class="icon">N</span>
         네이버 계정으로 로그인
       </button>
 
-      <button class="social-btn google"  @click="googleLogin">
+      <button class="social-btn google" @click="googleLogin">
         <span class="icon">G</span>
         구글 계정으로 로그인
       </button>
@@ -66,21 +66,27 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
 
+const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
 const login = async () => {
-  const success = await userStore.login({ email: email.value, password: password.value })
-  if (success) router.push('/')
-  else alert('로그인 실패. 이메일이나 비밀번호를 확인해주세요.')
-}
+  const result = await userStore.login(email.value, password.value);
+  if (result.success) {
+    const redirectPath = route.query.redirect || '/';
+    router.push(redirectPath); // 로그인 성공한 경우에만 redirect 수행
+  } else {
+    alert(result.message); // 로그인 실패 시 메시지 출력
+  }
+};
+
 
 const kakaoLogin = () => {
   alert('카카오 로그인 준비 중입니다.')

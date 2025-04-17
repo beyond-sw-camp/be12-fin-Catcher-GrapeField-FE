@@ -1,6 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-
 const props = defineProps({
     selected: String
 });
@@ -15,7 +13,7 @@ const selectType = (type) => {
 </script>
 
 <template>
-    <div class="w-[1320px] h-44 bg-purple-50 rounded-md px-10 py-6 mt-8">
+    <div class="w-[100%] h-44 bg-purple-50 rounded-md px-10 py-6 mt-8">
         <!-- 상단 텍스트 -->
         <div class="mb-4">
             <h2 class="text-violet-700 text-l font-bold">무엇을 도와드릴까요?</h2>

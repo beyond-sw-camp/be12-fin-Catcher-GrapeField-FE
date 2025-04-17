@@ -3,21 +3,30 @@ import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
-import SideBar from './common/SideBar.vue'
+import Sidebar from './common/Sidebar.vue'
+import GlobalLoading from './common/GlobalLoading.vue'
 
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
 const route = useRoute()
 const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 const isStandalonePage = computed(() => route.meta.standalone === true)
+
+// ✅ 페이지에 따라 레이아웃 클래스를 동적으로 결정
+const layoutClass = computed(() => {
+  if (route.path.startsWith('/admin')) return 'admin-layout'
+  if (route.path.startsWith('/mypage')) return 'mypage-layout'
+  return isStandalonePage.value ? 'standalone-page' : 'main-content'
+})
 </script>
 
 <template>
   <div class="layout">
     <Header v-if="!isStandalonePage" />
-    <div :class="{ 'standalone-page': isStandalonePage, 'main-content': !isStandalonePage }">
+    <div :class="layoutClass">
       <router-view />
+      <GlobalLoading />
     </div>
-    <SideBar v-if="showSidebar && !isStandalonePage" />
+    <Sidebar v-if="showSidebar && !isStandalonePage" />
     <Footer v-if="!isStandalonePage" />
   </div>
 </template>
@@ -29,11 +38,11 @@ const isStandalonePage = computed(() => route.meta.standalone === true)
   min-height: 98vh;
 }
 
-main {
+.main-content {
   flex: 1;
   margin-top: 4rem;
   /* 헤더 높이와 동일하게 설정 (기존 5vw에서 4rem으로 변경) */
-  padding: 1rem; /* 1vw에서 1rem으로 변경 */
+  padding-bottom: 1rem; /* 1vw에서 1rem으로 변경 */
 }
 
 .standalone-page {

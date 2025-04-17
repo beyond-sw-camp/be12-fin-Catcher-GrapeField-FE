@@ -32,27 +32,27 @@ function toggle(index) {
 </script>
 
 <template>
-    <div class="w-[1320px] mt-2">
-        <div class="w-[1320px] h-12 bg-stone-50 flex items-center">
-            <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
+    <div class="w-[95%] mt-2">
+        <div class="w-[95%] h-12 bg-stone-50 flex items-center">
+            <div class="w-[100%] flex items-center gap-4 text-zinc-800  font-bold font-['Inter'] pl-5">
                 <button
-                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-[20%] truncate sm:text-xs md:text-sm lg:text-sm xl:text-base h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'all' ? 'outline-2' : 'outline-1'" @click="selectCategory('all')">
                     전체</button>
                 <button
-                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-[20%] truncate sm:text-xs md:text-sm lg:text-sm xl:text-base h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'user' ? 'outline-2' : 'outline-1'" @click="selectCategory('user')">
                     회원</button>
                 <button
-                    class="w-28 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-[20%] truncate sm:text-xs md:text-sm lg:text-sm xl:text-base h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'service' ? 'outline-2' : 'outline-1'" @click="selectCategory('service')">
                     서비스 이용</button>
                 <button
-                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-[20%] truncate sm:text-xs md:text-sm lg:text-sm xl:text-base h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'comunity' ? 'outline-2' : 'outline-1'" @click="selectCategory('comunity')">
                     커뮤니티</button>
                 <button
-                    class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
+                    class="w-[20%] min-w-[20%] sm:text-xs md:text-sm lg:text-sm xl:text-base truncate h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
                     :class="category.type === 'others' ? 'outline-2' : 'outline-1'" @click="selectCategory('others')">
                     기타</button>
             </div>

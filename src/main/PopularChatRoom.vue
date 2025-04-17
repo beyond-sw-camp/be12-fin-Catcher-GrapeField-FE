@@ -1,279 +1,299 @@
-<template>
-    <div class="chat-rooms">
-        <div class="chat-header">
-            <h2 class="chat-title">인기 채팅방</h2>
-            <div class="filter-buttons">
-                <button class="filter-btn all-time">ALL-TIME BEST</button>
-                <button class="filter-btn hot">지금 HOT 🔥</button>
-            </div>
-        </div>
+<script setup>
+import { ref, computed } from 'vue';
+import chatRooms from '../assets/data/popular-chatroom.json';
 
-        <div class="room-list">
-            <div v-for="(room, index) in chatRooms" :key="index" class="room-item" :class="room.color">
-                <div class="room-avatar">
-                    <img v-if="room.imageUrl" :src="room.imageUrl" alt="채팅방 이미지" class="room-image">
-                </div>
-                <div class="room-info">
-                    <div class="room-name">{{ room.name }}</div>
-                    <div class="room-location">{{ room.location }} | {{ room.time }}</div>
-                </div>
-                <div class="room-stats">
-                    <div class="stat-item">
-                        <img src="../assets/icons/participant.png" alt="">
-                        <div class="stat-count">{{ room.comments }}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-count">
-                            <img src="../assets/icons/heart.png" alt="">
-                            <div>{{ room.likes }}</div>
-                        </div>
-                    </div>
-                    <button class="enter-btn">입장하기</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
+// 반응형 상태 정의
+const activeFilter = ref('all-time');
+const rooms = ref([]);
 
-<script>
-import chatRooms from '../assets/data/popular-chatroom.json'
-export default {
-    data() {
-        return {
-            chatRooms: []
-        };
-    },
-    created() {
-        this.chatRooms = chatRooms.chatRooms;
+// Tailwind 색상 클래스 - 보라~분홍 계열
+const colorClasses = [
+  'bg-purple-100',
+  'bg-violet-100',
+  'bg-fuchsia-100',
+  'bg-pink-100',
+  'bg-rose-100',
+  'bg-purple-200',
+  'bg-indigo-100'
+];
+// 랜덤하게 색상을 선택하되, 이전 색상은 피하는 함수
+const getRandomColorExcept = (previousColor) => {
+  // 사용 가능한 색상 목록 (이전 색상 제외)
+  const availableColors = colorClasses.filter(color => color !== previousColor);
+  // 랜덤 인덱스 생성
+  const randomIndex = Math.floor(Math.random() * availableColors.length);
+  // 선택된 색상 반환
+  return availableColors[randomIndex];
+};
+
+// 초기 데이터 설정 - 랜덤 색상 할당하되 인접 색상 중복 방지
+let previousColor = null;
+
+// 초기 데이터 설정
+rooms.value = chatRooms.chatRooms.map(room => {
+  // 랜덤하게 색상 선택 (이전 색상 제외)
+  const colorClass = getRandomColorExcept(previousColor);
+  // 선택된 색상을 다음 반복에서 제외하기 위해 저장
+  previousColor = colorClass;
+  
+  return {
+    ...room,
+    colorClass
+  };
+});
+
+// computed 속성
+const filteredRooms = computed(() => {
+  // 필터링 및 정렬된 방 목록 생성
+  let sortedRooms;
+  if (activeFilter.value === 'all-time') {
+    // ALL-TIME BEST: 좋아요 기준 정렬
+    sortedRooms = [...rooms.value].sort((a, b) => b.likes - a.likes);
+  } else {
+    // 지금 HOT: 댓글 기준 정렬
+    sortedRooms = [...rooms.value].sort((a, b) => b.comments - a.comments);
+  }
+  
+  // 정렬 후 색상 재할당 (인접 항목이 같은 색상을 가지지 않도록)
+  let prevColor = null;
+  
+  return sortedRooms.map(room => {
+    // 이전 정렬 상태의 색상 저장
+    const originalColor = room.colorClass;
+    
+    // 이전 색상과 같다면 새 색상 할당
+    if (originalColor === prevColor) {
+      room.colorClass = getRandomColorExcept(prevColor);
     }
+    
+    // 현재 색상을 다음 반복에서 제외하기 위해 저장
+    prevColor = room.colorClass;
+    
+    return room;
+  });
+});
+
+// 메소드
+const setFilter = (filter) => {
+  activeFilter.value = filter;
 };
 </script>
 
+<template>
+  <div class="w-full p-4 bg-white shadow rounded-lg">
+    <div class="chat-header">
+      <h2 class="chat-title">인기 채팅방</h2>
+      <div class="filter-buttons">
+        <button class="filter-btn all-time" :class="{ active: activeFilter === 'all-time' }"
+          @click="setFilter('all-time')">
+          ALL-TIME BEST
+        </button>
+        <button class="filter-btn hot" :class="{ active: activeFilter === 'hot' }" @click="setFilter('hot')">
+          지금 HOT 🔥
+        </button>
+      </div>
+    </div>
+
+    <div class="room-list">
+      <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-4 py-2 rounded-3xl"
+        :class="room.colorClass">
+        <div class="room-info">
+          <div class="room-name sm:text-sm xl:text-sm truncate font-semibold">{{ room.name }}</div>
+          <div class="room-location xs:text-xs sm:text-sm xl:text-xs truncate">{{ room.location }} | {{ room.time }}
+          </div>
+        </div>
+        <div class="room-stats">
+          <div class="stat-item">
+            <img src="../assets/icons/participant.png" alt="">
+            <div class="stat-count xs:text-xs sm:text-sm xl:text-xs">{{ room.comments }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item">
+              <img src="../assets/icons/heart.png" alt="">
+              <div class="stat-count xs:text-sm sm:text-sm xl:text-xs">{{ room.likes }}</div>
+            </div>
+          </div>
+        </div>
+        <button class="enter-btn text-xs ml-2 min-w-[3rem]">입장</button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .chat-rooms {
-    width: 43%;
-    min-width: 35vw;
-    max-width: 45vw;
-    padding-right: 7 vw;
-    margin-top: 4vw;
-    margin-bottom: 4vw;
-    position: relative;
+  width: 100%;
+  margin: 2rem 0;
+  padding-right: 0;
+  box-sizing: border-box;
 }
 
 .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .chat-title {
-    font-size: 1.2vw;
-    font-weight: 700;
-    color: #27272a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #27272a;
 }
 
 .filter-buttons {
-    display: flex;
-    gap: 0.8vw;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .filter-btn {
-    padding: 0.5vw 1vw;
-    border-radius: 1.5vw;
-    border: none;
-    font-size: 0.7vw;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
+  padding: 0.5em 1.25em;
+  border-radius: 2em;
+  border: none;
+  font-weight: 700;
+  font-size: 0.625rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
 }
 
 .all-time {
-    background-color: #6b21a8;
-    color: #f5f0ff;
+  background-color: #e9d5ff;
+  color: #6b21a8;
 }
 
 .hot {
-    background-color: #f9a8d4;
-    color: #831843;
-    display: flex;
-    align-items: center;
+  background-color: #f9a8d4;
+  color: #831843;
+  display: flex;
+  align-items: center;
+}
+
+.filter-btn.active {
+  background-color: #6b21a8;
+  color: #f5f0ff;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .room-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .room-item {
-    position: relative;
-    width: 100%;
-    height: 4vw;
-    border-radius: 1.5vw;
-    display: flex;
-    align-items: center;
-    padding: 0 0.8vw;
-}
-
-.pink {
-    background-color: #f9a8d4;
-}
-
-.purple-light {
-    background-color: #e9d5ff;
-}
-
-.violet {
-    background-color: #ddd6fe;
-}
-
-.fuchsia {
-    background-color: #fbcfe8;
-}
-
-.purple-dark {
-    background-color: #d8b4fe;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  /* ✅ 줄바꿈 방지 */
+  gap: 0.1rem;
+  width: 100%;
+  border-radius: 1.5rem;
 }
 
 .room-avatar {
-    width: 3vw;
-    height: 3vw;
-    background-color: #f8fafc;
-    border-radius: 50%;
-    margin-right: 1vw;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #f8fafc;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.room-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
 
 .room-info {
-    display: flex;
-    flex-direction: column;
-    width: 40%;
-}
-
-.room-name {
-    font-size: 0.9vw;
-    font-weight: 700;
-    color: #27272a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.room-location {
-    font-size: 0.7vw;
-    color: #27272a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .room-stats {
-    display: flex;
-    align-items: center;
-    gap: 1.5vw;
-    margin-left: auto;
-    margin-right: 2vw;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+
+.room-location {
+  font-size: 0.875rem;
+  color: #27272a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.3vw;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 img {
-    width: 1.2vw;
-    height: 1.2vw;
-    position: relative;
-}
-
-.comment-icon:before {
-    content: "";
-    position: absolute;
-    width: 0.8vw;
-    height: 0.8vw;
-    border-radius: 50%;
-    background-color: white;
-    left: 0.2vw;
-    top: 0.2vw;
-}
-
-.like-icon:before {
-    content: "";
-    position: absolute;
-    width: 1vw;
-    height: 0.8vw;
-    background-color: #6b21a8;
-    left: 0.1vw;
-    top: 0.2vw;
+  width: 1rem;
+  height: 1rem;
 }
 
 .stat-count {
-    font-size: 0.8vw;
-    color: #27272a;
+  font-size: 0.75rem;
+  color: #27272a;
 }
 
 .enter-btn {
-    width: 6vw;
-    height: 2.5vw;
-    background-color: #6b21a8;
-    border: none;
-    border-radius: 1vw;
-    color: white;
-    font-size: 0.8vw;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
+  font-size: 0.875rem;
+  padding: 0.25em 0.25em;
+  background-color: #6b21a8;
+  border: none;
+  border-radius: 1.5rem;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.3);
 }
 
+/* 반응형 - 태블릿 이하 */
 @media (max-width: 768px) {
-    .chat-title {
-        font-size: 3vw;
-    }
+  .chat-title {
+    font-size: 0.85rem;
+  }
 
-    .filter-btn {
-        font-size: 1.5vw;
-        padding: 1vw 2vw;
-    }
+  .filter-btn {
+    font-size: 0.75rem;
+    padding: 0.5em 1em;
+  }
 
-    .room-item {
-        height: 7vw;
-        padding: 0 1.5vw;
-    }
+  .room-name,
+  .room-location,
+  .stat-count,
+  .enter-btn {
+    font-size: 0.75rem;
+  }
 
-    .room-avatar {
-        width: 5vw;
-        height: 5vw;
-    }
+  .room-avatar {
+    width: 3rem;
+    height: 3rem;
+  }
 
-    .room-name {
-        font-size: 1.8vw;
-    }
-
-    .room-location {
-        font-size: 1.5vw;
-    }
-
-    .stat-icon {
-        width: 2vw;
-        height: 2vw;
-    }
-
-    .stat-count {
-        font-size: 1.5vw;
-    }
-
-    .enter-btn {
-        width: 10vw;
-        height: 4vw;
-        font-size: 1.5vw;
-    }
+  .enter-btn {
+    padding: 0.25em 0.25em;
+  }
 }
 
-@media (max-width: 480px) {
+
+/*
+@media (max-width: 640px) {
     .chat-header {
         flex-direction: column;
         align-items: flex-start;
@@ -281,11 +301,11 @@ img {
     }
 
     .chat-title {
-        font-size: 4vw;
+
     }
 
     .filter-btn {
-        font-size: 2.5vw;
+
         padding: 1.5vw 3vw;
     }
 
@@ -305,11 +325,11 @@ img {
     }
 
     .room-name {
-        font-size: 3vw;
+
     }
 
     .room-location {
-        font-size: 2.2vw;
+
     }
 
     .room-stats {
@@ -323,47 +343,15 @@ img {
     }
 
     .stat-count {
-        font-size: 2.5vw;
+
     }
 
     .enter-btn {
         width: 100%;
         height: 6vw;
         margin-top: 1vw;
-        font-size: 2.5vw;
+
         order: 4;
     }
-}
-
-.room-avatar {
-    width: 3vw;
-    height: 3vw;
-    background-color: #f8fafc;
-    border-radius: 50%;
-    margin-right: 1vw;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.room-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-@media (max-width: 768px) {
-    .room-avatar {
-        width: 5vw;
-        height: 5vw;
-    }
-}
-
-@media (max-width: 480px) {
-    .room-avatar {
-        width: 8vw;
-        height: 8vw;
-    }
-}
+}*/
 </style>

@@ -51,8 +51,8 @@ const userRole = ref({
 </script>
 
 <template>
-    <div class="w-[1320px] mt-2">
-        <div v-if="userRole.role !== 'admin'" class="w-[1320px] mb-4 h-14 flex items-end justify-between mt-8">
+    <div class="w-[100%] mt-2">
+        <div v-if="userRole.role !== 'admin'" class="w-[95%] mb-4 h-14 flex items-end justify-between mt-8">
             <div class="ml-4">
                 <div class="text-zinc-800 text-xl font-bold font-['Inter']">1:1 문의</div>
                 <div class="text-stone-500 text-sm font-normal font-['Inter']">
@@ -65,7 +65,7 @@ const userRole = ref({
                     문의하기</button>
             </div>
         </div>
-        <div class="w-[1320px] h-12 bg-stone-50 flex items-center mb-4">
+        <div class="w-[100%] h-12 bg-stone-50 flex items-center mb-4">
             <div class="flex items-center gap-4 text-zinc-800 text-base font-bold font-['Inter'] pl-5">
                 <button
                     class="w-20 h-8 bg-white outline outline-offset-[-1px] outline-violet-700 rounded-3xl flex items-center justify-center"
@@ -81,15 +81,15 @@ const userRole = ref({
                     답변 완료</button>
             </div>
         </div>
-        <div class="w-full">
-            <table class="w-full text-sm">
+        <div class="w-[100%]">
+            <table class="w-[100%] text-sm">
                 <thead class="bg-gray-100 text-gray-600">
                     <tr>
-                        <th class="text-left px-4 py-2 w-[5%]">번호</th>
-                        <th class="text-left px-4 py-2">제목</th>
-                        <th class="text-center px-4 py-2 w-[10%]">상태</th>
-                        <th class="text-center px-4 py-2 w-[12%]">등록일</th>
-                        <th class="text-center px-4 py-2 w-[12%]">답변일</th>
+                        <th class="text-left px-4 py-2 w-[10%] min-w-[4rem]">번호</th>
+                        <th class="text-left px-4 py-2 w-[40%] min-w-[14rem]">제목</th>
+                        <th class="text-center px-4 py-2 w-[20%] min-w-[4.5rem]">상태</th>
+                        <th class="text-center px-4 py-2 w-[15%]">등록일</th>
+                        <th class="text-center px-4 py-2 w-[15%]">답변일</th>
                     </tr>
                 </thead>
 
