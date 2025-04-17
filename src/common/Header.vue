@@ -112,9 +112,7 @@ const toggleMenu = () => {
 
 // 로그아웃 처리
 const logout = () => {
-  userStore.user = null
-  userStore.isLogin = false
-  showMenu.value = false
+  userStore.logout();
   router.push('/')
 }
 
