@@ -171,16 +171,20 @@ function handleIncomingMessage(frame) {
   console.log(frame.headers);
   console.log(frame.body);
   const msg = JSON.parse(frame.body); // 🔴 서버에서(인증마치고 publish하도록 나중에 변경하기) 보낸 KafkaReq DTO 기준 메세지
-  const isMe = msg.sendUserIdx === currentUserIdx // 🔴 화면표시용 세션정보사용!! 신뢰하는 정보는 서버의 것만받도록 나중에 변경하기
+  console.log('[msg]', msg);
   const newMsg = {
-    id: Date.now(),
-    sender: `사용자 ${msg.userIdx}`,
+    id: msg.messageIdx,
+    sender: msg.username,
+    avatar:      msg.profileImageUrl,
     content: msg.content,
-    timestamp: new Date(),
-    isMe // 화면표시용!! 신뢰하는 정보는 서버의 것만
+    timestamp: new Date(msg.createdAt),
+    isMe: msg.userIdx === currentUserIdx, // 🔴 화면표시용 세션정보사용!! 신뢰하는 정보는 서버의 것만받도록 나중에 변경하기
+    isHighlighted: msg.isHighlighted
   }
+
   messages.value.push(newMsg)
-  console.log('[수신된 메시지]', newMsg);
+
+  console.log('[newMsg]', newMsg);
   nextTick(scrollToBottom)
 }
 
