@@ -1,7 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import PasswordChangeModal from './PasswordChange.vue'
 import Withdraw from './Withdraw.vue'
+import axios from 'axios'
+import { useUserStore } from '../../stores/useUserStore'
+
 
 // 상태 변수
 const isEditMode = ref(false)
@@ -10,13 +13,36 @@ const password = ref('')
 const isPasswordModalOpen = ref(false)
 const isWithdrawModalOpen = ref(false)
 
+
 //유저 정보
 const user = ref({
-    name: '김포도',
-    email: 'example@grapefield.co.kr',
-    phone: '010-1234-5678',
-    profileImg: '' // or 이미지 URL
+    name: '',
+    email: '',
+    phone: '',
+    profileImg: ''
 })
+
+onMounted(async () => {
+    try {
+        const res = await axios.get('api/user/mypage', {
+            withCredentials: true
+        });
+
+        // 응답 로깅 및 직접 접근
+        console.log("응답:", JSON.stringify(res.data)); // 처음 200자만 출력
+
+        // 데이터 안전하게 추출
+        const username = res.data?.username || '';
+        const email = res.data?.email || '';
+        const phone = res.data?.phone || '';
+        const profileImg = res.data?.profileImg || '';
+
+        user.value = { name: username, email, phone, profileImg };
+        console.log("추출된 데이터:", user.value);
+    } catch (error) {
+        console.error('에러 발생:', error);
+    }
+});
 
 // 프로필 이미지 변경
 const onProfileChange = (e) => {
@@ -31,20 +57,45 @@ const onProfileChange = (e) => {
 }
 
 // 비밀번호 확인 후 수정 모드 전환
-const confirmPassword = () => {
-    if (password.value === '1234') {
-        // 실제 구현 시엔 서버에 인증 요청!
-        isPasswordConfirming.value = false
-        isEditMode.value = true
-        password.value = ''
-    } else {
-        alert('비밀번호가 일치하지 않습니다!')
+const confirmPassword = async () => {
+    try {
+        const res = await axios.post('/api/user/password_verify', {
+            password: password.value
+        }, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (res.status === 200 && res.data === true) { // 서버에서 true 반환 시
+            isPasswordConfirming.value = false
+            isEditMode.value = true
+            password.value = ''
+        } else {
+            alert('비밀번호가 일치하지 않습니다!')
+        }
+    } catch (error) {
+        console.log(error)
     }
 }
 
 // 저장 후 보기 모드로 되돌리기
-const saveChanges = () => {
-    isEditMode.value = false
+const saveChanges = async () => {
+    try {
+        const res = await axios.put('/api/user/update', {
+            username: user.value.name,   // 올바른 참조 방식
+            
+        }, {
+            withCredentials: true
+        });
+
+        if (res.status === 200) {
+            isEditMode.value = false;
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 </script>
 
