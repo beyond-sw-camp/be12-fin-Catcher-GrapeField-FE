@@ -82,7 +82,7 @@ export const useUserStore = defineStore('user', {
 
     async refreshToken() {
       try {
-        const response = await axiosInstance.post("/api/user/refresh-token");
+        const response = await axiosInstance.post("/api/auth/refresh-token");
         if (response.data) {
           this.user = {
             userIdx: response.data.userIdx,
@@ -118,7 +118,8 @@ export const useUserStore = defineStore('user', {
 
     async checkAuthStatus() {
       try {
-        const response = await axiosInstance.get("/api/user/status");
+        const response = await axiosInstance.get("/auth/status");
+    
         if (response.data && response.data.authenticated) {
           this.user = {
             userIdx: response.data.userIdx,
@@ -129,12 +130,16 @@ export const useUserStore = defineStore('user', {
           this.isLogin = true;
           return true;
         }
-        this.resetUserState();
-        return false;
+    
+        // ATOKEN은 없지만 RTOKEN은 있을 수 있으므로 Refresh 시도
+        const refreshed = await this.refreshToken();
+        return refreshed;
+    
       } catch (error) {
         this.resetUserState();
         return false;
       }
     }
+    
   }
 });
