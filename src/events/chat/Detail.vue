@@ -1,14 +1,13 @@
 <script setup>
 import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import chatData from '@/assets/data/chat.json'
+/* // 더미데이터로 채팅데이터 가져오기
+import chatData from '@/assets/data/chat.json'*/
+import axios from 'axios';
 import { connect, stompClient } from '@/utils/webSocketClient'
 
 const props = defineProps({
-  id: {
-    type: [String, Number],
-    required: true
-  }
+  id: { type: [String, Number], required: true }
 })
 const router = useRouter();
 
@@ -22,7 +21,7 @@ if (cookieToken) {
   token.value = cookieToken.split('=')[1];
   console.log('✅ 쿠키에 토큰 있음:', token.value);
 } else {
-  console.log('❌ ATOKEN 없음 (쿠키에 없음)');
+  console.log('❌ 쿠키에 토큰 ATOKEN 없음');
 }
 
 // 세션 변수 설정
@@ -34,16 +33,56 @@ if(loginUser) {
   console.log('❌ 세션에 로그인 유저 없음');
 }
 
+//------reactive 변수들------
 const roomTitle = ref('')
 const participantCount = ref(0)
 const messages = ref([])
 const highlightedTimes = ref([])
 const newMessage = ref('')
 const chatBody = ref(null)
-const room = ref(null)
+
 
 let subscription = null
+function loadChatRoomData() {
+  const roomIdx = Number(props.id)
+  axios.get(`/api/chat/${roomIdx}`, {
+    headers: token.value
+        ? { Authorization: `Bearer ${token.value}` }
+        : {}
+  })
+      .then(res => {
+        const data = res.data
+        // 방 정보
+        roomTitle.value        = data.roomName
+        participantCount.value = data.memberList.length
 
+        // 메시지 매핑
+        messages.value = data.messageList.map(msg => ({
+          id:          msg.messageIdx,
+          sender:      msg.username,
+          avatar:      msg.profileImageUrl,
+          content:     msg.content,
+          timestamp:   new Date(msg.createdAt),
+          isMe:        msg.userIdx === currentUserIdx,
+          isHighlighted: msg.isHighlighted
+        }))
+
+        // 하이라이트 매핑 (startTime 기준)
+        highlightedTimes.value = data.highlightList.map(h => ({
+          id:   h.idx,
+          time: new Date(h.startTime)
+        }))
+
+        nextTick(scrollToBottom)
+      })
+      .catch(() => {
+        router.push('/chat-list')
+      })
+}
+
+
+/* // 더미데이터로 채팅데이터 가져오기
+const room = ref(null)
 function loadChatRoomData() {
   const roomId = Number(props.id)
   const foundRoom = chatData.chatRooms.find(room => room.id === roomId)
@@ -66,7 +105,7 @@ function loadChatRoomData() {
     console.error(`채팅방 ID ${props.id}를 찾을 수 없습니다.`)
     router.push('/chat-list')
   }
-}
+} */
 
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -94,15 +133,20 @@ function sendMessage() {
   }
   const messagePayload = {
     roomIdx: props.id,
-    sendUserIdx: currentUserIdx, // 서버에서 자동으로 처리하도록 나중에 제거하기
+    sendUserIdx: currentUserIdx, // 🔴 서버에서 자동으로 처리하도록 하면서 나중에 제거하기
     content: newMessage.value
   }
   console.log('[전송할 메시지]', messagePayload); // ✅ 전송 직전 확인
   // STOMP 경로로 메시지 전송
-  stompClient.publish({
-    destination: `/app/chat.send.${props.id}`,
-    body: JSON.stringify(messagePayload)
-  })
+  if (currentUserIdx) {
+    stompClient.publish({
+      destination: `/app/chat.send.${props.id}`,
+      body: JSON.stringify(messagePayload)
+    })
+  } else {
+    console.error('[경고] 로그인한 사용자 정보가 없습니다.');
+  }
+
 
   newMessage.value = ''
 }
@@ -123,17 +167,20 @@ function goBack() {
 
 // ✅ 메시지 수신 시 처리 함수
 function handleIncomingMessage(frame) {
-  const msg = JSON.parse(frame.body); // 서버에서(인증마치고 publish) 보낸 KafkaReq DTO 기준 메세지
-  const authenticatedUser = JSON.parse(sessionStorage.getItem('user'))?.user;
-  const authenticatedIdx = authenticatedUser?.userIdx;
+  console.log('[메시지 수신]', frame);
+  console.log(frame.headers);
+  console.log(frame.body);
+  const msg = JSON.parse(frame.body); // 🔴 서버에서(인증마치고 publish하도록 나중에 변경하기) 보낸 KafkaReq DTO 기준 메세지
+  const isMe = msg.sendUserIdx === currentUserIdx // 🔴 화면표시용 세션정보사용!! 신뢰하는 정보는 서버의 것만받도록 나중에 변경하기
   const newMsg = {
     id: Date.now(),
-    sender: `사용자 ${msg.sendUserIdx}`,
+    sender: `사용자 ${msg.userIdx}`,
     content: msg.content,
     timestamp: new Date(),
-    isMe: msg.sendUserIdx === authenticatedIdx // 화면표시용!! 신뢰하는 정보는 서버의 것만
+    isMe // 화면표시용!! 신뢰하는 정보는 서버의 것만
   }
   messages.value.push(newMsg)
+  console.log('[수신된 메시지]', newMsg);
   nextTick(scrollToBottom)
 }
 
@@ -145,7 +192,7 @@ onMounted(() => {
     const topic = `/topic/chat.room.${props.id}`
     subscription = client.subscribe(topic, handleIncomingMessage)
     console.log(`[STOMP] 구독 완료: ${topic}`)
-  }, token)
+  }, token.value)
 })
 
 // 🧹 컴포넌트 종료 시 구독 해제

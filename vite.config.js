@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   define: {
-    global: 'window', // 꼭 'window'로 해줘야 >> 안 그러면 sockJS 충돌해서 연결 안 됨.
+    global: 'window', // 꼭 'window'로 해줘야 >> 안 그러면 sockJS 충돌해서 연결 안 z됨.
   },
   resolve: {
     alias: {
