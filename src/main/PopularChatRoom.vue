@@ -79,18 +79,18 @@ const setFilter = (filter) => {
     <div class="chat-header">
       <h2 class="chat-title">인기 채팅방</h2>
       <div class="filter-buttons">
-        <button class="filter-btn all-time" :class="{ active: activeFilter === 'all-time' }"
+        <button class="filter-btn all-time hover:scale-110 transition duration-500" :class="{ active: activeFilter === 'all-time' }"
           @click="setFilter('all-time')">
           ALL-TIME BEST
         </button>
-        <button class="filter-btn hot" :class="{ active: activeFilter === 'hot' }" @click="setFilter('hot')">
+        <button class="filter-btn hot hover:scale-110 transition duration-500" :class="{ active: activeFilter === 'hot' }" @click="setFilter('hot')">
           지금 HOT 🔥
         </button>
       </div>
     </div>
 
     <div class="room-list">
-      <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-4 py-2 rounded-3xl"
+      <div v-for="(room, index) in filteredRooms" :key="index" class="room-item text-sm px-4 py-2 rounded-3xl transform hover:scale-105 transition duration-500"
         :class="room.colorClass">
         <div class="room-info">
           <div class="room-name sm:text-sm xl:text-sm truncate font-semibold">{{ room.name }}</div>
@@ -109,7 +109,7 @@ const setFilter = (filter) => {
             </div>
           </div>
         </div>
-        <button class="enter-btn text-xs ml-2 min-w-[3rem]" @click="router.push(`/chat-room/${room.id}`)">입장</button>
+        <button class="enter-btn text-xs ml-2 min-w-[3rem] hover:opacity-50 " @click="router.push(`/chat-room/${room.id}`)">입장</button>
       </div>
     </div>
   </div>
@@ -167,7 +167,6 @@ const setFilter = (filter) => {
 .filter-btn.active {
   background-color: #6b21a8;
   color: #f5f0ff;
-  transform: scale(1.05);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
