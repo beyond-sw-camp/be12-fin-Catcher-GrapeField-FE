@@ -32,15 +32,23 @@
 
 
                 <!-- 이벤트 바 -->
-                <div v-for="event in getEventsForDate(date.fullDate)" :key="event.title + event.time" class="mt-1">
+                <div v-for="event in getEventsForDate(date.fullDate).slice(0, 2)" :key="event.title + event.time"
+                    class="mt-1">
                     <div :class="[
                         'flex items-center min-w-0 h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate',
-                        categoryStyleMap[event.category]?.bg
+                        categoryStyleMap[categoryTranslation[event.category]]?.bg
                     ]">
-                        <div :class="['flex-shrink-0 w-1 h-4 mr-1', categoryStyleMap[event.category]?.border]"></div>
-                        {{ event.title }} ({{ event.time }})
+                        <div :class="['flex-shrink-0 w-1 h-4 mr-1', categoryStyleMap[categoryStyleMap[categoryTranslation[event.category]]?.bg
+                        ]?.border]"></div>
+                        {{ event.title }}
                     </div>
 
+                </div>
+                <div v-if="getEventsForDate(date.fullDate).length > 3" class="flex justify-center items-center h-6">
+                    <div class="text-xs font-bold text-zinc-800 cursor-pointer hover:underline">
+                        ...
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,6 +60,7 @@ import { computed } from 'vue'
 
 const props = defineProps(['year', 'month', 'events'])
 const emit = defineEmits(['date-click'])
+
 
 const today = new Date()
 
@@ -96,8 +105,20 @@ function getCalendarDates(y, m) {
 const calendarDates = computed(() => getCalendarDates(props.year, props.month))
 
 function getEventsForDate(date) {
-    return props.events.filter(e => e.date === date)
+    if (!props.events.startEvents) return [];
+    return props.events.startEvents.filter(e => {
+        const eventDate = e.startDate.split('T')[0];  // "2025-04-01T00:00:00" → "2025-04-01"
+        return eventDate === date;
+    });
 }
+
+const categoryTranslation = {
+    'MUSICAL': '뮤지컬',
+    'EXHIBITION': '전시',
+    'PLAY': '연극',
+    'CONCERT': '콘서트',
+    'FAIR': '박람회'
+};
 
 const categoryStyleMap = {
     뮤지컬: { bg: 'bg-purple-100', border: 'bg-purple-700' },
