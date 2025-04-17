@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 // 반응형 상태 정의
 const activeFilter = ref('all-time');
 const rooms = ref([]);
@@ -30,6 +32,7 @@ function mapRoomDto(dto) {
   const color = getRandomColorExcept(previousColor);
   previousColor = color;
   return {
+    id: dto.roomIdx,
     name: dto.roomName,
     location: dto.venue,
     comments: dto.memberCount,
@@ -106,7 +109,7 @@ const setFilter = (filter) => {
             </div>
           </div>
         </div>
-        <button class="enter-btn text-xs ml-2 min-w-[3rem]">입장</button>
+        <button class="enter-btn text-xs ml-2 min-w-[3rem]" @click="router.push(`/chat-room/${room.id}`)">입장</button>
       </div>
     </div>
   </div>

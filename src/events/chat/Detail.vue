@@ -75,7 +75,9 @@ function loadChatRoomData() {
 
       })
       .catch(() => {
-        router.push('/chat-list')
+        router.push('/chat-list');
+        alert('접근 권한이 없는 페이지입니다.');
+        console.error(error); // 오류 내용을 콘솔에 출력하여 디버깅에 활용
       })
 }
 
