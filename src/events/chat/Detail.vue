@@ -11,7 +11,6 @@ const props = defineProps({
 })
 const router = useRouter();
 
-
 // 토큰 변수 설정
 const token = ref(null);
 const cookieToken = document.cookie
@@ -19,21 +18,13 @@ const cookieToken = document.cookie
     .find(row => row.startsWith('ATOKEN='));
 if (cookieToken) {
   token.value = cookieToken.split('=')[1];
-  console.log('✅ 쿠키에 토큰 있음:', token.value);
-} else {
-  console.log('❌ 쿠키에 토큰 ATOKEN 없음');
 }
 
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user;
 const currentUserIdx = loginUser?.userIdx;
-if(loginUser) {
-  console.log('✅ 세션에 로그인 유저 있음:', loginUser);
-} else {
-  console.log('❌ 세션에 로그인 유저 없음');
-}
 
-//------reactive 변수들------
+// reactive 변수들
 const roomTitle = ref('')
 const participantCount = ref(0)
 const messages = ref([])
@@ -41,8 +32,11 @@ const highlightedTimes = ref([])
 const newMessage = ref('')
 const chatBody = ref(null)
 
+// 새로운 메시지 알림 버튼 상태
+const showNewMessageButton = ref(false)
 
 let subscription = null
+
 function loadChatRoomData() {
   const roomIdx = Number(props.id)
   axios.get(`/api/chat/${roomIdx}`, {
@@ -67,45 +61,23 @@ function loadChatRoomData() {
           isHighlighted: msg.isHighlighted
         }))
 
-        // 하이라이트 매핑 (startTime 기준)
+        // 하이라이트 매핑
         highlightedTimes.value = data.highlightList.map(h => ({
           id:   h.idx,
           time: new Date(h.startTime)
         }))
+        // 초기 로드 시 스크롤을 맨 아래로 이동
+        nextTick(() => {
+          if (chatBody.value) {
+            chatBody.value.scrollTop = chatBody.value.scrollHeight
+          }
+        })
 
-        nextTick(scrollToBottom)
       })
       .catch(() => {
         router.push('/chat-list')
       })
 }
-
-
-/* // 더미데이터로 채팅데이터 가져오기
-const room = ref(null)
-function loadChatRoomData() {
-  const roomId = Number(props.id)
-  const foundRoom = chatData.chatRooms.find(room => room.id === roomId)
-
-  if (foundRoom) {
-    room.value = foundRoom
-    roomTitle.value = foundRoom.title
-    participantCount.value = foundRoom.participants
-
-    messages.value = foundRoom.messages.map(msg => ({
-      ...msg,
-      timestamp: new Date(msg.timestamp)
-    }))
-
-    highlightedTimes.value = foundRoom.highlights.map(highlight => ({
-      ...highlight,
-      time: new Date(highlight.time)
-    }))
-  } else {
-    console.error(`채팅방 ID ${props.id}를 찾을 수 없습니다.`)
-    router.push('/chat-list')
-  }
-} */
 
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -120,41 +92,57 @@ function formatHighlightTime(date) {
 }
 
 function sendMessage() {
-  console.log('[sendMessage 호출]', newMessage.value); // ✅ 호출 확인 로그
-  // if (!newMessage.value.trim() || !stompClient?.connected) return
-
-  if (!newMessage.value.trim()) {
-    console.warn('빈 메시지입니다.');
-    return;
-  }
-  if (!stompClient || !stompClient.connected) {
-    console.error('STOMP 연결이 안되어 있음');
-    return;
-  }
+  if (!newMessage.value.trim() || !stompClient?.connected) return
   const messagePayload = {
     roomIdx: props.id,
-    sendUserIdx: currentUserIdx, // 🔴 서버에서 자동으로 처리하도록 하면서 나중에 제거하기
+    sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
-  console.log('[전송할 메시지]', messagePayload); // ✅ 전송 직전 확인
-  // STOMP 경로로 메시지 전송
-  if (currentUserIdx) {
+  // 메시지 전송
+  if (stompClient.publish) {
     stompClient.publish({
       destination: `/app/chat.send.${props.id}`,
       body: JSON.stringify(messagePayload)
     })
   } else {
-    console.error('[경고] 로그인한 사용자 정보가 없습니다.');
+    stompClient.send(`/app/chat.send.${props.id}`, {}, JSON.stringify(messagePayload))
   }
-
-
   newMessage.value = ''
 }
 
 function scrollToBottom() {
-  if (chatBody.value) {
-    chatBody.value.scrollTop = chatBody.value.scrollHeight
+  if (!chatBody.value) return;
+
+  const element = chatBody.value;
+  const start = element.scrollTop;
+  const end = element.scrollHeight - element.clientHeight;
+  const duration = 600; // 애니메이션 지속 시간 (밀리초)
+  const startTime = performance.now();
+
+  function easeInOutQuad(t) {
+    return t < 0.5
+        ? 2 * t * t
+        : -1 + (4 - 2 * t) * t;
   }
+
+  function animateScroll(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = easeInOutQuad(progress);
+    element.scrollTop = start + (end - start) * ease;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  requestAnimationFrame(animateScroll);
+}
+
+// 새 메시지 알림 버튼 클릭
+function onNewMessageClick() {
+  scrollToBottom()
+  showNewMessageButton.value = false
 }
 
 function scrollToHighlight(highlightId) {
@@ -165,58 +153,38 @@ function goBack() {
   router.push('/chat-list')
 }
 
-// ✅ 메시지 수신 시 처리 함수
 function handleIncomingMessage(frame) {
-  console.log('[메시지 수신]', frame);
-  console.log(frame.headers);
-  console.log(frame.body);
-  const msg = JSON.parse(frame.body); // 🔴 서버에서(인증마치고 publish하도록 나중에 변경하기) 보낸 KafkaReq DTO 기준 메세지
-  console.log('[msg]', msg);
+  const msg = JSON.parse(frame.body)
   const newMsg = {
     id: msg.messageIdx,
     sender: msg.username,
     avatar: msg.profileImageUrl,
     content: msg.content,
     timestamp: new Date(msg.createdAt),
-    isMe: msg.userIdx === currentUserIdx, // 🔴 화면표시용 세션정보사용!! 신뢰하는 정보는 서버의 것만받도록 나중에 변경하기
+    isMe: msg.userIdx === currentUserIdx,
     isHighlighted: msg.isHighlighted
   }
-
   messages.value.push(newMsg)
-
-  console.log('[newMsg]', newMsg);
-  nextTick(scrollToBottom)
+  showNewMessageButton.value = true
 }
 
 onMounted(() => {
   loadChatRoomData()
-  scrollToBottom()
-
   connect((client) => {
-    const topic = `/topic/chat.room.${props.id}`
-    subscription = client.subscribe(topic, handleIncomingMessage)
-    console.log(`[STOMP] 구독 완료: ${topic}`)
+    subscription = client.subscribe(`/topic/chat.room.${props.id}`, handleIncomingMessage)
   }, token.value)
 })
 
-// 🧹 컴포넌트 종료 시 구독 해제
 onBeforeUnmount(() => {
-  if (subscription) {
-    subscription.unsubscribe()
-    console.log(`[STOMP] 구독 해제됨`)
-  }
+  if (subscription) subscription.unsubscribe()
 })
 </script>
-
-
 
 <template>
   <div class="chat-room-container">
     <div class="chat-header">
       <div class="chat-title">
-        <button class="back-button" @click="goBack">
-          <span>&larr;</span>
-        </button>
+        <button class="back-button" @click="goBack">←</button>
         <h2 style="color: white">{{ roomTitle }}</h2>
       </div>
       <div class="chat-info">
@@ -224,11 +192,16 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
+    <!-- 새 메시지 알림 버튼 -->
+    <div v-if="showNewMessageButton" class="new-message-notification">
+      <button class="new-message-button" @click="onNewMessageClick">✨새로운 메시지가 왔어요!</button>
+    </div>
+
     <div class="chat-body" ref="chatBody">
-      <div class="message-list">
+      <transition-group name="message" tag="div" class="message-list">
         <div
             v-for="(message, index) in messages"
-            :key="index"
+            :key="message.id"
             :class="['message-container', message.isMe ? 'my-message' : '']"
         >
           <div class="message-avatar" v-if="!message.isMe">
@@ -240,14 +213,14 @@ onBeforeUnmount(() => {
             <div class="message-time">{{ formatTime(message.timestamp) }}</div>
           </div>
         </div>
-      </div>
+      </transition-group>
 
       <div v-if="highlightedTimes.length > 0" class="highlight-section">
         <h3>🔥 하이라이트 시간대</h3>
         <div class="highlight-list">
           <div
               v-for="(highlight, index) in highlightedTimes"
-              :key="index"
+              :key="highlight.id"
               class="highlight-item"
               @click="scrollToHighlight(highlight.id)"
           >
@@ -264,8 +237,11 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-
 <style scoped>
+/* 메시지 입장 애니메이션 */
+.message-enter-from { opacity: 0; transform: translateY(10px); }
+.message-enter-active { transition: all 0.3s ease; }
+.message-enter-to { opacity: 1; transform: translateY(0); }
 .chat-room-container {
   display: flex;
   flex-direction: column;
@@ -310,6 +286,33 @@ onBeforeUnmount(() => {
 .participant-count {
   font-size: 0.9vw;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.new-message-notification{
+  position: fixed;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #6A0DAD;
+  color: white;
+  padding: 0vw;
+  border-radius: 16rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.new-message-button {
+  background-color: #6A0DAD;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 16rem;
+  font-size: medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-message-button:hover {
+  background-color: #5A0C9D;
 }
 
 .chat-body {
