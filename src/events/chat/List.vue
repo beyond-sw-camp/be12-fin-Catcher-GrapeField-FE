@@ -1,69 +1,54 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
-import chatData from '../../assets/data/chat.json'
+import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
 
-const chatRooms = ref([])
+const store = useChatRoomListStore()
 const searchQuery = ref('')
 const activeTab = ref('all')
 const router = useRouter()
 
-const loadChatRooms = () => {
-  try {
-    if (!chatData || !chatData.chatRooms) {
-      console.error('채팅 데이터가 올바른 형식이 아닙니다:', chatData)
-      return
-    }
+// 탭 변경 시 API 호출
+watch(activeTab, (newTab) => {
+  store.fetchRooms(newTab)
+})
 
-    const allRooms = chatData.chatRooms.map(room => ({
-      ...room,
-      isFavorite: chatData.userFavorites.includes(room.id),
-    }))
-
-    chatRooms.value = allRooms
-  } catch (error) {
-    console.error('채팅방 목록 로드 중 오류 발생:', error)
-  }
-}
-
+// 필터링 로직
 const filteredRooms = computed(() => {
-  let result = [...chatRooms.value]
-
-  if (activeTab.value === 'performances') {
-    result = result.filter(room => room.category === 'performances')
-  } else if (activeTab.value === 'exhibitions') {
-    result = result.filter(room => room.category === 'exhibitions')
-  } else if (activeTab.value === 'favorites') {
-    result = result.filter(room => room.isFavorite)
-  }
-
-  if (searchQuery.value.trim() !== '') {
+  let result = [...store.rooms]
+  if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(room =>
-        room.title.toLowerCase().includes(query) ||
-        room.preview.toLowerCase().includes(query)
+      room.roomName.toLowerCase().includes(query) ||
+      room.eventDescription?.toLowerCase().includes(query)
     )
   }
-
   return result
 })
 
-const openChatRoom = (id) => {
-  router.push(`/chat-room/${id}`)
-}
+const openChatRoom = async (roomId) => {
+  try {
+    // ✅ 채팅방 입장 요청 먼저 보내기
+    await axios.post(`/api/chatroom/join/${roomId}`, null, {
+      withCredentials: true // JWT 쿠키 전달 필수!
+    })
 
-const toggleFavorite = (id) => {
-  const room = chatRooms.value.find(r => r.id === id)
-  if (room) {
-    room.isFavorite = !room.isFavorite
+    // 🔁 입장 완료되면 상세 페이지로 이동
+    router.push(`/chat-room/${roomId}`)
+  } catch (err) {
+    console.error('채팅방 입장 실패:', err)
+    alert('채팅방 입장에 실패했어요. 로그인 여부를 확인해보세요!')
   }
 }
 
-onMounted(() => {
-  console.log('원본 데이터:', chatData)
-  loadChatRooms()
-  console.log('처리된 데이터:', chatRooms.value)
+onMounted(async () => {
+  await store.fetchRooms('all')
 })
+
+//NOTE: 이미지 링크 임의 설정
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
 </script>
 
 
@@ -88,34 +73,37 @@ onMounted(() => {
             <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
                 전시
             </div>
-            <div class="tab" :class="{ active: activeTab === 'favorites' }" @click="activeTab = 'favorites'">
-                관심 채팅
+            <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="activeTab = 'myPageRooms'">
+                내 채팅
             </div>
         </div>
 
         <div class="chat-rooms">
-            <div v-for="room in filteredRooms" :key="room.id" class="chat-room-card" @click="openChatRoom(room.id)">
-                <div class="chat-room-image">
-                    <img :src="room.imageUrl" :alt="room.title" />
-                    <div class="active-badge" v-if="room.isActive">LIVE</div>
-                </div>
-                <div class="chat-room-info">
-                    <h3 class="chat-room-title">{{ room.title }}</h3>
-                    <div class="chat-room-details">
-                        <span class="chat-room-date">{{ room.date }}</span>
-                        <span class="chat-room-participants">{{ room.participants }}명 참여중</span>
-                    </div>
-                    <p class="chat-room-preview">{{ room.preview }}</p>
-                </div>
-                <div class="chat-room-action">
-                    <button class="favorite-button" @click.stop="toggleFavorite(room.id)">
-                        <img :src="room.isFavorite ? '../assets/icons/heart-filled.png' : '../assets/icons/heart-outline.png'"
-                            alt="관심 채팅" />
-                    </button>
-                </div>
-            </div>
+      <div
+        v-for="room in filteredRooms"
+        :key="room.roomIdx"
+        class="chat-room-card"
+        @click="openChatRoom(room.roomIdx)"
+      >
+        <div class="chat-room-image">
+          <img :src="BASE_IMAGE_URL + room.posterImgUrl || '/default.jpg'" :alt="room.roomName" />
+          <div class="active-badge">LIVE</div>
         </div>
+        <div class="chat-room-info">
+          <h3 class="chat-room-title">{{ room.roomName }}</h3>
+          <div class="chat-room-details">
+            <span class="chat-room-date">{{ room.eventStartDate.slice(0, 10) }} ~ {{ room.eventEndDate.slice(0, 10) }}</span>
+            <span class="chat-room-participants">{{ room.participantCount }}명 참여중</span>
+          </div>
+          <p class="chat-room-preview">{{ room.eventDescription }}</p>
+        </div>
+      </div>
     </div>
+  </div>
+  <!-- 더보기 버튼 -->
+<div v-if="!store.isLast && !store.loading" class="chat-room-action">
+  <button class="favorite-button" @click="store.loadMoreRooms(activeTab)">더 보기</button>
+</div>
 </template>
 
 <style scoped>
