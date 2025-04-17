@@ -44,7 +44,7 @@ const categories = ref([
     { id: "PLAY", name: "연극", count: "30개의 공연" },
     { id: "CONCERT", name: "콘서트", count: "30개의 공연" },
     { id: "EXHIBITION", name: "전시회", count: "30개의 전시회" },
-    { id: "FAIR", name: "박람회", count: "11개의 박람회" }
+    { id: "CLASSIC", name: "클래식", count: "11개의 클래식" }
 ]);
 
 const selectCategory = (categoryId) => {

@@ -72,7 +72,7 @@ import axios from 'axios'
 const CalendarStore = useCalendarStore();
 
 const fetchEventsForCurrentMonth = async () => {
-  const targetDate = new Date(displayYear.value, displayMonth.value, 1); 
+  const targetDate = new Date(displayYear.value, displayMonth.value, 1);
   const isoDateString = targetDate.toISOString().slice(0, 19);
 
   try {
@@ -89,7 +89,7 @@ const fetchEventsForCurrentMonth = async () => {
     const groupedEvents = {};
 
     eventData.forEach(event => {
-      
+
       if (events.isPresale == null) {
 
         const saleStartDate = new Date(event.saleStart);

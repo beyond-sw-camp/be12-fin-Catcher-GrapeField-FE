@@ -117,7 +117,7 @@ const categoryTranslation = {
     'EXHIBITION': '전시',
     'PLAY': '연극',
     'CONCERT': '콘서트',
-    'FAIR': '박람회'
+    'CLASSIC': '클래식'
 };
 
 const categoryStyleMap = {

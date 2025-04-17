@@ -19,13 +19,15 @@
                     {{ categoryTranslation[item.category] }}
                 </div>
                 <div>
-                    <a :href="`/events/${ item.idx }`">
+                    <a :href="`/events/${item.idx}`">
                         <div class="text-base font-bold text-zinc-800">{{ item.title }}</div>
                     </a>
                     <div class="text-sm text-stone-500">예매 시작: {{ item.time }}</div>
-                    <div class="text-sm text-stone-500">예매처: {{ item.vendor }}</div>
-                    <div class="text-sm" :class="linkColorMap[categoryTranslation[item.category]]">
-                        <a :href="item.link" target="_blank">바로가기 &gt;</a>
+                    <div class="flex items-center text-sm text-stone-500">
+                        <span>예매처: {{ item.vendor }}</span>
+                        <div class="ml-2 text-sm" :class="linkColorMap[categoryTranslation[item.category]]">
+                            <a :href="item.link" target="_blank">바로가기 &gt;</a>
+                        </div>
                     </div>
                     <div class="text-sm text-stone-500">공연 기간: {{ item.period }}</div>
                     <div class="text-sm text-stone-500">장소: {{ item.location }}</div>
@@ -68,7 +70,7 @@ const categoryTranslation = {
     'EXHIBITION': '전시',
     'PLAY': '연극',
     'CONCERT': '콘서트',
-    'FAIR': '박람회'
+    'CLASSIC': '클래식식'
 };
 
 const bgColorMap = {
