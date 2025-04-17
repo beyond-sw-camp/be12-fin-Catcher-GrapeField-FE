@@ -16,7 +16,7 @@
         <button class="bg-purple-600 text-white px-4 py-2 rounded whitespace-nowrap">검색</button>
       </div>
       <!--TODO : 게시글 등록 페이지 추가 필요-->
-      <button class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister()">글쓰기</button>
+      <button v-if="isLogin" class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister()">글쓰기</button>
     </div>
 
     <!-- 게시판 테이블 -->
@@ -81,10 +81,14 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { usePostStore } from '@/stores/usePostStore'
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/useUserStore';
 
 const route = useRoute();
 const router = useRouter();
 const postStore = usePostStore();
+const userStore = useUserStore()
+
+const isLogin = computed(() => userStore.isLogin);
 
 // 한글 표시와 enum 값 매핑
 const tabMapping = {

@@ -18,7 +18,7 @@
     </div>
     <div v-if="selectedTab === '한줄평'" class="flex flex-col gap-y-3">
       <!-- 리뷰 카드 리스트 -->
-      <EventReview :idx="eventIdx"/>
+      <EventReview :eventIdx="eventIdx"/>
     </div>
   </div>
   <!-- 데이터 로드 실패 또는 데이터 없음 (로딩 중이 아닐 때만 표시) -->
@@ -30,12 +30,12 @@
 
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter,onBeforeRouteLeave } from 'vue-router'
 import { ref, onMounted, computed, watch } from 'vue'
 import EventHeaderInfo from './EventHeaderInfo.vue'
 import EventTabs from './EventDetailTab.vue'
 import EventDetail from './EventDetail.vue'
-import EventReview from "./EventReview.vue";
+import EventReview from "./review/EventReview.vue";
 
 import { useEventsStore } from '@/stores/useEventsStore'
 import { useLoadingStore } from '@/stores/useLoadingStore'
@@ -49,10 +49,22 @@ const eventIdx = Number(route.params.eventIdx) //이벤트 idx
 
 const event = ref(null)
 const error = ref(null)
+
+// 탭 상태 관리
+const selectedTab = ref(eventStore.selectedTab);
+watch(selectedTab, (newVal) => {
+  eventStore.setTab(newVal);
+});
 // 초기 데이터 로드
 onMounted(() => {
   loadEventDetail()
 })
+
+//이벤트 페이지를 떠나서 새로운 이벤트 페이지로 이동시 상세정보 탭으로 이동
+onBeforeRouteLeave((to, from, next) => {
+  eventStore.setTab('상세 정보');
+  next();
+});
 
 const loadEventDetail = async () => {
   try {
@@ -74,12 +86,6 @@ const loadEventDetail = async () => {
 const retryLoading = () => {
   loadEventDetail()
 }
-
-// 탭 상태 관리
-const selectedTab = ref(eventStore.selectedTab);
-watch(selectedTab, (newVal) => {
-  eventStore.setTab(newVal);
-});
 </script>
 
 <style scoped>

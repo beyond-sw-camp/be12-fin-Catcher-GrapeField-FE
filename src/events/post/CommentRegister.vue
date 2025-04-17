@@ -45,8 +45,14 @@ const submitComment = async () => {
 }
 
 const login = () => {
-    router.push("/login");
+    router.push({
+        path: '/login',
+        query: {
+            redirect: route.fullPath, // 현재 경로 저장
+        }
+    });
 }
+
 </script>
 <template>
     <!-- 댓글 입력 섹션 -->

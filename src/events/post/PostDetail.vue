@@ -131,16 +131,6 @@ const postType = computed(() => {
     return postTypeMapping[post.value.postType] || '일반';
 });
 
-// 현재 사용자가 작성자인지 확인
-const isAuthor = computed(() => {
-    return userStore.user && userStore.user.username === post.value.username;
-});
-
-// 관리자 여부 확인
-const isAdmin = computed(() => {
-    return userStore.user && userStore.user.role === 'ROLE_ADMIN';
-});
-
 // 마크다운 또는 HTML 형식의 내용 처리
 const formattedContent = computed(() => {
     if (!post.value.content) return '';
