@@ -113,8 +113,8 @@ const hasNext = ref(false)
 const hasPrevious = ref(false)
 
 const resetPagination = () => {
-  boardRows = [],
-    currentPage = 1
+  boardRows = []
+  currentPage = 1
   totalPages = 1
   totalElements = 0
   hasNext = false
