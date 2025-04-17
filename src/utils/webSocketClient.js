@@ -8,7 +8,11 @@ let stompClient = null;
 const baseUrl = import.meta.env.VITE_BASE_URL || '';  // 예: '' 또는 'http://localhost:8080'
 const socketUrl = `${baseUrl}/ws`; // 상대경로도 가능하게 설정
 
-export function connect(onConnectCallback /*, token */) {
+
+//const atoken = localStorage.getItem('ATOKEN') || sessionStorage.getItem('ATOKEN');
+
+export function connect(onConnectCallback , token ) {
+    //console.log(`atoken: ${atoken}`);
     const socket = new SockJS(socketUrl, null, {
         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
         // transports: ['websocket'], // 웹소켓만 사용하고 싶다면 이 줄을 사용
@@ -16,9 +20,12 @@ export function connect(onConnectCallback /*, token */) {
     });
     stompClient = new Client({
         webSocketFactory: () => socket,
+        connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
         reconnectDelay: 5000,
         onConnect: () => {
-            console.log('STOMP 연결 성공 (쿠키 + Interceptor 사용)');
+            // console.log('STOMP 연결 성공 (쿠키 + Interceptor 사용)');
+            console.log(`{TOKEN ${token ? '있음' : '없음'}}`);
+            console.log(`{TOKEN ${token.value}}`);
             console.log('WebSocket 연결 성공');
             if (onConnectCallback) onConnectCallback(stompClient);
         },

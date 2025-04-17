@@ -12,7 +12,7 @@ const props = defineProps({
 })
 const router = useRouter();
 
-/*
+
 // 토큰 변수 설정
 const token = ref(null);
 const cookieToken = document.cookie
@@ -23,7 +23,7 @@ if (cookieToken) {
   console.log('✅ 쿠키에 토큰 있음:', token.value);
 } else {
   console.log('❌ ATOKEN 없음 (쿠키에 없음)');
-}*/
+}
 
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user;
@@ -94,7 +94,7 @@ function sendMessage() {
   }
   const messagePayload = {
     roomIdx: props.id,
-    /* sendUserIdx: currentUserIdx, */ // 서버에서 자동으로 처리하도록 제거하기
+    sendUserIdx: currentUserIdx, // 서버에서 자동으로 처리하도록 나중에 제거하기
     content: newMessage.value
   }
   console.log('[전송할 메시지]', messagePayload); // ✅ 전송 직전 확인
@@ -145,7 +145,7 @@ onMounted(() => {
     const topic = `/topic/chat.room.${props.id}`
     subscription = client.subscribe(topic, handleIncomingMessage)
     console.log(`[STOMP] 구독 완료: ${topic}`)
-  } /*, token */)
+  }, token)
 })
 
 // 🧹 컴포넌트 종료 시 구독 해제
