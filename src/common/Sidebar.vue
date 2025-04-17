@@ -76,20 +76,50 @@
                   </div>
 
                   <!-- 채팅방 카드 -->
-                  <div v-for="room in favoriteChatRooms" :key="room.id"
+                  <div
+                    v-for="room in chatStore.myRooms"
+                    :key="room.roomIdx"
                     class="bg-purple-100 px-[1vw] py-[1.2vh] rounded-md cursor-pointer hover:shadow-md transition-all"
-                    @click="showChatRoom(room)">
+                    @click="showChatRoom(room)"
+                  >
                     <div class="flex justify-between items-center mb-[0.6vh]">
-                      <div class="text-[1.1vw] font-semibold text-gray-800 truncate">{{ room.title }}</div>
-                      <div :class="room.isActive ? 'bg-red-500' : 'bg-gray-400'"
-                        class="text-white text-[0.7vw] px-[0.4vw] py-[0.2vh] rounded-full font-semibold">
-                        {{ room.isActive ? 'LIVE' : '대기' }}
+                      <div
+                        class="text-[1.1vw] font-semibold text-gray-800 truncate"
+                      >
+                        {{ room.roomName }}
+                      </div>
+                      <div
+                        :class="
+                          isLive(room.eventStartDate, room.eventEndDate)
+                            ? 'bg-red-500'
+                            : 'bg-gray-400'
+                        "
+                        class="text-white text-[0.7vw] px-[0.4vw] py-[0.2vh] rounded-full font-semibold"
+                      >
+                        {{
+                          isLive(room.eventStartDate, room.eventEndDate)
+                            ? "LIVE"
+                            : "대기"
+                        }}
                       </div>
                     </div>
-                    <div class="text-[0.9vw] text-gray-600 truncate mb-[0.8vh]">{{ room.preview }}</div>
-                    <div class="flex justify-between text-[0.8vw] text-gray-500">
-                      <div>{{ room.participants }}명 참여중</div>
-                      <div>{{ room.date }}</div>
+
+                    <div class="text-[0.9vw] text-gray-600 truncate mb-[0.8vh]">
+                      {{ room.lastMessage || "최근 메시지가 없습니다." }}
+                    </div>
+
+                    <div
+                      class="flex justify-between text-[0.8vw] text-gray-500"
+                    >
+                      <div>{{ room.unreadCount }}명 참여중</div>
+                      <div>
+                        {{
+                          formatDateRange(
+                            room.eventStartDate,
+                            room.eventEndDate
+                          )
+                        }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -265,8 +295,10 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import chatData from '../assets/data/chat.json'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
+import { useChatStore } from '../stores/useChatStore'
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -309,7 +341,7 @@ const getPanelTitle = computed(() => {
   }
 })
 
-// 관심 등록된 채팅방
+// 내가 참여한 채팅방
 const favoriteChatRooms = computed(() => {
   if (!state.chatRooms || state.chatRooms.length === 0) return []
   return state.chatRooms
@@ -325,9 +357,6 @@ function togglePanel(panelName) {
   } else {
     state.activePanel = panelName
     state.activeChatRoom = null
-    if (panelName === 'chat') {
-      loadChatRooms()
-    }
   }
 }
 
@@ -345,11 +374,7 @@ function toggleSidebar() {
   localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed)
 }
 
-function loadChatRooms() {
-  if (chatData && chatData.chatRooms) {
-    state.chatRooms = chatData.chatRooms.map(room => ({ ...room }))
-  }
-}
+
 
 function showChatRoom(room) {
   state.activeChatRoom = room
@@ -442,11 +467,26 @@ const logout = () => {
   router.push('/')
 }
 
+// live:대기중 함수
+function isLive(start, end) {
+  if (!start || !end) return false;
+  const now = new Date();
+  return new Date(start) <= now && now <= new Date(end);
+}
+
+// 포맷 데이터 함수 추가
+function formatDateRange(start, end) {
+  if (!start || !end) return ''
+  const s = new Date(start)
+  const e = new Date(end)
+  return `${s.getFullYear()}.${(s.getMonth() + 1).toString().padStart(2, '0')}.${s.getDate().toString().padStart(2, '0')} - ${e.getFullYear()}.${(e.getMonth() + 1).toString().padStart(2, '0')}.${e.getDate().toString().padStart(2, '0')}`
+}
+
+
 
 onMounted(() => {
-  const savedState = localStorage.getItem('sidebarCollapsed')
-  if (savedState !== null) {
-    state.isSidebarCollapsed = savedState === 'true'
+  if (chatStore.myRooms.length === 0) {
+    chatStore.fetchMyRooms()
   }
 })
 </script>
