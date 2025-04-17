@@ -46,9 +46,14 @@
       <div class="flex items-center gap-2 px-1.5">
         <!-- ✅ 비로그인 -->
         <template v-if="!isLogin">
-          <router-link to="/login" class="text-sm text-gray-700 hover:underline truncate">로그인</router-link>
+          <router-link :to="{ path: '/login', query: { redirect: $route.fullPath } }"
+            class="text-sm text-gray-700 hover:underline truncate">
+            로그인
+          </router-link>
           <span class="text-gray-400">/</span>
-          <router-link to="/signup" class="text-sm text-gray-700 hover:underline truncate">회원가입</router-link>
+          <router-link to="/signup" class="text-sm text-gray-700 hover:underline truncate">
+            회원가입
+          </router-link>
         </template>
 
         <!-- ✅ 로그인 -->
