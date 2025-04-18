@@ -1,3 +1,204 @@
+<script setup>
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import chatData from '../assets/data/chat.json'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '../stores/useUserStore'
+import { useChatStore } from '../stores/useChatStore'
+
+const userStore = useUserStore()
+const chatStore = useChatStore()
+const route = useRoute()
+const router = useRouter()
+
+// 로그인 상태 확인
+const isLogin = computed(() => userStore.isLogin)
+
+// 상태 정의
+const state = reactive({
+  activePanel: null,
+  isSidebarCollapsed: false,
+  chatRooms: [],
+  activeChatRoom: null,
+  activeChatRoomMessages: [],
+  newMessage: ''
+})
+
+//사이드바 아이콘
+const getIconUrl = (name) => {
+  return new URL(`../assets/icons/${name}.png`, import.meta.url).href
+}
+//프로필 아이콘
+const profileImgUrl = new URL('../assets/icons/profile.png', import.meta.url).href
+
+
+// 패널 제목 계산
+const getPanelTitle = computed(() => {
+  switch (state.activePanel) {
+    case 'profile':
+      return '프로필'
+    case 'chat':
+      return state.activeChatRoom ? state.activeChatRoom.title : '채팅'
+    case 'calendar':
+      return '캘린더'
+    case 'interest':
+      return '관심목록'
+    case 'history':
+      return '히스토리'
+    default:
+      return ''
+  }
+})
+
+// 내가 참여한 채팅방
+const favoriteChatRooms = computed(() => {
+  if (!state.chatRooms || state.chatRooms.length === 0) return []
+  return state.chatRooms
+      .filter(room => chatData.userFavorites.includes(room.id))
+      .slice(0, 5)
+})
+
+// 패널 토글
+function togglePanel(panelName) {
+  if (state.activePanel === panelName) {
+    state.activePanel = null
+    state.activeChatRoom = null
+  } else {
+    state.activePanel = panelName
+    state.activeChatRoom = null
+  }
+}
+
+function closePanel() {
+  state.activePanel = null
+  state.activeChatRoom = null
+}
+
+function toggleSidebar() {
+  state.isSidebarCollapsed = !state.isSidebarCollapsed
+  if (state.isSidebarCollapsed) {
+    state.activePanel = null
+    state.activeChatRoom = null
+  }
+  localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed)
+}
+
+
+
+function showChatRoom(room) {
+  state.activeChatRoom = room
+  state.activeChatRoomMessages = room.messages.map(msg => ({
+    ...msg,
+    timestamp: new Date(msg.timestamp)
+  }))
+  nextTick(scrollToBottom)
+}
+
+function backToChatList() {
+  state.activeChatRoom = null
+  state.activeChatRoomMessages = []
+  state.newMessage = ''
+}
+
+function sendMessage() {
+  if (!state.newMessage.trim() || !state.activeChatRoom) return
+
+  const newMsg = {
+    id: Date.now(),
+    sender: '나',
+    content: state.newMessage,
+    timestamp: new Date(),
+    isMe: true
+  }
+
+  state.activeChatRoomMessages.push(newMsg)
+  state.newMessage = ''
+
+  nextTick(scrollToBottom)
+
+  setTimeout(() => {
+    const autoResponse = {
+      id: Date.now() + 1,
+      sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
+      content: getRandomResponse(),
+      timestamp: new Date(),
+      avatar: `../assets/icons/profile.png`,
+      isMe: false
+    }
+    state.activeChatRoomMessages.push(autoResponse)
+    nextTick(scrollToBottom)
+  }, 1000)
+}
+
+function scrollToBottom() {
+  const el = document.querySelector('.chat-messages')
+  if (el) {
+    el.scrollTop = el.scrollHeight
+  }
+}
+
+function getRandomResponse() {
+  const responses = [
+    '네, 지금 공연장 분위기가 정말 좋습니다!',
+    '메인 홀 우측이 잘 보이는 것 같아요.',
+    '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
+    '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
+    '오늘 특별 게스트도 온다는 소문이 있어요!',
+    '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
+    '공연 후 사인회는 로비에서 진행된다고 합니다.'
+  ]
+  return responses[Math.floor(Math.random() * responses.length)]
+}
+
+function formatTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+function openChatRoomNewWindow(id) {
+  const baseUrl = window.location.origin
+  const routeUrl = `${baseUrl}/chat-room/${id}`
+  window.open(routeUrl, '_blank')
+}
+
+function viewAllChatRoomsNewWindow() {
+  const baseUrl = window.location.origin
+  const routeUrl = `${baseUrl}/chat-list`
+  window.open(routeUrl, '_blank')
+}
+
+// 로그아웃 처리
+const logout = () => {
+  userStore.user = null
+  userStore.isLogin = false
+  showMenu.value = false
+  router.push('/')
+}
+
+// live:대기중 함수
+function isLive(start, end) {
+  if (!start || !end) return false;
+  const now = new Date();
+  return new Date(start) <= now && now <= new Date(end);
+}
+
+// 포맷 데이터 함수 추가
+function formatDateRange(start, end) {
+  if (!start || !end) return ''
+  const s = new Date(start)
+  const e = new Date(end)
+  return `${s.getFullYear()}.${(s.getMonth() + 1).toString().padStart(2, '0')}.${s.getDate().toString().padStart(2, '0')} - ${e.getFullYear()}.${(e.getMonth() + 1).toString().padStart(2, '0')}.${e.getDate().toString().padStart(2, '0')}`
+}
+
+
+
+onMounted(() => {
+  if (chatStore.myRooms.length === 0) {
+    chatStore.fetchMyRooms()
+  }
+})
+</script>
+
 <template>
   <div class="relative w-full h-full">
     <!-- 사이드 패널 -->
@@ -288,208 +489,6 @@
     </div>
   </div>
 </template>
-
-
-<script setup>
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
-import chatData from '../assets/data/chat.json'
-import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../stores/useUserStore'
-import { useChatStore } from '../stores/useChatStore'
-
-const userStore = useUserStore()
-const chatStore = useChatStore()
-const route = useRoute()
-const router = useRouter()
-
-// 로그인 상태 확인
-const isLogin = computed(() => userStore.isLogin)
-
-// 상태 정의
-const state = reactive({
-  activePanel: null,
-  isSidebarCollapsed: false,
-  chatRooms: [],
-  activeChatRoom: null,
-  activeChatRoomMessages: [],
-  newMessage: ''
-})
-
-//사이드바 아이콘
-const getIconUrl = (name) => {
-  return new URL(`../assets/icons/${name}.png`, import.meta.url).href
-}
-//프로필 아이콘
-const profileImgUrl = new URL('../assets/icons/profile.png', import.meta.url).href
-
-
-// 패널 제목 계산
-const getPanelTitle = computed(() => {
-  switch (state.activePanel) {
-    case 'profile':
-      return '프로필'
-    case 'chat':
-      return state.activeChatRoom ? state.activeChatRoom.title : '채팅'
-    case 'calendar':
-      return '캘린더'
-    case 'interest':
-      return '관심목록'
-    case 'history':
-      return '히스토리'
-    default:
-      return ''
-  }
-})
-
-// 내가 참여한 채팅방
-const favoriteChatRooms = computed(() => {
-  if (!state.chatRooms || state.chatRooms.length === 0) return []
-  return state.chatRooms
-    .filter(room => chatData.userFavorites.includes(room.id))
-    .slice(0, 5)
-})
-
-// 패널 토글
-function togglePanel(panelName) {
-  if (state.activePanel === panelName) {
-    state.activePanel = null
-    state.activeChatRoom = null
-  } else {
-    state.activePanel = panelName
-    state.activeChatRoom = null
-  }
-}
-
-function closePanel() {
-  state.activePanel = null
-  state.activeChatRoom = null
-}
-
-function toggleSidebar() {
-  state.isSidebarCollapsed = !state.isSidebarCollapsed
-  if (state.isSidebarCollapsed) {
-    state.activePanel = null
-    state.activeChatRoom = null
-  }
-  localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed)
-}
-
-
-
-function showChatRoom(room) {
-  state.activeChatRoom = room
-  state.activeChatRoomMessages = room.messages.map(msg => ({
-    ...msg,
-    timestamp: new Date(msg.timestamp)
-  }))
-  nextTick(scrollToBottom)
-}
-
-function backToChatList() {
-  state.activeChatRoom = null
-  state.activeChatRoomMessages = []
-  state.newMessage = ''
-}
-
-function sendMessage() {
-  if (!state.newMessage.trim() || !state.activeChatRoom) return
-
-  const newMsg = {
-    id: Date.now(),
-    sender: '나',
-    content: state.newMessage,
-    timestamp: new Date(),
-    isMe: true
-  }
-
-  state.activeChatRoomMessages.push(newMsg)
-  state.newMessage = ''
-
-  nextTick(scrollToBottom)
-
-  setTimeout(() => {
-    const autoResponse = {
-      id: Date.now() + 1,
-      sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
-      content: getRandomResponse(),
-      timestamp: new Date(),
-      avatar: `../assets/icons/profile.png`,
-      isMe: false
-    }
-    state.activeChatRoomMessages.push(autoResponse)
-    nextTick(scrollToBottom)
-  }, 1000)
-}
-
-function scrollToBottom() {
-  const el = document.querySelector('.chat-messages')
-  if (el) {
-    el.scrollTop = el.scrollHeight
-  }
-}
-
-function getRandomResponse() {
-  const responses = [
-    '네, 지금 공연장 분위기가 정말 좋습니다!',
-    '메인 홀 우측이 잘 보이는 것 같아요.',
-    '인터미션 시간에는 카페에서 특별 음료도 판매한대요.',
-    '주차는 B2층이 비교적 자리가 많이 남아있습니다.',
-    '오늘 특별 게스트도 온다는 소문이 있어요!',
-    '프로그램 북을 꼭 받아가세요, 배우들 인터뷰가 실려있습니다.',
-    '공연 후 사인회는 로비에서 진행된다고 합니다.'
-  ]
-  return responses[Math.floor(Math.random() * responses.length)]
-}
-
-function formatTime(date) {
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${hours}:${minutes}`
-}
-
-function openChatRoomNewWindow(id) {
-  const baseUrl = window.location.origin
-  const routeUrl = `${baseUrl}/chat-room/${id}`
-  window.open(routeUrl, '_blank')
-}
-
-function viewAllChatRoomsNewWindow() {
-  const baseUrl = window.location.origin
-  const routeUrl = `${baseUrl}/chat-list`
-  window.open(routeUrl, '_blank')
-}
-
-// 로그아웃 처리
-const logout = () => {
-  userStore.user = null
-  userStore.isLogin = false
-  showMenu.value = false
-  router.push('/')
-}
-
-// live:대기중 함수
-function isLive(start, end) {
-  if (!start || !end) return false;
-  const now = new Date();
-  return new Date(start) <= now && now <= new Date(end);
-}
-
-// 포맷 데이터 함수 추가
-function formatDateRange(start, end) {
-  if (!start || !end) return ''
-  const s = new Date(start)
-  const e = new Date(end)
-  return `${s.getFullYear()}.${(s.getMonth() + 1).toString().padStart(2, '0')}.${s.getDate().toString().padStart(2, '0')} - ${e.getFullYear()}.${(e.getMonth() + 1).toString().padStart(2, '0')}.${e.getDate().toString().padStart(2, '0')}`
-}
-
-
-
-onMounted(() => {
-  if (chatStore.myRooms.length === 0) {
-    chatStore.fetchMyRooms()
-  }
-})
-</script>
 
 
 <style scoped></style>

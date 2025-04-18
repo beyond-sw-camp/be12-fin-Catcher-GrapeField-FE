@@ -5,11 +5,11 @@ import {useRoute, useRouter} from 'vue-router'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import axios from 'axios';
 import {connect, stompClient} from '@/utils/webSocketClient'
-import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
+import { useChatRoomListStore } from '@/stores/useChatRoomsListStore'
 
-// const props = defineProps({
-//   id: {type: [String, Number], required: true}
-// })
+const props = defineProps({
+  id: { type: [String, Number], required: true }
+})
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 
@@ -42,8 +42,8 @@ const showNewMessageButton = ref(false)
 let subscription = null
 
 function loadChatRoomData() {
-  const roomIdx = Number(roomId.value)
-  chatRoomStore.fetchChatRoom(roomIdx, token.value)
+  const roomIdx = Number(props.id)
+  chatRoomStore.fetchChatRoom(roomIdx, token)
       .then(data => {
         roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
@@ -91,17 +91,19 @@ function formatHighlightTime(date) {
 function sendMessage() {
   if (!newMessage.value.trim() || !stompClient?.connected) return
   const messagePayload = {
-    roomIdx: roomId.value,
+    roomIdx: props.id,
     sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
   if (stompClient.publish) {
     stompClient.publish({
-      destination: `/app/chat.send.${roomId.value}`,
-      body: JSON.stringify(messagePayload)
+      destination: `/app/chat.send.${props.id}`,
+      body: JSON.stringify(messagePayload),
     })
+    console.log(`웹소켓 메세지 발행: ${JSON.stringify(messagePayload)}`)
   } else {
-    stompClient.send(`/app/chat.send.${roomId.value}`, {}, JSON.stringify(messagePayload))
+    stompClient.send(`/app/chat.send.${props.id}`, {}, JSON.stringify(messagePayload))
+    console.log(`웹소켓 메세지 발행: ${JSON.stringify(messagePayload)}`)
   }
   newMessage.value = ''
 }
@@ -182,6 +184,7 @@ function handleIncomingMessage(frame) {
     isHighlighted: msg.isHighlighted
   }
   messages.value.push(newMsg)
+  console.log(`웹소켓 메세지 수신: ${JSON.stringify(newMsg)}`);
   if (!newMsg.isMe) showNewMessageButton.value = true
   else nextTick(scrollToBottom)
 }
@@ -198,12 +201,11 @@ const getRandomColor = () => {
 
 const handleLike = async () => {
   // try {
-  //   await chatRoomStore.likeRoom(roomId.value)
+  //   await chatRoomStore.likeRoom(props.id)
   //   console.log('좋아요 완료!')
   // } catch (err) {
   //   console.error('API 오류:', err)
   // }
-// 애니메이션용 하트 추가
   for (let i = 0; i < 5; i++) {
     const id = Date.now() + Math.random()
     setTimeout(() => {
@@ -234,9 +236,9 @@ const leaveChatRoom = async () => {
 
 onMounted(() => {
   loadChatRoomData()
-  connect((client) => {
-    subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
-  }, token.value)
+  connect(client => {
+    subscription = client.subscribe(`/topic/chat.room.${props.id}`, handleIncomingMessage)
+  }, token)
 })
 
 onBeforeUnmount(() => {

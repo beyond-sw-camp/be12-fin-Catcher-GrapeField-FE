@@ -20,7 +20,7 @@ export function connect(onConnectCallback , token ) {
     });
     stompClient = new Client({
         webSocketFactory: () => socket,
-        connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+        connectHeaders: token.value ? { Authorization: `Bearer ${token.value}` } : {},
         reconnectDelay: 5000,
         onConnect: () => {
             // console.log('STOMP 연결 성공 (쿠키 + Interceptor 사용)');
