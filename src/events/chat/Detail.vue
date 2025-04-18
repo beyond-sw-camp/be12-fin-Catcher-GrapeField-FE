@@ -167,7 +167,12 @@ function handleIncomingMessage(frame) {
     isHighlighted: msg.isHighlighted
   }
   messages.value.push(newMsg)
-  showNewMessageButton.value = true
+  if (newMsg.isMe === false) {
+    showNewMessageButton.value = true
+  } else {
+    nextTick(scrollToBottom)
+  }
+
 }
 
 // 애니메이션용 하트 리스트
