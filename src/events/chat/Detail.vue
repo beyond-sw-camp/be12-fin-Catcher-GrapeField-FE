@@ -1,13 +1,13 @@
 <script setup>
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
+import {ref, onMounted, nextTick, onBeforeUnmount} from 'vue'
+import {useRouter} from 'vue-router'
 /* // 더미데이터로 채팅데이터 가져오기
 import chatData from '@/assets/data/chat.json'*/
 import axios from 'axios';
-import { connect, stompClient } from '@/utils/webSocketClient'
+import {connect, stompClient} from '@/utils/webSocketClient'
 
 const props = defineProps({
-  id: { type: [String, Number], required: true }
+  id: {type: [String, Number], required: true}
 })
 const router = useRouter();
 
@@ -41,29 +41,29 @@ function loadChatRoomData() {
   const roomIdx = Number(props.id)
   axios.get(`/api/chat/${roomIdx}`, {
     headers: token.value
-        ? { Authorization: `Bearer ${token.value}` }
+        ? {Authorization: `Bearer ${token.value}`}
         : {}
   })
       .then(res => {
         const data = res.data
         // 방 정보
-        roomTitle.value        = data.roomName
+        roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
 
         // 메시지 매핑
         messages.value = data.messageList.map(msg => ({
-          id:          msg.messageIdx,
-          sender:      msg.username,
-          avatar:      msg.profileImageUrl,
-          content:     msg.content,
-          timestamp:   new Date(msg.createdAt),
-          isMe:        msg.userIdx === currentUserIdx,
+          id: msg.messageIdx,
+          sender: msg.username,
+          avatar: msg.profileImageUrl,
+          content: msg.content,
+          timestamp: new Date(msg.createdAt),
+          isMe: msg.userIdx === currentUserIdx,
           isHighlighted: msg.isHighlighted
         }))
 
         // 하이라이트 매핑
         highlightedTimes.value = data.highlightList.map(h => ({
-          id:   h.idx,
+          id: h.idx,
           time: new Date(h.startTime)
         }))
         // 초기 로드 시 스크롤을 맨 아래로 이동
@@ -170,6 +170,54 @@ function handleIncomingMessage(frame) {
   showNewMessageButton.value = true
 }
 
+// 애니메이션용 하트 리스트
+const hearts = ref([])
+
+const getRandomColor = () => {
+  const colors = [
+    '#FF4D4D', // 빨강
+    '#FF9900', // 주황
+    '#FFD700', // 노랑
+    '#66CC66', // 초록
+    '#00BFFF', // 파랑
+    '#8A2BE2', // 보라
+    '#FF69B4', // 핑크
+  ]
+  return colors[Math.floor(Math.random() * colors.length)]
+}
+
+// 하트 클릭 핸들러
+const handleLike = async () => {
+  // API 요청
+  try {
+    await axios.post('/api/like', {
+      roomIdx: props.id, // post ID 전달
+    })
+    console.log('좋아요 완료!')
+  } catch (err) {
+    console.error('API 오류:', err)
+  }
+
+// 애니메이션용 하트 추가
+  for (let i = 0; i < 5; i++) {
+    const id = Date.now() + Math.random()
+
+    // 각 하트가 생성되는 간격을 i에 따라 다르게 설정
+    setTimeout(() => {
+      hearts.value.push({
+        id,
+        x: 10 + Math.random() * 20,
+        y: 0,
+      })
+
+      // 1초 뒤 제거
+      setTimeout(() => {
+        hearts.value = hearts.value.filter((h) => h.id !== id)
+      }, 10000)
+    }, i * 150)  // 각 하트가 500ms 간격으로 생성되도록 설정
+  }
+}
+
 onMounted(() => {
   loadChatRoomData()
   connect((client) => {
@@ -199,18 +247,18 @@ onBeforeUnmount(() => {
       <button class="new-message-button" @click="onNewMessageClick">✨새로운 메시지가 왔어요!</button>
     </div>
 
-    <div class="chat-body" ref="chatBody">
-      <transition-group name="message" tag="div" class="message-list">
+    <div ref="chatBody" class="chat-body">
+      <transition-group class="message-list" name="message" tag="div">
         <div
             v-for="(message, index) in messages"
             :key="message.id"
             :class="['message-container', message.isMe ? 'my-message' : '']"
         >
-          <div class="message-avatar" v-if="!message.isMe">
-            <img :src="message.avatar || '../assets/icons/default-avatar.png'" alt="프로필" />
+          <div v-if="!message.isMe" class="message-avatar">
+            <img :src="message.avatar || '../assets/icons/default-avatar.png'" alt="프로필"/>
           </div>
           <div class="message-content">
-            <div class="message-sender" v-if="!message.isMe">{{ message.sender }}</div>
+            <div v-if="!message.isMe" class="message-sender">{{ message.sender }}</div>
             <div class="message-bubble">{{ message.content }}</div>
             <div class="message-time">{{ formatTime(message.timestamp) }}</div>
           </div>
@@ -233,7 +281,44 @@ onBeforeUnmount(() => {
     </div>
 
     <div class="chat-input">
-      <input type="text" v-model="newMessage" placeholder="메시지 입력..." @keyup.enter="sendMessage" />
+      <button aria-label="좋아요" class="heart-button" @click="handleLike">
+        <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+          <path
+              d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
+       2 5 4.5 2.8 7.5 2.8c1.7 0 3.2.8 4.5 2.2
+       1.3-1.4 2.8-2.2 4.5-2.2C19.5 2.8 22 5 22 8.2
+       c0 3.75-3.2 6.9-7.1 10.45-1.3 1.25-2.5 2.35-2.9 2.7z"
+              fill="#e1306c"
+          />
+        </svg>
+
+        <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
+        <span
+            v-for="heart in hearts"
+            :key="heart.id"
+            :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
+            class="heart-pop"
+        >
+  <svg
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+        :fill="getRandomColor()"
+        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+         2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81
+         4.5 2.09C13.09 3.81 14.76 3 16.5 3
+         19.58 3 22 5.42 22 8.5c0 3.78-3.4
+         6.86-8.55 11.54L12 21.35z"
+    />
+  </svg>
+</span>
+
+
+      </button>
+      <input v-model="newMessage" placeholder="메시지 입력..." type="text" @keyup.enter="sendMessage"/>
       <button class="send-button" @click="sendMessage">전송</button>
     </div>
   </div>
@@ -241,9 +326,20 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* 메시지 입장 애니메이션 */
-.message-enter-from { opacity: 0; transform: translateY(10px); }
-.message-enter-active { transition: all 0.3s ease; }
-.message-enter-to { opacity: 1; transform: translateY(0); }
+.message-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.message-enter-active {
+  transition: all 0.3s ease;
+}
+
+.message-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .chat-room-container {
   display: flex;
   flex-direction: column;
@@ -290,7 +386,7 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.new-message-notification{
+.new-message-notification {
   position: fixed;
   bottom: 10vh;
   left: 50%;
@@ -426,6 +522,45 @@ onBeforeUnmount(() => {
   color: white;
 }
 
+.heart-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.heart-button:hover {
+  transform: scale(1.2);
+}
+
+.heart-icon {
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.heart-pop {
+  position: absolute;
+  animation: floatUp 1s ease-out forwards;
+  font-size: 16px;
+  color: #e1306c;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(1.5);
+  }
+}
+
 .chat-input {
   background-color: white;
   padding: 1.2vh 1.5vw;
@@ -503,6 +638,11 @@ onBeforeUnmount(() => {
   .highlight-item {
     font-size: 3vw;
     padding: 1vh 2vw;
+  }
+
+  .heart-icon {
+    width: 6vw;
+    height: 6vw;
   }
 
   .chat-input input {
