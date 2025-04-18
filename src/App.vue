@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed} from 'vue'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
 import Sidebar from './common/Sidebar.vue'
@@ -8,6 +8,8 @@ import GlobalLoading from './common/GlobalLoading.vue'
 import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
 
+const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 
 // 초기 상태 확인이 끝났는지 여부
@@ -19,8 +21,14 @@ onMounted(async () => {
   console.log('🔍 checkAuthStatus 결과:', result)
   isInitialized.value = true
 })
+
+// 전역 세션 만료 핸들러 등록
+window.handleSessionExpired = () => {
+  userStore.resetUserState();
+  router.push('/login');
+};
+
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
-const route = useRoute()
 const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 const isStandalonePage = computed(() => route.meta.standalone === true)
 

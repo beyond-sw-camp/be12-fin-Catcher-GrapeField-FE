@@ -115,7 +115,6 @@ const logout = () => {
   router.push('/')
 }
 
-
 // 초기 경로 설정
 onMounted(() => {
   currentPath.value = route.path
@@ -136,8 +135,11 @@ const isActive = (path) => {
 
 const keyword = ref('')
 const SearchKeyword = (keyword) => {
-  if (!keyword || keyword.trim() === '') return
-  router.push({ path: '/search', query: { keyword } })
+  if (!keyword || keyword.trim() === '') {
+    router.push({path: '/community'}) //검색어가 없으면 커뮤니티 페이지로 이동
+  }else{
+    router.push({ path: '/search', query: { keyword } })
+  }
 }
 </script>
 

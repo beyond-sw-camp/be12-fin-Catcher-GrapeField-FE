@@ -21,11 +21,15 @@ export const useUserStore = defineStore('user', {
   actions: {
     async login(email, password) {
       try {
+        // 로그인 시도 전 기존 만료된 토큰 정리 
+        document.cookie = "RTOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "ATOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
         const response = await axiosInstance.post("/api/login", {
           email,
           password,
         });
-
+    
         if (response.data && response.data.authenticated) {
           this.user = {
             userIdx: response.data.userIdx,
@@ -34,14 +38,53 @@ export const useUserStore = defineStore('user', {
           };
           this.role = response.data.role || 'user';
           this.isLogin = true;
-
+          
           return { success: true };
         }
-
+    
         return { success: false, message: '로그인 실패' };
       } catch (error) {
-        const message = error.response?.data?.message || '로그인 실패';
-        return { success: false, message };
+        console.error('로그인 오류:', error);
+        
+        // 오류 응답 상세 분석
+        if (error.response) {
+          const statusCode = error.response.status;
+          const errorData = error.response.data;
+          
+          // 특정 오류 코드에 따른 맞춤형 메시지
+          if (statusCode === 403) {
+            return { 
+              success: false, 
+              message: errorData.message || '이메일 인증이 필요합니다.',
+              code: 'EMAIL_VERIFICATION_REQUIRED'
+            };
+          } else if (statusCode === 401) {
+            return { 
+              success: false, 
+              message: errorData.message || '이메일 또는 비밀번호가 일치하지 않습니다.',
+              code: 'INVALID_CREDENTIALS'
+            };
+          } else if (statusCode === 429) {
+            return {
+              success: false,
+              message: '너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.',
+              code: 'TOO_MANY_ATTEMPTS'
+            };
+          }
+          
+          return { 
+            success: false, 
+            message: errorData.message || '로그인 실패',
+            code: errorData.code
+          };
+        }
+        
+        // 네트워크 오류 등 기타 예외 처리
+        return { 
+          success: false, 
+          message: '서버 연결에 실패했습니다. 네트워크 연결을 확인해주세요.',
+          code: 'NETWORK_ERROR'
+        };
       }
     },
 
@@ -82,25 +125,6 @@ export const useUserStore = defineStore('user', {
     },
 
     async refreshToken() {
-      // try {
-      //   const response = await axiosNoInterceptor.post("/api/auth/refresh-token");
-    
-      //   if (response.data) {
-      //     this.user = {
-      //       userIdx: response.data.userIdx,
-      //       email: response.data.email,
-      //       username: response.data.username,
-      //     };
-      //     this.role = response.data.role || 'user';
-      //     return true;
-      //   }
-    
-      //   return false;
-      // } catch (error) {
-      //   console.error("세션 갱신 실패:", error);
-      //   this.resetUserState();
-      //   return false;
-      // }
       try {
         console.log('리프레시 토큰 갱신 시도...')
         const response = await axiosNoInterceptor.post("/api/auth/refresh-token")
@@ -114,7 +138,7 @@ export const useUserStore = defineStore('user', {
             username: response.data.username,
           }
           this.role = response.data.role || 'user'
-          this.isLogin = true // isLogin 상태 업데이트 추가
+          this.isLogin = true
           return true
         }
         
@@ -125,9 +149,16 @@ export const useUserStore = defineStore('user', {
         if (error.response) {
           console.error("응답 상태:", error.response.status)
           console.error("응답 데이터:", error.response.data)
+          
+          // 특정 오류 코드 처리
+          if (error.response.data?.code === 'SESSION_EXPIRED') {
+            console.log("저장된 리프레시 토큰이 없습니다. 쿠키 삭제 필요");
+            this.handleAuthError();
+            return false;
+          }
         }
         
-        // 401 오류인 경우 조용히 실패 처리
+        // 401 오류인 경우
         if (error.response && error.response.status === 401) {
           console.log("리프레시 토큰이 만료되었거나 유효하지 않습니다.")
           this.resetUserState()
@@ -139,14 +170,18 @@ export const useUserStore = defineStore('user', {
         return false
       }
     },
-
+    
     resetUserState() {
       this.isLogin = false;
       this.user = null;
       this.role = '';
       sessionStorage.removeItem('user');
+      
+      // 쿠키 삭제 (선택적)
+      document.cookie = "RTOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "ATOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     },
-
+    
     updateUserInfo(updatedInfo) {
       this.user = { ...this.user, ...updatedInfo };
     },
@@ -156,7 +191,7 @@ export const useUserStore = defineStore('user', {
       router.push('/login');
       toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
     },
-
+    
     async checkAuthStatus() {
       try {
         const response = await axiosInstance.get("/api/auth/status");
@@ -170,22 +205,28 @@ export const useUserStore = defineStore('user', {
           this.role = response.data.role || 'user';
           this.isLogin = true;
           return true;
-        }else{
+        } else {
           console.log(`인증 실패 이유: ${response.data.reason || "unknown"}`);
           console.log(`메시지: ${response.data.message || ""}`);
-        }
-
-        if (response.data.reason === "no_authentication") {
-          // toast.info('로그인이 필요합니다.');
+          
+          // 특정 오류 이유에 따른 처리
+          if (response.data.reason === "no_authentication") {
+            console.log('인증 정보가 없습니다.');
+          } else if (response.data.reason === "refresh_failed") {
+            console.log('리프레시 토큰 갱신 실패');
+            // 세션 만료 시 쿠키 정리
+            document.cookie = "RTOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "ATOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          }
         }
         
         this.resetUserState();
         return false;
       } catch (error) {
+        console.error('인증 상태 확인 중 오류:', error);
         this.resetUserState();
         return false;
       }
-    }
-    
+    },
   }
 });
