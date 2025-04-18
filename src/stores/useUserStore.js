@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axiosInstance from "@/utils/axios"; // 커스텀 axios 인스턴스
+import axiosInstance, { axiosNoInterceptor } from '@/utils/axios' // 커스텀 axios 인스턴스
 import router from '@/router';
 import { toast } from 'vue3-toastify';
 
@@ -47,7 +47,7 @@ export const useUserStore = defineStore('user', {
 
     async logout() {
       try {
-        await axiosInstance.post("/api/logout");
+        await axiosInstance.post("/logout");
 
         this.resetUserState();
         return true;
@@ -82,21 +82,61 @@ export const useUserStore = defineStore('user', {
     },
 
     async refreshToken() {
+      // try {
+      //   const response = await axiosNoInterceptor.post("/api/auth/refresh-token");
+    
+      //   if (response.data) {
+      //     this.user = {
+      //       userIdx: response.data.userIdx,
+      //       email: response.data.email,
+      //       username: response.data.username,
+      //     };
+      //     this.role = response.data.role || 'user';
+      //     return true;
+      //   }
+    
+      //   return false;
+      // } catch (error) {
+      //   console.error("세션 갱신 실패:", error);
+      //   this.resetUserState();
+      //   return false;
+      // }
       try {
-        const response = await axiosInstance.post("/api/auth/refresh-token");
+        console.log('리프레시 토큰 갱신 시도...')
+        const response = await axiosNoInterceptor.post("/api/auth/refresh-token")
+        
+        console.log('리프레시 응답:', response.data)
+        
         if (response.data) {
           this.user = {
             userIdx: response.data.userIdx,
             email: response.data.email,
             username: response.data.username,
-          };
-          this.role = response.data.role || 'user';
+          }
+          this.role = response.data.role || 'user'
+          this.isLogin = true // isLogin 상태 업데이트 추가
+          return true
         }
-        return true;
+        
+        return false
       } catch (error) {
-        console.error("세션 갱신 실패:", error);
-        this.resetUserState();
-        return false;
+        // 상세한 오류 정보 로깅
+        console.error("세션 갱신 실패:", error.message)
+        if (error.response) {
+          console.error("응답 상태:", error.response.status)
+          console.error("응답 데이터:", error.response.data)
+        }
+        
+        // 401 오류인 경우 조용히 실패 처리
+        if (error.response && error.response.status === 401) {
+          console.log("리프레시 토큰이 만료되었거나 유효하지 않습니다.")
+          this.resetUserState()
+          return false
+        }
+        
+        // 기타 오류 처리
+        this.resetUserState()
+        return false
       }
     },
 
@@ -120,7 +160,7 @@ export const useUserStore = defineStore('user', {
     async checkAuthStatus() {
       try {
         const response = await axiosInstance.get("/api/auth/status");
-    
+        
         if (response.data && response.data.authenticated) {
           this.user = {
             userIdx: response.data.userIdx,
@@ -130,12 +170,17 @@ export const useUserStore = defineStore('user', {
           this.role = response.data.role || 'user';
           this.isLogin = true;
           return true;
+        }else{
+          console.log(`인증 실패 이유: ${response.data.reason || "unknown"}`);
+          console.log(`메시지: ${response.data.message || ""}`);
         }
-    
-        // ATOKEN은 없지만 RTOKEN은 있을 수 있으므로 Refresh 시도
-        const refreshed = await this.refreshToken();
-        return refreshed;
-    
+
+        if (response.data.reason === "no_authentication") {
+          // toast.info('로그인이 필요합니다.');
+        }
+        
+        this.resetUserState();
+        return false;
       } catch (error) {
         this.resetUserState();
         return false;
