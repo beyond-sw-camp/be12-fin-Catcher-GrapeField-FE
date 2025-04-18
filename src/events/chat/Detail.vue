@@ -1,28 +1,25 @@
 <script setup>
-import {ref, onMounted, nextTick, onBeforeUnmount} from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import {useRouter} from 'vue-router'
-/* // 더미데이터로 채팅데이터 가져오기
-import chatData from '@/assets/data/chat.json'*/
-import axios from 'axios';
+import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import {connect, stompClient} from '@/utils/webSocketClient'
 
 const props = defineProps({
-  id: {type: [String, Number], required: true}
+  id: { type: [String, Number], required: true }
 })
-const router = useRouter();
+const router = useRouter()
+const chatRoomStore = useChatRoomStore()
 
 // 토큰 변수 설정
-const token = ref(null);
+const token = ref(null)
 const cookieToken = document.cookie
     .split('; ')
-    .find(row => row.startsWith('ATOKEN='));
-if (cookieToken) {
-  token.value = cookieToken.split('=')[1];
-}
+    .find(row => row.startsWith('ATOKEN='))
+if (cookieToken) token.value = cookieToken.split('=')[1]
 
 // 세션 변수 설정
-const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user;
-const currentUserIdx = loginUser?.userIdx;
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
+const currentUserIdx = loginUser?.userIdx
 
 // reactive 변수들
 const roomTitle = ref('')
@@ -34,23 +31,14 @@ const chatBody = ref(null)
 
 // 새로운 메시지 알림 버튼 상태
 const showNewMessageButton = ref(false)
-
 let subscription = null
 
 function loadChatRoomData() {
   const roomIdx = Number(props.id)
-  axios.get(`/api/chat/${roomIdx}`, {
-    headers: token.value
-        ? {Authorization: `Bearer ${token.value}`}
-        : {}
-  })
-      .then(res => {
-        const data = res.data
-        // 방 정보
+  chatRoomStore.fetchChatRoom(roomIdx, token.value)
+      .then(data => {
         roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
-
-        // 메시지 매핑
         messages.value = data.messageList.map(msg => ({
           id: msg.messageIdx,
           sender: msg.username,
@@ -60,24 +48,23 @@ function loadChatRoomData() {
           isMe: msg.userIdx === currentUserIdx,
           isHighlighted: msg.isHighlighted
         }))
-
-        // 하이라이트 매핑
         highlightedTimes.value = data.highlightList.map(h => ({
           id: h.idx,
-          time: new Date(h.startTime)
+          messageIdx: h.messageIdx,
+          summary: h.description,
+          time1: new Date(h.startTime),
+          time2: new Date(h.endTime)
         }))
-        // 초기 로드 시 스크롤을 맨 아래로 이동
         nextTick(() => {
           if (chatBody.value) {
             chatBody.value.scrollTop = chatBody.value.scrollHeight
           }
         })
-
       })
-      .catch(() => {
-        router.push('/chat-list');
-        alert('접근 권한이 없는 페이지입니다.');
-        console.error(error); // 오류 내용을 콘솔에 출력하여 디버깅에 활용
+      .catch(error => {
+        router.push('/chat-list')
+        alert('페이지 접근 권한이 없습니다.')
+        console.error(error)
       })
 }
 
@@ -100,7 +87,6 @@ function sendMessage() {
     sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
-  // 메시지 전송
   if (stompClient.publish) {
     stompClient.publish({
       destination: `/app/chat.send.${props.id}`,
@@ -113,42 +99,63 @@ function sendMessage() {
 }
 
 function scrollToBottom() {
-  if (!chatBody.value) return;
-
-  const element = chatBody.value;
-  const start = element.scrollTop;
-  const end = element.scrollHeight - element.clientHeight;
-  const duration = 600; // 애니메이션 지속 시간 (밀리초)
-  const startTime = performance.now();
+  if (!chatBody.value) return
+  const element = chatBody.value
+  const start = element.scrollTop
+  const end = element.scrollHeight - element.clientHeight
+  const duration = 600
+  const startTime = performance.now()
 
   function easeInOutQuad(t) {
-    return t < 0.5
-        ? 2 * t * t
-        : -1 + (4 - 2 * t) * t;
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
   }
 
   function animateScroll(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = easeInOutQuad(progress);
-    element.scrollTop = start + (end - start) * ease;
-
-    if (progress < 1) {
-      requestAnimationFrame(animateScroll);
-    }
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const ease = easeInOutQuad(progress)
+    element.scrollTop = start + (end - start) * ease
+    if (progress < 1) requestAnimationFrame(animateScroll)
   }
 
-  requestAnimationFrame(animateScroll);
+  requestAnimationFrame(animateScroll)
 }
 
-// 새 메시지 알림 버튼 클릭
 function onNewMessageClick() {
   scrollToBottom()
   showNewMessageButton.value = false
 }
 
-function scrollToHighlight(highlightId) {
-  alert('해당 하이라이트 시간대의 대화를 보여줍니다.')
+
+function scrollToHighlight(hStartMessageIdx, highlight) {
+  console.log(hStartMessageIdx);
+  const element = chatBody.value;
+  const targetElement = element.children[0].children[hStartMessageIdx];
+  if (!element || !targetElement) {
+    console.error('Element not found');
+    return;
+  }
+  nextTick(() => {
+    const start = element.scrollTop;
+    const end = targetElement.offsetTop - element.clientHeight / 2 + targetElement.clientHeight / 2;
+    const duration = 600;
+    const startTime = performance.now();
+
+    function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+    function animateScroll(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutQuad(progress);
+      element.scrollTop = start + (end - start) * ease;
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    }
+    requestAnimationFrame(animateScroll);
+  });
+
 }
 
 function goBack() {
@@ -167,60 +174,41 @@ function handleIncomingMessage(frame) {
     isHighlighted: msg.isHighlighted
   }
   messages.value.push(newMsg)
-  showNewMessageButton.value = true
+  if (!newMsg.isMe) showNewMessageButton.value = true
+  else nextTick(scrollToBottom)
 }
 
 // 애니메이션용 하트 리스트
 const hearts = ref([])
-
 const getRandomColor = () => {
   const colors = [
-    '#FF4D4D', // 빨강
-    '#FF9900', // 주황
-    '#FFD700', // 노랑
-    '#66CC66', // 초록
-    '#00BFFF', // 파랑
-    '#8A2BE2', // 보라
-    '#FF69B4', // 핑크
+    '#FF4D4D', '#FF9900', '#FFD700',
+    '#66CC66', '#00BFFF', '#8A2BE2', '#FF69B4'
   ]
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-// 하트 클릭 핸들러
 const handleLike = async () => {
-  // API 요청
-  try {
-    await axios.post('/api/like', {
-      roomIdx: props.id, // post ID 전달
-    })
-    console.log('좋아요 완료!')
-  } catch (err) {
-    console.error('API 오류:', err)
-  }
-
-// 애니메이션용 하트 추가
+  // try {
+  //   await chatRoomStore.likeRoom(props.id)
+  //   console.log('좋아요 완료!')
+  // } catch (err) {
+  //   console.error('API 오류:', err)
+  // }
   for (let i = 0; i < 5; i++) {
     const id = Date.now() + Math.random()
-
-    // 각 하트가 생성되는 간격을 i에 따라 다르게 설정
     setTimeout(() => {
-      hearts.value.push({
-        id,
-        x: 10 + Math.random() * 20,
-        y: 0,
-      })
-
-      // 1초 뒤 제거
+      hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
       setTimeout(() => {
-        hearts.value = hearts.value.filter((h) => h.id !== id)
+        hearts.value = hearts.value.filter(h => h.id !== id)
       }, 10000)
-    }, i * 150)  // 각 하트가 500ms 간격으로 생성되도록 설정
+    }, i * 150)
   }
 }
 
 onMounted(() => {
   loadChatRoomData()
-  connect((client) => {
+  connect(client => {
     subscription = client.subscribe(`/topic/chat.room.${props.id}`, handleIncomingMessage)
   }, token.value)
 })
@@ -229,6 +217,7 @@ onBeforeUnmount(() => {
   if (subscription) subscription.unsubscribe()
 })
 </script>
+
 
 <template>
   <div class="chat-room-container">
@@ -241,7 +230,20 @@ onBeforeUnmount(() => {
         <span class="participant-count">{{ participantCount }}명 참여중</span>
       </div>
     </div>
+    <div v-if="highlightedTimes.length > 0" class="highlight-section">
+      <h3>🔥 하이라이트 시간대</h3>
+      <div class="highlight-list">
+        <div
+            v-for="(highlight, index) in highlightedTimes"
+            :key="highlight.id"
+            class="highlight-item"
+            @click="scrollToHighlight(highlight.messageIdx, highlight)"
+        ><div>{{ formatHighlightTime(highlight.time1) }}~{{ formatHighlightTime(highlight.time2) }}</div>
+          <div>{{ highlight.summary }}</div>
 
+        </div>
+      </div>
+    </div>
     <!-- 새 메시지 알림 버튼 -->
     <div v-if="showNewMessageButton" class="new-message-notification">
       <button class="new-message-button" @click="onNewMessageClick">✨새로운 메시지가 왔어요!</button>
@@ -264,20 +266,6 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </transition-group>
-
-      <div v-if="highlightedTimes.length > 0" class="highlight-section">
-        <h3>🔥 하이라이트 시간대</h3>
-        <div class="highlight-list">
-          <div
-              v-for="(highlight, index) in highlightedTimes"
-              :key="highlight.id"
-              class="highlight-item"
-              @click="scrollToHighlight(highlight.id)"
-          >
-            {{ formatHighlightTime(highlight.time) }}
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="chat-input">
