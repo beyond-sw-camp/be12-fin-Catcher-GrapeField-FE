@@ -33,16 +33,17 @@ export const useChatStore = defineStore('chat', {
     // 채팅방 퇴장 관리
     async leaveRoom(roomId) {
       try {
+        console.log('🚀 퇴장 요청 시작 (roomId):', roomId)
         const res = await axios.delete(`/api/chatroom/leave/${roomId}`, {
           withCredentials: true
         })
-        console.log(`👋 퇴장 완료 (roomId: ${roomId})`)
-        // 내 채팅방 목록에서 제거
-        this.myRooms = this.myRooms.filter(room => room.roomIdx !== roomId)
+        console.log('✅ 퇴장 응답:', res.data)
+  
+        this.myRooms = this.myRooms.filter(room => Number(room.roomIdx) !== Number(roomId))
         return res.data
       } catch (err) {
         console.error('❌ 채팅방 퇴장 실패:', err)
-        throw err
+        throw new Error('퇴장 중 문제가 발생했습니다.')
       }
     }
   }
