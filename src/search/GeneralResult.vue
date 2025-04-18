@@ -4,39 +4,50 @@ import { useRoute } from 'vue-router'
 import EventCard from './EventsCardGeneral.vue'
 import PostRow from './PostRow.vue'
 import ReviewCard from './ReviewCard.vue'
-
-import events from '/public/data/search/events.js'
-import posts from '/public/data/search/posts.js'
-import reviews from '/public/data/search/reviews.js'
+import { useSearchStore } from '@/stores/useSearchStore'
+import SearchHeader from './SearchHeader.vue'
 
 const route = useRoute()
+const searchStore = useSearchStore()
+
 const keyword = computed(() => route.query.keyword)
+
+const events = ref([])
+const posts = ref([])
+const reviews = ref([])
+
+const loadSearch = async () => {
+  try {
+    const response = await searchStore.getALLSearchList(keyword.value);
+    console.log(response)
+    events.value = response.events || [];
+    posts.value = response.posts || [];
+    reviews.value = response.reviews || [];
+
+  } catch (error) {
+    console.error("검색 결과 로드 실패:", error);
+  }
+}
+
+onMounted(loadSearch)
+watch(() => route.query.keyword, async (newKeyword, oldKeyword) => {
+  if (newKeyword && newKeyword !== oldKeyword) {
+    await loadSearch()
+  }
+})
 
 </script>
 
 <template>
   <div class="wrapper flex flex-col gap-10 mt-8">
-    <!-- 제목 & 탭 -->
-    <section class="flex flex-col gap-4">
-      <h2 class="text-2xl font-bold text-neutral-800"> {{ keyword }} 검색 결과</h2>
-    </section>
-
+    <SearchHeader :keyword="keyword" />
     <!-- 공연/전시 카드 -->
     <section>
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-lg font-semibold">공연/전시 ({{ events.length }})</h3>
         <router-link to="/search/events" class="text-violet-500 text-sm">더보기</router-link>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-        <EventCard
-            v-for="event in events.slice(0, 3)"
-            :key="event.id"
-            :id="event.id"
-            :title="event.title"
-            :period="event.period"
-            :location="event.location"
-        />
-      </div>
+      <EventCard v-for="event in events.slice(0, 3)" :key="event.idx" :event="event" />
     </section>
 
     <!-- 게시판 테이블 -->
@@ -47,7 +58,8 @@ const keyword = computed(() => route.query.keyword)
       </div>
       <div class="flex flex-col">
         <!-- 헤더 -->
-        <div class="grid grid-cols-[12rem_1fr_8rem_7rem_6rem_6rem] h-12 bg-violet-50 rounded-t text-sm font-bold text-neutral-800">
+        <div
+          class="grid grid-cols-[12rem_1fr_8rem_7rem_6rem_6rem] h-12 bg-violet-50 rounded-t text-sm font-bold text-neutral-800">
           <div class="flex items-center justify-center">게시판</div>
           <div class="flex items-center justify-center">제목</div>
           <div class="flex items-center justify-center">작성자</div>
@@ -68,14 +80,8 @@ const keyword = computed(() => route.query.keyword)
         <router-link to="/search/review" class="text-violet-500 text-sm">더보기</router-link>
       </div>
       <div class="flex flex-col gap-4">
-        <ReviewCard
-            v-for="review in reviews.slice(0, 3)"
-            :key="review.id"
-            :username="review.username"
-            :rating="review.rating"
-            :date="review.date"
-            :comment="review.comment"
-        />
+        <ReviewCard v-for="review in reviews.slice(0, 3)" :key="review.id" :username="review.username"
+          :rating="review.rating" :date="review.date" :comment="review.comment" />
       </div>
     </section>
   </div>

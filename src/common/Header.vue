@@ -30,7 +30,7 @@
       </nav>
       <!-- search-box-->
       <div class="search-box px-1.5 flex items-center gap-2">
-        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" class="border px-2 py-1 rounded" />
+        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)" class="border px-2 py-1 rounded" />
         <button class="search-button" @click="SearchKeyword(keyword)">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
