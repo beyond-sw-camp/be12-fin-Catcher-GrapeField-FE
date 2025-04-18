@@ -2,10 +2,9 @@
 
 import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
+import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
-import axios from 'axios';
 import {connect, stompClient} from '@/utils/webSocketClient'
-import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
 
 // const props = defineProps({
 //   id: {type: [String, Number], required: true}
@@ -216,20 +215,16 @@ const handleLike = async () => {
 }
 
 // 채팅방 퇴장
+
 const leaveChatRoom = async () => {
   if (!confirm('채팅방을 퇴장하시겠습니까?')) return
 
-  try {
-    const result = await chatStore.leaveRoom(roomId.value)
-    alert(result.message || '채팅방을 퇴장했습니다.')
+  const res = await axios.delete(`/api/chatroom/leave/${roomId.value}`, {
+    withCredentials: true
+  })
 
-    // 🔁 전체 채팅방 리스트도 업데이트할 수 있다면
-    listStore.updateParticipantCount(roomId.value, result.participantCount)
-
-    router.push('/chat-list')
-  } catch (err) {
-    alert('퇴장 중 문제가 발생했습니다.')
-  }
+  alert(res.data.message || '채팅방을 퇴장했습니다.')
+  router.push('/chat-list')
 }
 
 onMounted(() => {
