@@ -28,10 +28,10 @@
           </li>
         </ul>
       </nav>
-      <!-- search-box 부분 수정 -->
-      <div class="search-box px-1.5">
-        <input type="text" placeholder="꽃의 비밀 🔍" />
-        <router-link to="/search" class="search-button">
+      <!-- search-box-->
+      <div class="search-box px-1.5 flex items-center gap-2">
+        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" class="border px-2 py-1 rounded" />
+        <button class="search-button" @click="SearchKeyword(keyword)">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -39,7 +39,7 @@
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
           </div>
-        </router-link>
+        </button>
       </div>
 
       <!-- 로그인 상태별 UI -->
@@ -99,7 +99,6 @@ const route = useRoute()
 const router = useRouter()
 
 const currentPath = ref('')
-
 // 로그인 상태 확인
 const isLogin = computed(() => userStore.isLogin)
 const userInitial = computed(() => userStore.user?.email?.charAt(0)?.toUpperCase() || 'U')
@@ -133,6 +132,12 @@ const isActive = (path) => {
     return currentPath.value === '/'
   }
   return currentPath.value.startsWith(path)
+}
+
+const keyword = ref('')
+const SearchKeyword = (keyword) => {
+  if (!keyword || keyword.trim() === '') return
+  router.push({ path: '/search', query: { keyword } })
 }
 </script>
 

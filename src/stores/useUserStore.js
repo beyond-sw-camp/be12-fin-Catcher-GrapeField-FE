@@ -9,6 +9,7 @@ export const useUserStore = defineStore('user', {
     user: null,
     role: '',
   }),
+  //추후 운영 환경에서는 persist 삭제 
   persist: {
     storage: sessionStorage,
   },
@@ -118,7 +119,7 @@ export const useUserStore = defineStore('user', {
 
     async checkAuthStatus() {
       try {
-        const response = await axiosInstance.get("/auth/status");
+        const response = await axiosInstance.get("/api/auth/status");
     
         if (response.data && response.data.authenticated) {
           this.user = {

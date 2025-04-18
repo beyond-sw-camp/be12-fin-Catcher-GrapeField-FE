@@ -1,17 +1,30 @@
 <script setup>
-import {computed} from 'vue'
+import { ref, computed} from 'vue'
 import {useRoute} from 'vue-router'
 import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
 import Sidebar from './common/Sidebar.vue'
 import GlobalLoading from './common/GlobalLoading.vue'
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/useUserStore'
 
+const userStore = useUserStore()
+
+// 초기 상태 확인이 끝났는지 여부
+const isInitialized = ref(false)
+
+//로그인 여부 확인
+onMounted(async () => {
+  const result = await userStore.checkAuthStatus()
+  console.log('🔍 checkAuthStatus 결과:', result)
+  isInitialized.value = true
+})
 // 로그인, 회원가입 페이지일 때는 사이드바 가리기
 const route = useRoute()
 const showSidebar = computed(() => !['Login', 'SignUp'].includes(route.name))
 const isStandalonePage = computed(() => route.meta.standalone === true)
 
-// ✅ 페이지에 따라 레이아웃 클래스를 동적으로 결정
+// 페이지에 따라 레이아웃 클래스를 동적으로 결정
 const layoutClass = computed(() => {
   if (route.path.startsWith('/admin')) return 'admin-layout'
   if (route.path.startsWith('/mypage')) return 'mypage-layout'
@@ -20,7 +33,8 @@ const layoutClass = computed(() => {
 </script>
 
 <template>
-  <div class="layout">
+  <!-- 인증 확인이 완료될 때만 전체 앱 렌더링 -->
+  <div v-if="isInitialized" class="layout">
     <Header v-if="!isStandalonePage" />
     <div :class="layoutClass">
       <router-view />
