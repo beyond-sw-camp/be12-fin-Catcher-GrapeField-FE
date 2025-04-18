@@ -282,17 +282,17 @@ onBeforeUnmount(() => {
 
     <div class="chat-input">
       <button aria-label="좋아요" class="heart-button" @click="handleLike">
-        <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
           <path
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-       2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81
-       4.5 2.09C13.09 3.81 14.76 3 16.5 3
-       19.58 3 22 5.42 22 8.5c0 3.78-3.4
-       6.86-8.55 11.54L12 21.35z"
+              d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
+       2 5 4.5 2.8 7.5 2.8c1.7 0 3.2.8 4.5 2.2
+       1.3-1.4 2.8-2.2 4.5-2.2C19.5 2.8 22 5 22 8.2
+       c0 3.75-3.2 6.9-7.1 10.45-1.3 1.25-2.5 2.35-2.9 2.7z"
               fill="#e1306c"
           />
         </svg>
-        <!-- 뿅뿅 올라오는 하트들 -->
+
+        <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
         <span
             v-for="heart in hearts"
             :key="heart.id"
@@ -596,7 +596,6 @@ onBeforeUnmount(() => {
 .send-button:hover {
   background-color: #5A0C9D;
 }
-
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
