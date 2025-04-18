@@ -3,11 +3,14 @@ import { ref, computed, watch, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
+import { useChatStore } from '../../stores/useChatStore'
 
 const store = useChatRoomListStore()
+const chatStore = useChatStore()
 const searchQuery = ref('')
 const activeTab = ref('all')
 const router = useRouter()
+
 
 // 탭 변경 시 API 호출
 watch(activeTab, (newTab) => {
@@ -27,20 +30,16 @@ const filteredRooms = computed(() => {
   return result
 })
 
+// 채팅방 입장요청 로직(이미 참여중인 채팅방이라면 백엔드에 요청 x)
 const openChatRoom = async (roomId) => {
   try {
-    // ✅ 채팅방 입장 요청 먼저 보내기
-    await axios.post(`/api/chatroom/join/${roomId}`, null, {
-      withCredentials: true // JWT 쿠키 전달 필수!
-    })
-
-    // 🔁 입장 완료되면 상세 페이지로 이동
+    await chatStore.joinRoom(roomId) // ❗ 역할 위임
     router.push(`/chat-room/${roomId}`)
   } catch (err) {
-    console.error('채팅방 입장 실패:', err)
-    alert('채팅방 입장에 실패했어요. 로그인 여부를 확인해보세요!')
+    alert('채팅방 입장 실패. 로그인 상태를 확인하세요.')
   }
 }
+
 
 onMounted(async () => {
   await store.fetchRooms('all')

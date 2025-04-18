@@ -143,7 +143,7 @@
                     {{ state.activeChatRoom.title }}
                   </div>
                   <button class="hover:bg-purple-100 px-[0.6vw] py-[0.4vh] rounded"
-                    @click="openChatRoomNewWindow(state.activeChatRoom.id)">
+                    @click="openChatRoomNewWindow(state.activeChatRoom.roomIdx)">
                     <img src="../assets/icons/expand.png" alt="전체화면" class="w-[1.2vw] h-[1.2vw] opacity-70" />
                   </button>
                 </div>

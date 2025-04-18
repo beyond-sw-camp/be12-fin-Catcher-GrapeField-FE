@@ -15,7 +15,34 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
     exhibitions: '/api/chat/list/exhibition',
     myPageRooms: '/api/chat/list/my-page',
   }
+  
+    // 채팅방 퇴장
 
+    const leaveRoom = async (roomId) => {
+      try {
+        const res = await axios.delete(`/api/chatroom/leave/${roomId}`, {
+          withCredentials: true
+        })
+    
+        // ✅ 현재 rooms 목록 내에서 participantCount 갱신
+        updateParticipantCount(roomId, res.data.participantCount)
+    
+        // ✅ 👉 여기서 chatStore도 같이 업데이트
+        const chatStore = useChatStore()
+        chatStore.removeRoom(roomId)
+    
+        return res.data.message || '채팅방을 퇴장했습니다.'
+      } catch (err) {
+        console.error('채팅방 퇴장 실패:', err)
+        throw new Error('퇴장 중 오류가 발생했어요.')
+      }
+    }
+    const updateParticipantCount = (roomId, count) => {
+      const room = rooms.value.find(r => r.roomIdx === roomId)
+      if (room) room.participantCount = count
+    }
+    
+    
   // 🧹 초기화 + 첫 페이지 불러오기
   const fetchRooms = async (type = 'all') => {
     loading.value = true
@@ -62,5 +89,6 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
     isLast,
     fetchRooms,
     loadMoreRooms,
+    updateParticipantCount  // ✅ 이거 export 꼭 해야 함!
   }
 })

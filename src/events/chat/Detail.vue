@@ -1,14 +1,22 @@
 <script setup>
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
-import {useRouter} from 'vue-router'
-import { useChatRoomStore } from '@/stores/useChatRoomStore'
-import {connect, stompClient} from '@/utils/webSocketClient'
 
-const props = defineProps({
-  id: { type: [String, Number], required: true }
-})
+import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import { useChatRoomStore } from '@/stores/useChatRoomStore'
+import axios from 'axios';
+import {connect, stompClient} from '@/utils/webSocketClient'
+import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
+
+// const props = defineProps({
+//   id: {type: [String, Number], required: true}
+// })
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
+
+const route = useRoute()
+const roomId = computed(() => Number(route.params.id))
+
+
 
 // 토큰 변수 설정
 const token = ref(null)
@@ -34,7 +42,7 @@ const showNewMessageButton = ref(false)
 let subscription = null
 
 function loadChatRoomData() {
-  const roomIdx = Number(props.id)
+  const roomIdx = Number(roomId.value)
   chatRoomStore.fetchChatRoom(roomIdx, token.value)
       .then(data => {
         roomTitle.value = data.roomName
@@ -83,17 +91,17 @@ function formatHighlightTime(date) {
 function sendMessage() {
   if (!newMessage.value.trim() || !stompClient?.connected) return
   const messagePayload = {
-    roomIdx: props.id,
+    roomIdx: roomId.value,
     sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
   if (stompClient.publish) {
     stompClient.publish({
-      destination: `/app/chat.send.${props.id}`,
+      destination: `/app/chat.send.${roomId.value}`,
       body: JSON.stringify(messagePayload)
     })
   } else {
-    stompClient.send(`/app/chat.send.${props.id}`, {}, JSON.stringify(messagePayload))
+    stompClient.send(`/app/chat.send.${roomId.value}`, {}, JSON.stringify(messagePayload))
   }
   newMessage.value = ''
 }
@@ -190,11 +198,12 @@ const getRandomColor = () => {
 
 const handleLike = async () => {
   // try {
-  //   await chatRoomStore.likeRoom(props.id)
+  //   await chatRoomStore.likeRoom(roomId.value)
   //   console.log('좋아요 완료!')
   // } catch (err) {
   //   console.error('API 오류:', err)
   // }
+// 애니메이션용 하트 추가
   for (let i = 0; i < 5; i++) {
     const id = Date.now() + Math.random()
     setTimeout(() => {
@@ -206,10 +215,27 @@ const handleLike = async () => {
   }
 }
 
+// 채팅방 퇴장
+const leaveChatRoom = async () => {
+  if (!confirm('채팅방을 퇴장하시겠습니까?')) return
+
+  try {
+    const result = await chatStore.leaveRoom(roomId.value)
+    alert(result.message || '채팅방을 퇴장했습니다.')
+
+    // 🔁 전체 채팅방 리스트도 업데이트할 수 있다면
+    listStore.updateParticipantCount(roomId.value, result.participantCount)
+
+    router.push('/chat-list')
+  } catch (err) {
+    alert('퇴장 중 문제가 발생했습니다.')
+  }
+}
+
 onMounted(() => {
   loadChatRoomData()
-  connect(client => {
-    subscription = client.subscribe(`/topic/chat.room.${props.id}`, handleIncomingMessage)
+  connect((client) => {
+    subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
   }, token.value)
 })
 
@@ -228,6 +254,7 @@ onBeforeUnmount(() => {
       </div>
       <div class="chat-info">
         <span class="participant-count">{{ participantCount }}명 참여중</span>
+        <button class="leave-button" @click="leaveChatRoom">퇴장</button>
       </div>
     </div>
     <div v-if="highlightedTimes.length > 0" class="highlight-section">
@@ -641,5 +668,27 @@ onBeforeUnmount(() => {
     font-size: 3.5vw;
     padding: 1vh 3vw;
   }
+
+  /* 퇴장 버튼 */
+  .leave-button {
+  background-color: white;
+  border: 2px solid #6A0DAD;
+  border-radius: 9999px;
+  color: #6A0DAD;
+  padding: 0.5vh 1vw;
+  font-size: 0.9vw;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.leave-button:hover {
+  background-color: #6A0DAD;
+  color: white;
+}
+
+.leave-button:active {
+  transform: scale(0.95);
+}
 }
 </style>
