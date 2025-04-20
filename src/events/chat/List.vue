@@ -1,25 +1,35 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { useChatRoomListStore } from '../../stores/useChatRoomsListStore'
-import { useChatStore } from '../../stores/useChatStore'
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
+import { useChatStore } from '@/stores/useChatStore'
 
-const store = useChatRoomListStore()
+const chatListStore = useChatRoomListStore()
 const chatStore = useChatStore()
 const searchQuery = ref('')
 const activeTab = ref('all')
 const router = useRouter()
 
 
-// 탭 변경 시 API 호출
+// 💡 필터 탭 변경 감지 → API 호출
 watch(activeTab, (newTab) => {
-  store.fetchRooms(newTab)
+  if (newTab === 'myPageRooms') {
+    chatListStore.fetchMyPageRooms()
+  } else {
+    chatListStore.fetchRooms(newTab)
+  }
 })
 
-// 필터링 로직
+// 🔍 필터링된 채팅방 목록 계산
 const filteredRooms = computed(() => {
-  let result = [...store.rooms]
+  const source =
+    activeTab.value === 'myPageRooms'
+      ? Array.isArray(chatListStore.myPageRooms) ? chatListStore.myPageRooms : []
+      : Array.isArray(chatListStore.rooms) ? chatListStore.rooms : []
+
+  let result = [...source]
+
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(room =>
@@ -30,19 +40,70 @@ const filteredRooms = computed(() => {
   return result
 })
 
+
+
+
 // 채팅방 입장요청 로직(이미 참여중인 채팅방이라면 백엔드에 요청 x)
 const openChatRoom = async (roomId) => {
   try {
-    await chatStore.joinRoom(roomId) // ❗ 역할 위임
+    await chatStore.joinRoom(roomId) // 이미 참여중이면 백엔드 요청 생략됨
     router.push(`/chat-room/${roomId}`)
   } catch (err) {
     alert('채팅방 입장 실패. 로그인 상태를 확인하세요.')
   }
 }
 
+// 채팅방 목록 무한스크롤
+const scrollTrigger = ref(null)
 
 onMounted(async () => {
-  await store.fetchRooms('all')
+  console.log('🚀 onMounted 실행됨')
+
+  if (activeTab.value === 'myPageRooms') {
+    console.log('📌 탭: myPageRooms → fetchMyPageRooms() 실행')
+    await chatListStore.fetchMyPageRooms()
+  } else {
+    console.log(`📌 탭: ${activeTab.value} → fetchRooms() 실행`)
+    await chatListStore.fetchRooms(activeTab.value)
+  }
+
+  await chatStore.fetchMyRooms()
+  console.log('✅ myRooms fetch 완료')
+
+  // DOM 렌더 이후 등록
+  nextTick(() => {
+    console.log('🌀 nextTick 진입')
+    if (scrollTrigger.value) {
+      console.log('📍 scrollTrigger.value 존재 → observer 등록 시작')
+
+      const observer = new IntersectionObserver(
+        async ([entry]) => {
+          console.log('👀 intersection observed', entry.isIntersecting)
+          if (
+            entry.isIntersecting &&
+            !chatListStore.loading &&
+            !chatListStore.isLast &&
+            activeTab.value !== 'myPageRooms'
+          ) {
+            console.log(`📦 loadMoreRooms 실행: page ${chatListStore.page + 1}`)
+            await chatListStore.loadMoreRooms(activeTab.value)
+          }
+        },
+        { threshold: 1.0 }
+      )
+      observer.observe(scrollTrigger.value)
+      console.log('📌 observer.observe 실행 완료')
+    } else {
+      console.warn('⚠️ scrollTrigger.value 가 null이었음')
+    }
+  })
+})
+
+
+
+onMounted(async () => {
+  await chatListStore.fetchRooms(activeTab.value)
+  await chatStore.fetchMyRooms()
 })
 
 //NOTE: 이미지 링크 임의 설정
@@ -100,9 +161,10 @@ const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
     </div>
   </div>
   <!-- 더보기 버튼 -->
-<div v-if="!store.isLast && !store.loading" class="chat-room-action">
-  <button class="favorite-button" @click="store.loadMoreRooms(activeTab)">더 보기</button>
-</div>
+  <!-- <div v-if="!chatListStore.isLast && !chatListStore.loading" class="chat-room-action">
+  <button class="favorite-button" @click="chatListStore.loadMoreRooms(activeTab)">더 보기</button>
+</div> -->
+<div ref="scrollTrigger" class="h-4"></div>
 </template>
 
 <style scoped>
