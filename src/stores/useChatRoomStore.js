@@ -32,6 +32,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             this.error = null
             try {
                 const { data } = await axios.get(`/api/chat/${roomIdx}`, {
+                    withCredentials: true,
                     headers: token ? { Authorization: `Bearer ${token}` } : {}
                 })
                 this.roomData = data
