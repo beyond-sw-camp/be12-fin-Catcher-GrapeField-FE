@@ -8,15 +8,22 @@ const searchStore = useSearchStore()
 
 const props = defineProps({ keyword: String })
 
-const reviews = ref([])
+const reviews = ref({
+  content: [],
+  totalPages: 0,
+  totalElements: 0,
+  number: 0,
+  size: 10
+})
+
 
 const currentPage = ref(1)
-const itemsPerPage = 5
+const itemsPerPage = 10
 
 const loadReviewsSearch = async () => {
   try {
     const response = await searchStore.getReviewsSearchList(props.keyword, currentPage.value - 1, itemsPerPage)
-    reviews.value = response.content || [] 
+    reviews.value = response || {}
   } catch (e) {
     console.error(e)
   }
@@ -24,15 +31,32 @@ const loadReviewsSearch = async () => {
 
 onMounted(loadReviewsSearch)
 
-const totalPages = computed(() =>
-Math.ceil(reviews.value.length / itemsPerPage)
-)
+const totalPages = computed(() => reviews.value.totalPages || 0)
+const paginatedReviews = computed(() => reviews.value.content || [])
 
-const goToPage = (page) => {
+
+function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
     loadReviewsSearch()
   }
+}
+
+//재검색
+const newKeyword = ref('')
+const refinedKeywords = ref([props.keyword])
+
+function onRefineSearch() {
+  if (!newKeyword.value.trim()) return
+  refinedKeywords.value.push(newKeyword.value.trim())
+  newKeyword.value = ''
+  currentPage.value = 1
+  loadRefinedSearch()
+}
+
+async function loadRefinedSearch() {
+  const response = await searchStore.getReviewsRefineSearchList(refinedKeywords.value, currentPage.value - 1, itemsPerPage)
+  reviews.value = response || {}
 }
 </script>
 
@@ -41,12 +65,23 @@ const goToPage = (page) => {
     <!-- 제목 & 탭 -->
     <SearchHeader />
 
-
+    <section class="flex flex-col gap-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-neutral-800"> 공연/전시 ({{ reviews.totalElements }})</h2>
+        <div class="flex items-center px-4 py-1 border border-zinc-300 rounded-full w-80 bg-white">
+          <input v-model="newKeyword" type="text" placeholder="결과 내 재검색"
+            class="flex-1 text-sm text-neutral-800 bg-transparent outline-none" />
+          <button @click="onRefineSearch"
+            class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+            검색
+          </button>
+        </div>
+      </div>
+    </section>
     <!-- 리뷰 카드 리스트 -->
     <section class="flex flex-col gap-8">
-      <h3 class="text-xl font-bold text-neutral-800">한줄평 ({{ reviews.length }})</h3>
       <div class="flex flex-col gap-4">
-        <ReviewCard v-for="review in reviews" :key="review.idx" :review="review" />
+        <ReviewCard v-for="review in paginatedReviews" :key="review.idx" :review="review" />
       </div>
     </section>
     <!-- 페이지네이션 -->

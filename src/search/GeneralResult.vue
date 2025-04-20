@@ -24,6 +24,7 @@ const loadSearch = async () => {
     events.value = response.events || [];
     posts.value = response.posts || [];
     reviews.value = response.reviews || [];
+    console.log("통합 검색: ", response)
   } catch (error) {
     console.error("검색 결과 로드 실패:", error);
   }
@@ -39,7 +40,8 @@ watch(() => route.query.keyword, async (newKeyword, oldKeyword) => {
 function goToTab(label) {
   if (keyword.value) {
     searchStore.setTab(label)
-    router.push({ path: getPathFromLabel(label), query: { keyword: keyword.value }
+    router.push({
+      path: getPathFromLabel(label), query: { keyword: keyword.value }
     })
   }
 }
@@ -62,16 +64,20 @@ function getPathFromLabel(label) {
     <!-- 공연/전시 카드 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">공연/전시 ({{ events.length }})</h3>
+        <h3 class="text-lg font-semibold">공연/전시</h3>
         <button @click="goToTab('공연/전시')" class="text-violet-500 text-sm">더보기</button>
       </div>
-      <EventsCardGeneral v-for="event in events" :key="event.idx" :event="event" />
+
+      <!-- 카드들을 감싸는 컨테이너 추가 -->
+      <div class="flex flex-wrap gap-4 ">
+        <EventsCardGeneral v-for="event in events" :key="event.idx" :event="event" />
+      </div>
     </section>
 
     <!-- 게시판 테이블 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">게시글 ({{ posts.length }})</h3>
+        <h3 class="text-lg font-semibold">게시글</h3>
         <button @click="goToTab('게시판')" class="text-violet-500 text-sm">더보기</button>
       </div>
       <div class="flex flex-col">
@@ -82,7 +88,7 @@ function getPathFromLabel(label) {
     <!-- 한줄평 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">한줄평 ({{ reviews.length }})</h3>
+        <h3 class="text-lg font-semibold">한줄평 </h3>
         <button @click="goToTab('한줄평')" class="text-violet-500 text-sm">더보기</button>
       </div>
       <div class="flex flex-col gap-4">

@@ -11,14 +11,19 @@ const props = defineProps({ keyword: String })
 const currentPage = ref(1)
 const itemsPerPage = 10
 
-const posts = ref([])
+const posts = ref({
+  content: [],
+  totalPages: 0,
+  totalElements: 0,
+  number: 0,
+  size: 10
+})
 
 const loadPosts = async () => {
   try {
     searchStore.setTab('게시판')
     const response = await searchStore.getPostsSearchList(props.keyword, currentPage.value - 1, itemsPerPage)
-    posts.value = response.content || []
-    console.log('검색 결과:', response)
+    posts.value = response || {}
   } catch (error) {
     console.error("검색 결과 로드 실패:", error)
   }
@@ -26,11 +31,8 @@ const loadPosts = async () => {
 
 onMounted(loadPosts)
 
-const totalPages = computed(() => Math.ceil(posts.value.length / itemsPerPage))
-
-const paginatedPosts = computed(() =>
-  posts.value.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage)
-)
+const totalPages = computed(() => posts.value.totalPages || 0)
+const paginatedPosts = computed(() => posts.value.content || [])
 
 function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
@@ -39,10 +41,23 @@ function goToPage(page) {
   }
 }
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
+//재검색
+const newKeyword = ref('')
+const refinedKeywords = ref([props.keyword])
+
+function onRefineSearch() {
+  if (!newKeyword.value.trim()) return
+  refinedKeywords.value.push(newKeyword.value.trim())
+  newKeyword.value = ''
+  currentPage.value = 1
+  loadRefinedSearch()
 }
+
+async function loadRefinedSearch() {
+  const response = await searchStore.getPostsRefineSearchList(refinedKeywords.value, currentPage.value - 1, itemsPerPage)
+  posts.value = response || {}
+}
+
 </script>
 
 <template>
@@ -51,14 +66,13 @@ const formatDate = (dateString) => {
     <!-- 검색 + 개수 -->
     <section class="flex flex-col gap-4">
       <div class="flex justify-between items-center">
-        <h2 class="text-xl font-bold text-neutral-800">게시글 ({{ posts.length }})</h2>
+        <h2 class="text-xl font-bold text-neutral-800">게시글 ({{ posts.totalElements }})</h2>
         <div class="flex items-center px-4 py-1 border border-zinc-300 rounded-full w-80 bg-white">
           <input type="text" placeholder="게시글 내 재검색"
             class="flex-1 text-sm text-neutral-800 bg-transparent outline-none" />
-          <div
-            class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+          <button @click="onRefineSearch" class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
             검색
-          </div>
+          </button>
         </div>
       </div>
     </section>

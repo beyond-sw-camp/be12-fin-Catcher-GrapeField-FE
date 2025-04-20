@@ -20,8 +20,8 @@ const goToEvent = (idx)=>{
 </script>
 
 <template>
-  <div
-    class="min-w-54 max-w-64 flex flex-row flex-wrap gap-x-3 bg-white rounded-lg border border-zinc-200 p-4 gap-2 shadow hover:shadow-md transition">
+  <!-- 카드 전체 -->
+<div class="w-64 h-60 flex flex-col justify-between bg-white rounded-lg border border-zinc-200 p-4 shadow hover:shadow-md transition">
     <!-- 이미지 영역 -->
     <img @click="goToEvent(event.idx)" :src="BASE_IMAGE_URL + event.posterImgUrl" alt="포스터" class="w-20 h-20 object-cover rounded" />
     <div class="flex flex-col gap-1">
@@ -38,7 +38,6 @@ const goToEvent = (idx)=>{
         </p>
       </div>
     </div>
-
 
   </div>
 </template>
