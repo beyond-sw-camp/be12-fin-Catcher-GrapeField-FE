@@ -3,11 +3,21 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
+import { useChatRoomStore } from '@/stores/useChatRoomStore'
+import { stompClient } from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
 const userStore = useUserStore()
 const chatListStore = useChatRoomListStore()
+const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const router = useRouter()
+// 토큰 변수 설정
+const token = ref(null)
+const cookieToken = document.cookie.split('; ').find(row => row.startsWith('ATOKEN='))
+if (cookieToken) token.value = cookieToken.split('=')[1]
+// 세션 변수 설정
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
+const currentUserIdx = loginUser?.userIdx
 
 // 로그인 상태 확인
 const isLogin = computed(() => userStore.isLogin)
@@ -16,9 +26,8 @@ const isLogin = computed(() => userStore.isLogin)
 const state = reactive({
   activePanel: null,
   isSidebarCollapsed: false,
-  // chatRooms: [],
-  activeChatRoom: null,
-  activeChatRoomMessages: [],
+  activeChatRoom: null, // 채팅방 상세보기에서 선택된 채팅방
+  activeChatRoomMessages: [], // 채팅방 상세보기에서 선택된 채팅방의 메세지 리스트
   newMessage: ''
 })
 
@@ -81,49 +90,46 @@ function toggleSidebar() {
 
 
 
-function showChatRoom(room) {
-  state.activeChatRoom = room
-  state.activeChatRoomMessages = room.messages.map(msg => ({
-    ...msg,
-    timestamp: new Date(msg.timestamp)
-  }))
-  nextTick(scrollToBottom)
+async function showChatRoom(room) {
+  state.activeChatRoom = room;
+  state.activeChatRoomMessages = [];
+  state.activePanel = 'chat';
+
+  await chatRoomStore.fetchChatRoom(room.roomIdx, token);
+  state.activeChatRoomMessages = chatRoomStore.formattedMessages;
+  chatRoomStore.connectWebSocket(room.roomIdx, token); // 웹소켓 구독 연결
+  nextTick(scrollToBottom); // 패널 채팅방 스크롤을 맨 아래로 이동
+
 }
 
 function backToChatList() {
-  state.activeChatRoom = null
-  state.activeChatRoomMessages = []
-  state.newMessage = ''
+  chatRoomStore.disconnectWebSocket(); // 웹소켓 연결 해제
+  state.activeChatRoom = null;
+  state.activeChatRoomMessages = [];
+  state.newMessage = '';
 }
 
 function sendMessage() {
-  if (!state.newMessage.trim() || !state.activeChatRoom) return
+  if (!state.newMessage.trim() || !state.activeChatRoom || !stompClient?.connected) return;
 
-  const newMsg = {
-    id: Date.now(),
-    sender: '나',
-    content: state.newMessage,
-    timestamp: new Date(),
-    isMe: true
+  const payload = {
+    roomIdx: state.activeChatRoom.roomIdx,
+    sender: currentUserIdx,
+    content: state.newMessage.value
   }
+if (typeof stompClient.publish === 'function') {
+  stompClient.publish({
+    destination: `/app/chat.send${state.activeChatRoom.roomIdx}`,
+    body: JSON.stringify(payload)
+  })
+} else {
+  stompClient.send(`/app/chat.send${state.activeChatRoom.roomIdx}`, {}, JSON.stringify(payload))
+}
 
-  state.activeChatRoomMessages.push(newMsg)
+  // state.activeChatRoomMessages.push(newMsg)
   state.newMessage = ''
 
   nextTick(scrollToBottom)
-
-  setTimeout(() => {
-    const autoResponse = {
-      id: Date.now() + 1,
-      sender: '관람객' + (Math.floor(Math.random() * 10) + 1),
-      content: getRandomResponse(),
-      timestamp: new Date(),
-      avatar: `../assets/icons/profile.png`,
-      isMe: false
-    }
-    state.activeChatRoomMessages.push(autoResponse)
-    nextTick(scrollToBottom)
-  }, 1000)
 }
 
 function scrollToBottom() {
@@ -133,6 +139,22 @@ function scrollToBottom() {
   }
 }
 
+function handleIncomingMessage(frame) {
+  const message = JSON.parse(frame.body);
+  const newMsg = {
+    roomIdx: message.roomIdx,
+    sender: message.userIdx,
+    avatar: message.profileImageUrl,
+    content: message.content,
+    timestamp: new Date(message.createdAt),
+    isMe: message.userIdx === currentUserIdx
+  };
+  if (message.roomIdx === state.activeChatRoom.roomIdx) {
+    state.activeChatRoomMessages.push(newMsg);
+    nextTick(scrollToBottom);
+  }
+}
+/*
 function getRandomResponse() {
   const responses = [
     '네, 지금 공연장 분위기가 정말 좋습니다!',
@@ -144,7 +166,7 @@ function getRandomResponse() {
     '공연 후 사인회는 로비에서 진행된다고 합니다.'
   ]
   return responses[Math.floor(Math.random() * responses.length)]
-}
+}*/
 
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -330,7 +352,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <!-- 채팅방 상세 보기 -->
+              <!-- 채팅방 상세 보기 --> <!-- chat.json 가짜데이터 대신에 진짜 REST API 응답으로 채워 넣어야 하는 부분 -->
               <div v-else class="flex flex-col h-full">
                 <!-- 채팅방 헤더 -->
                 <div class="flex items-center gap-[0.8vw] mb-[1vh] pb-[1vh] border-b border-gray-300">
@@ -338,7 +360,7 @@ onMounted(() => {
                           @click="backToChatList">←
                   </button>
                   <div class="flex-1 text-[1.1vw] font-semibold text-gray-800 truncate">
-                    {{ state.activeChatRoom.title }}
+                    {{ chatRoomStore.roomTitle }}
                   </div>
                   <button class="hover:bg-purple-100 px-[0.6vw] py-[0.4vh] rounded"
                           @click="openChatRoomNewWindow(state.activeChatRoom.roomIdx)">
