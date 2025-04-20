@@ -77,7 +77,7 @@
 
                   <!-- 채팅방 카드 -->
                   <div
-                    v-for="room in chatStore.myRooms"
+                    v-for="room in chatListStore.myRooms"
                     :key="room.roomIdx"
                     class="bg-purple-100 px-[1vw] py-[1.2vh] rounded-md cursor-pointer hover:shadow-md transition-all"
                     @click="showChatRoom(room)"
@@ -111,7 +111,7 @@
                     <div
                       class="flex justify-between text-[0.8vw] text-gray-500"
                     >
-                      <div>{{ room.unreadCount }}명 참여중</div>
+                      <div>{{ room.participantCount }}명 참여중</div>
                       <div>
                         {{
                           formatDateRange(
@@ -292,13 +292,12 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
-import chatData from '../assets/data/chat.json'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
-import { useChatStore } from '../stores/useChatStore'
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
+const chatListStore = useChatRoomListStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -309,7 +308,7 @@ const isLogin = computed(() => userStore.isLogin)
 const state = reactive({
   activePanel: null,
   isSidebarCollapsed: false,
-  chatRooms: [],
+  // chatRooms: [],
   activeChatRoom: null,
   activeChatRoomMessages: [],
   newMessage: ''
@@ -343,11 +342,9 @@ const getPanelTitle = computed(() => {
 
 // 내가 참여한 채팅방
 const favoriteChatRooms = computed(() => {
-  if (!state.chatRooms || state.chatRooms.length === 0) return []
-  return state.chatRooms
-    .filter(room => chatData.userFavorites.includes(room.id))
-    .slice(0, 5)
+  return chatListStore.myRooms.slice(0, 5)
 })
+
 
 // 패널 토글
 function togglePanel(panelName) {
@@ -485,8 +482,8 @@ function formatDateRange(start, end) {
 
 
 onMounted(() => {
-  if (chatStore.myRooms.length === 0) {
-    chatStore.fetchMyRooms()
+  if (chatListStore.myRooms.length === 0) {
+    chatListStore.fetchMyRooms()
   }
 })
 </script>
