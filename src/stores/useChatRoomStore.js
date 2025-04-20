@@ -1,3 +1,4 @@
+//useChatRoomStore.js
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import axios from 'axios'
 import { connect as createWebSocketConnection, stompClient } from '@/utils/webSocketClient'
@@ -33,7 +34,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             try {
                 const { data } = await axios.get(`/api/chat/${roomIdx}`, {
                     withCredentials: true,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                    headers: token.value ? { Authorization: `Bearer ${token.value}` } : {}
                 })
                 this.roomData = data
                 this.roomTitle = data.roomName
