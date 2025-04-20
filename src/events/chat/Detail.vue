@@ -42,7 +42,7 @@ let subscription = null
 
 function loadChatRoomData() {
   const roomIdx = Number(roomId.value)
-  chatRoomStore.fetchChatRoom(roomIdx, token.value)
+  chatRoomStore.fetchChatRoom(roomIdx, token)
       .then(data => {
         roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
@@ -231,7 +231,7 @@ onMounted(() => {
   loadChatRoomData()
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
-  }, token.value)
+  }, token)
 })
 
 onBeforeUnmount(() => {
