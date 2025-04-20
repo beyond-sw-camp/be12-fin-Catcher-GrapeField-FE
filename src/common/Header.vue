@@ -94,9 +94,12 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
+import { useSearchStore } from '@/stores/useSearchStore'
+
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
+const searchStore = useSearchStore()
 
 const currentPath = ref('')
 // 로그인 상태 확인
@@ -138,6 +141,7 @@ const SearchKeyword = (keyword) => {
   if (!keyword || keyword.trim() === '') {
     router.push({path: '/community'}) //검색어가 없으면 커뮤니티 페이지로 이동
   }else{
+    searchStore.setTab("통합 검색")
     router.push({ path: '/search', query: { keyword } })
   }
 }
