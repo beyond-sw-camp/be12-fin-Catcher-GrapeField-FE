@@ -95,7 +95,7 @@ async function showChatRoom(room) {
   state.activePanel = 'chat';
   state.activeRoomIdx = room.roomIdx;
 
-      await chatRoomStore.fetchChatRoom(room.roomIdx, token);
+      await chatRoomStore.fetchChatRoom(room.roomIdx/*, token*/);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)

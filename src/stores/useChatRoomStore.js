@@ -30,13 +30,13 @@ export const useChatRoomStore = defineStore('chatRoom', {
     },
 
     actions: {
-        async fetchChatRoom(roomIdx, token) {
+        async fetchChatRoom(roomIdx/*, token*/) {
             this.loading = true
             this.error = null
             try {
                 const { data } = await axios.get(`/api/chat/${roomIdx}`, {
                     withCredentials: true,
-                    headers: token.value ? { Authorization: `Bearer ${token.value}` } : {}
+                    headers: {}
                 })
                 this.roomData = data
                 this.roomTitle = data.roomName
@@ -87,7 +87,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     frame => this.handleIncomingMessage(frame)
                 );
                 console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
-            }, token)
+            }/*, token*/)
         },
 
         disconnectWebSocket() {
