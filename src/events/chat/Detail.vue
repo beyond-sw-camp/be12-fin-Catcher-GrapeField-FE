@@ -199,8 +199,14 @@ const handleLike = async () => {
   // } catch (err) {
   //   console.error('API 오류:', err)
   // }
+  chatRoomStore.sendHeart(roomId.value)
+  triggerHearts()  // 내 화면에서도 뿅뿅
+
+}
+
 // 애니메이션용 하트 추가
-  for (let i = 0; i < 5; i++) {
+function triggerHearts() {
+for (let i = 0; i < 5; i++) {
     const id = Date.now() + Math.random()
     setTimeout(() => {
       hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
@@ -229,6 +235,7 @@ onMounted(() => {
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
   }/*, token*/)
+  chatRoomStore.connectWebSocket(roomId.value, token)
 })
 
 onBeforeUnmount(() => {
@@ -352,6 +359,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
+  position: relative;
 }
 
 .chat-header {
