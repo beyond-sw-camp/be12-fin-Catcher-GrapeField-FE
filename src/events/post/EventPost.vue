@@ -15,50 +15,71 @@
         <input type="text" placeholder="제목, 내용, 작성자 검색" class="border px-4 py-2 rounded w-full" />
         <button class="bg-purple-600 text-white px-4 py-2 rounded whitespace-nowrap">검색</button>
       </div>
-      <!--TODO : 게시글 등록 페이지 추가 필요-->
       <button v-if="isLogin" class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister()">글쓰기</button>
     </div>
 
-    <!-- 게시판 테이블 -->
-    <table class="w-full table-auto border-t border-gray-300 text-center text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="py-3">분류</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일</th>
-          <th>조회수</th>
-          <th>추천</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in paginatedRows" :key="index" class="border-b">
-          <td class="py-2">
-            <span :class="getCategoryClass(row.postType)" class="px-2 py-1 text-xs">
-              {{ getPostTypeDisplay(row.postType) }}
-            </span>
-          </td>
-          <td class="text-left pl-4">
-            <router-link :to="`/events/${eventIdx}/post/${row.idx}`">
-              {{ row.title }}
-            </router-link>
-          </td>
-          <td>{{ row.writer }}</td>
-          <td>{{ formatDate(row.createdAt) }}</td>
-          <td>{{ row.viewCnt }}</td>
-          <td>{{ row.recommendCnt }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- 데스크탑용 헤더 -->
+    <div class="hidden sm:grid grid-cols-12 h-12 bg-gray-100 text-sm font-bold text-neutral-800 border-t border-b">
+      <div class="col-span-1 flex items-center justify-center">분류</div>
+      <div class="col-span-5 pl-2 flex items-center justify-start">제목</div>
+      <div class="col-span-2 flex items-center justify-center">작성자</div>
+      <div class="col-span-2 flex items-center justify-center">작성일</div>
+      <div class="col-span-1 flex items-center justify-center">조회</div>
+      <div class="col-span-1 flex items-center justify-center">추천</div>
+    </div>
 
-    <!-- 페이지네이션 -->
+    <!-- 게시글 리스트 -->
+    <div v-for="(row, index) in paginatedRows" :key="index"
+      class="border-b bg-white text-sm text-neutral-800 hover:bg-gray-50 px-2 py-2">
+      <!-- 모바일 -->
+      <div class="sm:hidden flex flex-col gap-1">
+        <!-- 분류 -->
+        <div>
+          <div class="text-xs text-gray-400">분류</div>
+          <span :class="getCategoryClass(row.postType)" class="text-sm font-semibold">
+            {{ getPostTypeDisplay(row.postType) }}
+          </span>
+        </div>
+        <!-- 제목 -->
+        <div>
+          <div class="text-xs text-gray-400">제목</div>
+          <div @click="goToPost(eventIdx, row.idx)"
+            class="font-medium truncate cursor-pointer hover:underline hover:text-black">
+            {{ row.title }}
+          </div>
+        </div>
+        <!-- 하단 메타 -->
+        <div class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 mt-1">
+          <span>👤 {{ row.writer }}</span>
+          <span>🗓 {{ formatDate(row.createdAt) }}</span>
+          <span>👁 {{ row.viewCnt }}</span>
+          <span>❤️ {{ row.recommendCnt }}</span>
+        </div>
+      </div>
+
+      <!-- 데스크탑 -->
+      <div class="hidden sm:grid sm:grid-cols-12 sm:gap-2 sm:h-12 items-center">
+        <div class="col-span-1 text-center">
+          <span :class="getCategoryClass(row.postType)" class="text-sm font-semibold">
+            {{ getPostTypeDisplay(row.postType) }}
+          </span>
+        </div>
+        <div class="col-span-5 pl-2 text-left truncate cursor-pointer hover:underline" @click="goToPost(eventIdx, row.idx)">
+          {{ row.title }}
+        </div>
+        <div class="col-span-2 text-center truncate">{{ row.writer }}</div>
+        <div class="col-span-2 text-center truncate">{{ formatDate(row.createdAt) }}</div>
+        <div class="col-span-1 text-center">{{ row.viewCnt }}</div>
+        <div class="col-span-1 text-center">{{ row.recommendCnt }}</div>
+      </div>
+    </div>
+
+    <!-- 페이지네이션 (기존 그대로 유지) -->
     <div class="mt-6 flex justify-center items-center gap-2 flex-wrap">
       <button @click="goToPage(currentPage - 1)" :disabled="!hasPrevious" class="px-3 py-1 rounded border text-sm"
         :class="hasPrevious ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
         이전
       </button>
-
-      <!-- 페이지 버튼 개선 - 최대 5개만 표시 -->
       <template v-for="n in totalPages" :key="n">
         <button v-if="n === 1 || n === totalPages || (n >= currentPage - 1 && n <= currentPage + 1)"
           @click="goToPage(n)" class="px-2 py-1 rounded-md text-xs font-semibold border transition" :class="{
@@ -76,6 +97,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
@@ -169,6 +191,10 @@ function getCategoryClass(category) {
 function formatDate(dateString) {
   const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
   return new Date(dateString).toLocaleDateString('ko-KR', options)
+}
+
+function goToPost(boardIdx, postIdx) {
+  router.push(`/events/${boardIdx}/post/${postIdx}`)
 }
 
 function goToPage(page) {

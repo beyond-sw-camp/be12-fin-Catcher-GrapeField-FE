@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 
@@ -76,6 +76,24 @@ const remember = ref(false)
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+
+// RTOKEN 확인 함수
+const checkRefreshToken = () => {
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'RTOKEN' && value) {
+      // 쿠키 만료 (사용자에게 알림 없이 조용히 처리)
+      document.cookie = "RTOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      console.log('이전 세션 쿠키 정리 완료');
+    }
+  }
+};
+
+onMounted(() => {
+  // 로그인 페이지 진입 시 조용히 쿠키 확인 및 정리
+  checkRefreshToken();
+});
 
 const login = async () => {
   const result = await userStore.login(email.value, password.value);

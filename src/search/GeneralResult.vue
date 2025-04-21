@@ -1,101 +1,98 @@
 <script setup>
-import EventCard from './EventsCardGeneral.vue'
-import PostRow from './PostRow.vue'
+import { ref, watch, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import EventsCardGeneral from './EventsCardGeneral.vue'
+import PostList from './PostList.vue'
 import ReviewCard from './ReviewCard.vue'
+import { useSearchStore } from '@/stores/useSearchStore'
+import SearchHeader from './SearchHeader.vue'
 
-import events from '/public/data/search/events.js'
-import posts from '/public/data/search/posts.js'
-import reviews from '/public/data/search/reviews.js'
+const route = useRoute()
+const router = useRouter()
+const searchStore = useSearchStore()
+
+const keyword = computed(() => route.query.keyword)
+
+const events = ref([])
+const posts = ref([])
+const reviews = ref([])
+
+const loadSearch = async () => {
+  try {
+    searchStore.setTab('통합 검색') // 진입 시 기본 탭 설정
+    const response = await searchStore.getALLSearchList(keyword.value);
+    events.value = response.events || [];
+    posts.value = response.posts || [];
+    reviews.value = response.reviews || [];
+    console.log("통합 검색: ", response)
+  } catch (error) {
+    console.error("검색 결과 로드 실패:", error);
+  }
+}
+
+onMounted(loadSearch)
+watch(() => route.query.keyword, async (newKeyword, oldKeyword) => {
+  if (newKeyword && newKeyword !== oldKeyword) {
+    await loadSearch()
+  }
+})
+
+function goToTab(label) {
+  if (keyword.value) {
+    searchStore.setTab(label)
+    router.push({
+      path: getPathFromLabel(label), query: { keyword: keyword.value }
+    })
+  }
+}
+
+function getPathFromLabel(label) {
+  switch (label) {
+    case '통합 검색': return '/search'
+    case '공연/전시': return '/search/events'
+    case '게시판': return '/search/post'
+    case '한줄평': return '/search/review'
+    default: return '/search'
+  }
+}
 </script>
 
 <template>
   <div class="wrapper flex flex-col gap-10 mt-8">
-    <!-- 제목 & 탭 -->
-    <section class="flex flex-col gap-4">
-      <h2 class="text-2xl font-bold text-neutral-800">'햄릿' 검색 결과</h2>
-      <nav class="flex gap-2">
-        <router-link
-            to="/search"
-            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-violet-600 font-bold underline flex items-center justify-center rounded"
-        >
-          통합검색
-        </router-link>
-        <router-link
-            to="/search/events"
-            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
-        >
-          공연/전시
-        </router-link>
-        <router-link
-            to="/search/post"
-            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600  flex items-center justify-center rounded"
-        >
-          게시판
-        </router-link>
-        <router-link
-            to="/search/review"
-            class="truncate w-40 h-14 px-7 py-4 bg-white text-base text-zinc-600 flex items-center justify-center rounded"
-        >
-          한줄평
-        </router-link>
-      </nav>
-    </section>
+    <SearchHeader :keyword="keyword" />
 
     <!-- 공연/전시 카드 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">공연/전시 ({{ events.length }})</h3>
-        <router-link to="/search/events" class="text-violet-500 text-sm">더보기</router-link>
+        <h3 class="text-lg font-semibold">공연/전시</h3>
+        <button @click="goToTab('공연/전시')" class="text-violet-500 text-sm">더보기</button>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-        <EventCard
-            v-for="event in events.slice(0, 3)"
-            :key="event.id"
-            :id="event.id"
-            :title="event.title"
-            :period="event.period"
-            :location="event.location"
-        />
+
+      <!-- 카드들을 감싸는 컨테이너 추가 -->
+      <div class="flex flex-wrap gap-4 ">
+        <EventsCardGeneral v-for="event in events" :key="event.idx" :event="event" />
       </div>
     </section>
 
     <!-- 게시판 테이블 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">게시글 ({{ posts.length }})</h3>
-        <router-link to="/search/post" class="text-violet-500 text-sm">더보기</router-link>
+        <h3 class="text-lg font-semibold">게시글</h3>
+        <button @click="goToTab('게시판')" class="text-violet-500 text-sm">더보기</button>
       </div>
       <div class="flex flex-col">
-        <!-- 헤더 -->
-        <div class="grid grid-cols-[12rem_1fr_8rem_7rem_6rem_6rem] h-12 bg-violet-50 rounded-t text-sm font-bold text-neutral-800">
-          <div class="flex items-center justify-center">게시판</div>
-          <div class="flex items-center justify-center">제목</div>
-          <div class="flex items-center justify-center">작성자</div>
-          <div class="flex items-center justify-center">작성일</div>
-          <div class="flex items-center justify-center">조회</div>
-          <div class="flex items-center justify-center">추천</div>
-        </div>
-
-        <!-- 게시글 리스트 -->
-        <PostRow v-for="post in posts.slice(0, 5)" :key="post.id" :post="post" />
+        <PostList :posts="posts" />
       </div>
     </section>
 
     <!-- 한줄평 -->
     <section>
       <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">한줄평 ({{ reviews.length }})</h3>
-        <router-link to="/search/review" class="text-violet-500 text-sm">더보기</router-link>
+        <h3 class="text-lg font-semibold">한줄평 </h3>
+        <button @click="goToTab('한줄평')" class="text-violet-500 text-sm">더보기</button>
       </div>
       <div class="flex flex-col gap-4">
-        <ReviewCard
-            v-for="review in reviews.slice(0, 3)"
-            :key="review.id"
-            :username="review.username"
-            :rating="review.rating"
-            :date="review.date"
-            :comment="review.comment"
-        />
+        <ReviewCard v-for="review in reviews" :key="review.idx" :review="review" />
       </div>
     </section>
   </div>

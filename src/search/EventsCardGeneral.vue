@@ -1,45 +1,43 @@
 <script setup>
-defineProps({
-  id: Number,
-  title: String,
-  period: String,
-  location: String
+import { useRoute, useRouter } from 'vue-router';
+const props = defineProps({
+  event: Object
 })
+
+const router = useRouter()
+
+// NOTE: 임시 이미지 링크
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
+const formatDate = (dateString) => {  
+  const date = new Date(dateString)
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
+}
+
+const goToEvent = (idx)=>{
+  router.push(`/events/${idx}`)
+}
 </script>
 
 <template>
-  <div
-      class="min-w-54 max-w-64 flex flex-row flex-wrap gap-x-3 bg-white rounded-lg border border-zinc-200 p-4 gap-2 shadow hover:shadow-md transition"
-  >
+  <!-- 카드 전체 -->
+<div class="w-64 h-60 flex flex-col justify-between bg-white rounded-lg border border-zinc-200 p-4 shadow hover:shadow-md transition">
     <!-- 이미지 영역 -->
-    <div class="min-w-16 aspect-square bg-violet-100 rounded-md flex items-center justify-center text-violet-600 text-sm font-bold">
-      이미지
-    </div>
+    <img @click="goToEvent(event.idx)" :src="BASE_IMAGE_URL + event.posterImgUrl" alt="포스터" class="w-20 h-20 object-cover rounded" />
     <div class="flex flex-col gap-1">
       <!-- 텍스트 정보 -->
       <div class="flex flex-col mt-2 gap-0.5">
         <h3 class="text-sm font-bold text-neutral-800 truncate">
-          {{ title }}
+          {{ event.title }}
         </h3>
         <p class="text-xs text-zinc-600">
-          {{ period }}
+          {{ formatDate(event.startDate) }} ~ {{ formatDate(event.endDate) }}
         </p>
         <p class="text-xs text-zinc-500 truncate">
-          {{ location }}
+          {{ event.venue }}
         </p>
       </div>
-      <!-- 버튼 그룹 -->
-      <div class="flex gap-2 mt-auto">
-        <button class="flex-1 text-xs text-white bg-violet-500 rounded-full py-1.5 font-semibold hover:bg-violet-600">
-          <router-link :to="`/events/${id}`" >
-          더보기</router-link>
-        </button>
-        <button class="flex-1 text-xs text-violet-500 border border-violet-500 rounded-full py-1.5 font-semibold hover:bg-violet-50">
-          즐겨찾기
-        </button>
-      </div>
     </div>
-
 
   </div>
 </template>
