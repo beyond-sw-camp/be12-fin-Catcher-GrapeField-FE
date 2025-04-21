@@ -159,7 +159,6 @@ function scrollToHighlight(hStartMessageIdx, highlight) {
     }
     requestAnimationFrame(animateScroll);
   });
-
 }
 
 function goBack() {
@@ -206,7 +205,7 @@ const handleLike = async () => {
 
 // 애니메이션용 하트 추가
 function triggerHearts() {
-for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5; i++) {
     const id = Date.now() + Math.random()
     setTimeout(() => {
       hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
@@ -235,7 +234,7 @@ onMounted(() => {
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
   }/*, token*/)
-  chatRoomStore.connectWebSocket(roomId.value, token)
+  chatRoomStore.connectWebSocket(roomId.value/*, token */)
 })
 
 onBeforeUnmount(() => {
@@ -671,24 +670,24 @@ onBeforeUnmount(() => {
 
   /* 퇴장 버튼 */
   .leave-button {
-  background-color: white;
-  border: 2px solid #6A0DAD;
-  border-radius: 9999px;
-  color: #6A0DAD;
-  padding: 0.5vh 1vw;
-  font-size: 0.9vw;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+    background-color: white;
+    border: 2px solid #6A0DAD;
+    border-radius: 9999px;
+    color: #6A0DAD;
+    padding: 0.5vh 1vw;
+    font-size: 0.9vw;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-.leave-button:hover {
-  background-color: #6A0DAD;
-  color: white;
-}
+  .leave-button:hover {
+    background-color: #6A0DAD;
+    color: white;
+  }
 
-.leave-button:active {
-  transform: scale(0.95);
-}
+  .leave-button:active {
+    transform: scale(0.95);
+  }
 }
 </style>
