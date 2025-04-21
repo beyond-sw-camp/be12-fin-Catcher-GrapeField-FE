@@ -2,6 +2,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import axios from 'axios'
 import { connect as createWebSocketConnection, stompClient } from '@/utils/webSocketClient'
+import { Client } from '@stomp/stompjs'
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
 
@@ -9,6 +10,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
     state: () => ({
         roomData: null,
         messages: [],
+        stompClient: null,
+        // currentUserIdx: null,
         highlightedTimes: [],
         participantCount: 0,
         roomTitle: '',
@@ -59,7 +62,25 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this.loading = false
             }
         },
-
+        // 채팅방 하트 로직
+        sendHeart(roomId) {
+            console.log('🧪 stompClient 상태 확인:', this.stompClient)
+          
+            if (!this.stompClient || !this.stompClient.connected) {
+              console.warn('❗ stompClient 연결 안 됨');
+              return
+            }
+          
+            this.stompClient.publish({
+              destination: `/app/chat.like.${roomId}`,
+              body: JSON.stringify({
+                roomIdx: roomId
+              })
+            })
+          },
+          
+          
+          
         /*
         async likeRoom(roomIdx) {
             this.loading = true
@@ -77,6 +98,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
 
         connectWebSocket(roomId, token) { // 리팩터링 필요. 실제로 쓸모가 없는 것 같음..
             createWebSocketConnection(client => {
+                this.stompClient = client
+            // createWebSocketConnection(client => {
                 this._stompSubscription = client.subscribe(
                     `/topic/chat.room.${roomId}`,
                     this.handleIncomingMessage,
@@ -87,6 +110,24 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     frame => this.handleIncomingMessage(frame)
                 );
                 console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
+                // 하트 실시간 구독
+    this._likeSubscription = client.subscribe(
+        `/topic/chat.room.likes.${roomId}`,
+        (frame) => {
+          const heart = JSON.parse(frame.body)
+          console.log("❤️ 하트 수신!", heart)
+  
+          // 하트 수 증가
+          if (this.roomData) {
+            this.roomData.heartCnt += 1
+          }
+  
+          // 하트 애니메이션
+          this.triggerHearts()
+        }
+      )
+    
+      console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`)
             }, token)
         },
 
@@ -95,6 +136,10 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this._stompSubscription.unsubscribe()
                 this._stompSubscription = null
             }
+            if (this._likeSubscription) {
+                this._likeSubscription.unsubscribe()
+                this._likeSubscription = null
+              }
         },
 
         handleIncomingMessage(frame) {
