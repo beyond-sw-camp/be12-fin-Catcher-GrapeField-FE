@@ -1,6 +1,9 @@
+//useChatRoomStore.js
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import axios from 'axios'
 import { connect as createWebSocketConnection, stompClient } from '@/utils/webSocketClient'
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
+const currentUserIdx = loginUser?.userIdx
 
 export const useChatRoomStore = defineStore('chatRoom', {
     state: () => ({
@@ -33,7 +36,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             try {
                 const { data } = await axios.get(`/api/chat/${roomIdx}`, {
                     withCredentials: true,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                    headers: token.value ? { Authorization: `Bearer ${token.value}` } : {}
                 })
                 this.roomData = data
                 this.roomTitle = data.roomName
@@ -44,7 +47,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     avatar: msg.profileImageUrl,
                     content: msg.content,
                     timestamp: msg.createdAt,
-                    isMe: msg.userIdx === data.currentUserIdx,
+                    isMe: msg.userIdx === currentUserIdx,
                     isHighlighted: msg.isHighlighted
                 }))
                 this.highlightedTimes = data.highlightList.map(h => ({ id: h.idx, time: h.startTime }))

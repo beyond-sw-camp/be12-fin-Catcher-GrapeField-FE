@@ -1,5 +1,5 @@
+<!-- events/chat/Detail.vue -->
 <script setup>
-
 import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import axios from 'axios'

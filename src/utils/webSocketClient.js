@@ -25,7 +25,7 @@ export function connect(onConnectCallback , token ) {
         onConnect: () => {
             // console.log('STOMP 연결 성공 (쿠키 + Interceptor 사용)');
             console.log(`{TOKEN ${token ? '있음' : '없음'}}`);
-            console.log(`{TOKEN ${token}}`);
+            console.log(`{TOKEN ${token.value}}`);
             console.log('WebSocket 연결 성공');
             if (onConnectCallback) onConnectCallback(stompClient);
         },
