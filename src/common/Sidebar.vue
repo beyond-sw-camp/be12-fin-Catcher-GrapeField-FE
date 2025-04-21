@@ -95,10 +95,9 @@ async function showChatRoom(room) {
 
       await chatRoomStore.fetchChatRoom(room.roomIdx, token);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
-  chatRoomStore.connectWebSocket(room.roomIdx, token); // 웹소켓 구독 연결
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)
-  }, token)
+  }/*, token*/)
   nextTick(scrollToBottom); // 패널 채팅방 스크롤을 맨 아래로 이동
 
 }

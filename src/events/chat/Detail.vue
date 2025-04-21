@@ -231,7 +231,7 @@ onMounted(() => {
   loadChatRoomData()
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
-  }, token)
+  }/*, token*/)
 })
 
 onBeforeUnmount(() => {
