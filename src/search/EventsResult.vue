@@ -63,6 +63,8 @@ async function loadRefinedSearch() {
   const response = await searchStore.getEventsRefineSearchList(refinedKeywords.value, currentPage.value - 1, itemsPerPage)
   events.value = response || {}
 }
+//NOTE: 이미지 링크 임의 설정
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 </script>
 
 <template>
@@ -75,7 +77,8 @@ async function loadRefinedSearch() {
         <div class="flex items-center px-4 py-1 border border-zinc-300 rounded-full w-80 bg-white">
           <input v-model="newKeyword" type="text" placeholder="결과 내 재검색"
             class="flex-1 text-sm text-neutral-800 bg-transparent outline-none" />
-          <button @click="onRefineSearch" class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
+          <button @click="onRefineSearch"
+            class="px-2 py-1 bg-violet-600 rounded-lg flex items-center justify-center text-white text-xs font-semibold">
             검색
           </button>
         </div>
@@ -85,7 +88,9 @@ async function loadRefinedSearch() {
     <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       <router-link v-for="event in paginatedEvents" :key="event.id" :to="`/events/${event.idx}`"
         class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-        <div class="h-56 bg-purple-100"></div>
+        <div class="h-56 bg-purple-100 overflow-hidden">
+          <img :src="BASE_IMAGE_URL + event.posterImgUrl" :alt="event.title" class="w-full h-full object-cover" />
+        </div>
         <div class="flex flex-col gap-1 p-4">
           <h3 class="text-lg font-bold text-neutral-800">{{ event.title }}</h3>
           <p class="text-sm text-zinc-600">{{ event.dateRange }}</p>
