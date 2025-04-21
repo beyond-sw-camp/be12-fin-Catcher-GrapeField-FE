@@ -4,13 +4,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
-import { stompClient } from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
+import {connect, stompClient} from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
 const userStore = useUserStore()
 const chatListStore = useChatRoomListStore()
 const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const router = useRouter()
+let subscription = null
 // 토큰 변수 설정
 const token = ref(null)
 const cookieToken = document.cookie.split('; ').find(row => row.startsWith('ATOKEN='))
@@ -95,6 +96,9 @@ async function showChatRoom(room) {
       await chatRoomStore.fetchChatRoom(room.roomIdx, token);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
   chatRoomStore.connectWebSocket(room.roomIdx, token); // 웹소켓 구독 연결
+  connect((client) => {
+    subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)
+  }, token)
   nextTick(scrollToBottom); // 패널 채팅방 스크롤을 맨 아래로 이동
 
 }

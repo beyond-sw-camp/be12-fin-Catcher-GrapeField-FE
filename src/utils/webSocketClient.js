@@ -22,16 +22,17 @@ export function connect(onConnectCallback , token ) {
         webSocketFactory: () => socket,
         connectHeaders: token.value ? { Authorization: `Bearer ${token.value}` } : {},
         reconnectDelay: 5000,
-        onConnect: () => {
+        onConnect: (frame) => {
+            console.log('WebSocket 연결 성공');
             // console.log('STOMP 연결 성공 (쿠키 + Interceptor 사용)');
             console.log(`{TOKEN ${token ? '있음' : '없음'}}`);
             console.log(`{TOKEN ${token.value}}`);
-            console.log('WebSocket 연결 성공');
             if (onConnectCallback) onConnectCallback(stompClient);
         },
         onStompError: (frame) => {
             console.error('STOMP 오류 발생:', frame);
         },
+
     });
 
     stompClient.activate();
