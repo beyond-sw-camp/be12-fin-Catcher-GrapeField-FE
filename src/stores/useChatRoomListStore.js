@@ -22,8 +22,12 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
   const fetchRooms = async (type = 'all') => {
     loading.value = true
     error.value = null
+  
+    // 🔥 반드시 try 밖에서 초기화해야 함
     page.value = 0
+    isLast.value = false
     rooms.value = []
+  
     try {
       const res = await axios.get(`${API_ENDPOINTS[type]}?page=0&size=20`, { withCredentials: true })
       rooms.value = res.data.content
@@ -35,27 +39,31 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
       loading.value = false
     }
   }
+  
 
-  const loadMoreRooms = async (type = 'all') => {
-    if (loading.value || isLast.value) return
-    loading.value = true
-    try {
-      const res = await axios.get(`${API_ENDPOINTS[type]}?page=${page.value + 1}&size=20`, {
-        withCredentials: true
-      })
-      rooms.value.push(...res.data.content)
-      isLast.value = res.data.last
-      page.value++  // ✅ 꼭 필요함
-      console.log('📦 loadMoreRooms 실행: page', page.value + 1)
-      console.log('✅ 불러온 데이터:', res.data)
-console.log('🛑 마지막 페이지인가?:', res.data.last)
+  // 📍 loadMoreRooms
+const loadMoreRooms = async (type = 'all') => {
+  if (loading.value || isLast.value) return
+  loading.value = true
 
-    } catch (err) {
-      console.error('❌ loadMoreRooms 실패:', err)
-    } finally {
-      loading.value = false
-    }
+  try {
+    const nextPage = page.value + 1
+    const res = await axios.get(`${API_ENDPOINTS[type]}?page=${nextPage}&size=20`, {
+      withCredentials: true
+    })
+
+    // 🔁 교체 방식으로 반응성 보장
+    rooms.value = [...rooms.value, ...res.data.content]
+    isLast.value = res.data.last
+    page.value = nextPage
+  } catch (err) {
+    console.error('❌ loadMoreRooms 실패:', err)
+  } finally {
+    loading.value = false
   }
+}
+
+  
   
 
   const fetchMyRooms = async () => {
