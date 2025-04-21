@@ -33,13 +33,13 @@ export const useChatRoomStore = defineStore('chatRoom', {
     },
 
     actions: {
-        async fetchChatRoom(roomIdx, token) {
+        async fetchChatRoom(roomIdx/*, token*/) {
             this.loading = true
             this.error = null
             try {
                 const { data } = await axios.get(`/api/chat/${roomIdx}`, {
                     withCredentials: true,
-                    headers: token.value ? { Authorization: `Bearer ${token.value}` } : {}
+                    headers: {}
                 })
                 this.roomData = data
                 this.roomTitle = data.roomName
@@ -96,7 +96,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             }
         }, */
 
-        connectWebSocket(roomId, token) { // 리팩터링 필요. 실제로 쓸모가 없는 것 같음..
+        connectWebSocket(roomId/*, token */) { // 리팩터링 필요. 실제로 쓸모가 없는 것 같음..
             createWebSocketConnection(client => {
                 this.stompClient = client
             // createWebSocketConnection(client => {
@@ -128,7 +128,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
       )
     
       console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`)
-            }, token)
+            }/*, token*/)
         },
 
         disconnectWebSocket() {

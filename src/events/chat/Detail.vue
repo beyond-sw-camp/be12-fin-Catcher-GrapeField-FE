@@ -6,9 +6,6 @@ import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import {connect, stompClient} from '@/utils/webSocketClient'
 
-// const props = defineProps({
-//   id: {type: [String, Number], required: true}
-// })
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 
@@ -16,14 +13,14 @@ const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 
 
-
+/*
 // 토큰 변수 설정
 const token = ref(null)
 const cookieToken = document.cookie
     .split('; ')
     .find(row => row.startsWith('ATOKEN='))
 if (cookieToken) token.value = cookieToken.split('=')[1]
-
+*/
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
@@ -42,7 +39,7 @@ let subscription = null
 
 function loadChatRoomData() {
   const roomIdx = Number(roomId.value)
-  chatRoomStore.fetchChatRoom(roomIdx, token)
+  chatRoomStore.fetchChatRoom(roomIdx /*, token */)
       .then(data => {
         roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
@@ -91,7 +88,7 @@ function sendMessage() {
   if (!newMessage.value.trim() || !stompClient?.connected) return
   const messagePayload = {
     roomIdx: roomId.value,
-    sendUserIdx: currentUserIdx,
+    // sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
   if (stompClient.publish) {
@@ -235,6 +232,9 @@ const leaveChatRoom = async () => {
 
 onMounted(() => {
   loadChatRoomData()
+  connect((client) => {
+    subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
+  }/*, token*/)
   chatRoomStore.connectWebSocket(roomId.value, token)
 })
 

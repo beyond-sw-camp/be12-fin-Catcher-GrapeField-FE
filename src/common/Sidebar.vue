@@ -12,10 +12,12 @@ const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const router = useRouter()
 let subscription = null
+/*
 // 토큰 변수 설정
 const token = ref(null)
 const cookieToken = document.cookie.split('; ').find(row => row.startsWith('ATOKEN='))
 if (cookieToken) token.value = cookieToken.split('=')[1]
+ */
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
@@ -93,12 +95,11 @@ async function showChatRoom(room) {
   state.activePanel = 'chat';
   state.activeRoomIdx = room.roomIdx;
 
-      await chatRoomStore.fetchChatRoom(room.roomIdx, token);
+      await chatRoomStore.fetchChatRoom(room.roomIdx/*, token*/);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
-  chatRoomStore.connectWebSocket(room.roomIdx, token); // 웹소켓 구독 연결
   connect((client) => {
     subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)
-  }, token)
+  }/*, token*/)
   nextTick(scrollToBottom); // 패널 채팅방 스크롤을 맨 아래로 이동
 
 }
@@ -115,7 +116,7 @@ function sendMessage() {
 
   const payload = {
     roomIdx: state.activeRoomIdx,
-    sendUserIdx: currentUserIdx,
+    // sendUserIdx: currentUserIdx,
     content: state.newMessage
   }
   try {
