@@ -75,12 +75,18 @@ export const useChatRoomStore = defineStore('chatRoom', {
             }
         }, */
 
-        connectWebSocket(roomId, token) {
+        connectWebSocket(roomId, token) { // 리팩터링 필요. 실제로 쓸모가 없는 것 같음..
             createWebSocketConnection(client => {
                 this._stompSubscription = client.subscribe(
                     `/topic/chat.room.${roomId}`,
-                    this.handleIncomingMessage
-                )
+                    this.handleIncomingMessage,
+
+                );
+                this._stompSubscription = client.subscribe(
+                    `/topic/chat.room.${roomId}`,
+                    frame => this.handleIncomingMessage(frame)
+                );
+                console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
             }, token)
         },
 
