@@ -10,24 +10,30 @@ const chatStore = useChatStore()
 const searchQuery = ref('')
 const activeTab = ref('all')
 const router = useRouter()
+const scrollTrigger = ref(null)
 
 
 // 💡 필터 탭 변경 감지 → API 호출
-watch(activeTab, (newTab) => {
+watch(activeTab, async (newTab) => {
+  console.log('🧭 watch(activeTab) 실행됨', newTab)
+  chatListStore.page = 0
+  chatListStore.rooms = []
+  chatListStore.isLast = false
+
   if (newTab === 'myPageRooms') {
-    chatListStore.fetchMyPageRooms()
+    await chatListStore.fetchMyPageRooms()
   } else {
-    chatListStore.fetchRooms(newTab)
+    await chatListStore.fetchRooms(newTab)
   }
-})
+}, { immediate: true })
+
 
 // 🔍 필터링된 채팅방 목록 계산
 const filteredRooms = computed(() => {
-  const source =
-    activeTab.value === 'myPageRooms'
-      ? Array.isArray(chatListStore.myPageRooms) ? chatListStore.myPageRooms : []
-      : Array.isArray(chatListStore.rooms) ? chatListStore.rooms : []
-
+  const source = activeTab.value === 'myPageRooms'
+    ? chatListStore.myPageRooms ?? []
+    : chatListStore.rooms ?? []  // 꼭 여기서 ref 안 푸는 방식으로
+  
   let result = [...source]
 
   if (searchQuery.value.trim()) {
@@ -43,6 +49,7 @@ const filteredRooms = computed(() => {
 
 
 
+
 // 채팅방 입장요청 로직(이미 참여중인 채팅방이라면 백엔드에 요청 x)
 const openChatRoom = async (roomId) => {
   try {
@@ -54,23 +61,7 @@ const openChatRoom = async (roomId) => {
 }
 
 // 채팅방 목록 무한스크롤
-const scrollTrigger = ref(null)
-
-onMounted(async () => {
-  console.log('🚀 onMounted 실행됨')
-
-  if (activeTab.value === 'myPageRooms') {
-    console.log('📌 탭: myPageRooms → fetchMyPageRooms() 실행')
-    await chatListStore.fetchMyPageRooms()
-  } else {
-    console.log(`📌 탭: ${activeTab.value} → fetchRooms() 실행`)
-    await chatListStore.fetchRooms(activeTab.value)
-  }
-
-  await chatStore.fetchMyRooms()
-  console.log('✅ myRooms fetch 완료')
-
-  // DOM 렌더 이후 등록
+onMounted(() => {
   nextTick(() => {
     console.log('🌀 nextTick 진입')
     if (scrollTrigger.value) {
@@ -85,26 +76,25 @@ onMounted(async () => {
             !chatListStore.isLast &&
             activeTab.value !== 'myPageRooms'
           ) {
-            console.log(`📦 loadMoreRooms 실행: page ${chatListStore.page + 1}`)
+            console.log('📦 loadMoreRooms 실행: page', chatListStore.page + 1)
             await chatListStore.loadMoreRooms(activeTab.value)
           }
         },
         { threshold: 1.0 }
       )
+
       observer.observe(scrollTrigger.value)
       console.log('📌 observer.observe 실행 완료')
-    } else {
-      console.warn('⚠️ scrollTrigger.value 가 null이었음')
     }
   })
 })
 
 
 
-onMounted(async () => {
-  await chatListStore.fetchRooms(activeTab.value)
-  await chatStore.fetchMyRooms()
-})
+// onMounted(async () => {
+//   await chatListStore.fetchRooms(activeTab.value)
+//   await chatStore.fetchMyRooms()
+// })
 
 //NOTE: 이미지 링크 임의 설정
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
@@ -159,12 +149,19 @@ const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
         </div>
       </div>
     </div>
+    <div class="text-sm text-gray-500 mt-2">
+  🔄 로딩 중: {{ chatListStore.loading ? 'Y' : 'N' }} /
+  ✅ 마지막 페이지: {{ chatListStore.isLast ? 'Y' : 'N' }} /
+  📦 방 개수: {{ filteredRooms.length }}개
+</div>
+<!-- ✅ 무한 스크롤 트리거용 -->
+<div ref="scrollTrigger" class="h-4"></div>
   </div>
   <!-- 더보기 버튼 -->
   <!-- <div v-if="!chatListStore.isLast && !chatListStore.loading" class="chat-room-action">
   <button class="favorite-button" @click="chatListStore.loadMoreRooms(activeTab)">더 보기</button>
 </div> -->
-<div ref="scrollTrigger" class="h-4"></div>
+
 </template>
 
 <style scoped>
