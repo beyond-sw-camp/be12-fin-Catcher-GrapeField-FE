@@ -6,9 +6,6 @@ import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import {connect, stompClient} from '@/utils/webSocketClient'
 
-// const props = defineProps({
-//   id: {type: [String, Number], required: true}
-// })
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 
@@ -42,7 +39,7 @@ let subscription = null
 
 function loadChatRoomData() {
   const roomIdx = Number(roomId.value)
-  chatRoomStore.fetchChatRoom(roomIdx, token)
+  chatRoomStore.fetchChatRoom(roomIdx /*, token */)
       .then(data => {
         roomTitle.value = data.roomName
         participantCount.value = data.memberList.length
@@ -91,7 +88,7 @@ function sendMessage() {
   if (!newMessage.value.trim() || !stompClient?.connected) return
   const messagePayload = {
     roomIdx: roomId.value,
-    sendUserIdx: currentUserIdx,
+    // sendUserIdx: currentUserIdx,
     content: newMessage.value
   }
   if (stompClient.publish) {

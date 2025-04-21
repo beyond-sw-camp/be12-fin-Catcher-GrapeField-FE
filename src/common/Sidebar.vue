@@ -116,7 +116,7 @@ function sendMessage() {
 
   const payload = {
     roomIdx: state.activeRoomIdx,
-    sendUserIdx: currentUserIdx,
+    // sendUserIdx: currentUserIdx,
     content: state.newMessage
   }
   try {
