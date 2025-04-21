@@ -16,14 +16,14 @@ const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 
 
-
+/*
 // 토큰 변수 설정
 const token = ref(null)
 const cookieToken = document.cookie
     .split('; ')
     .find(row => row.startsWith('ATOKEN='))
 if (cookieToken) token.value = cookieToken.split('=')[1]
-
+*/
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx

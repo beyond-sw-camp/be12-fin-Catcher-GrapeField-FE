@@ -12,10 +12,12 @@ const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const router = useRouter()
 let subscription = null
+/*
 // 토큰 변수 설정
 const token = ref(null)
 const cookieToken = document.cookie.split('; ').find(row => row.startsWith('ATOKEN='))
 if (cookieToken) token.value = cookieToken.split('=')[1]
+ */
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
