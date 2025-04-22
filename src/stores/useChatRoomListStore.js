@@ -13,8 +13,9 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
 
   const API_ENDPOINTS = {
     all: '/api/chat/list/all',
-    performances: '/api/chat/list/performance',
-    exhibitions: '/api/chat/list/exhibition',
+    popular: '/api/chat/list/popular',
+    // performances: '/api/chat/list/performance',
+    // exhibitions: '/api/chat/list/exhibition',
     myPageRooms: '/api/chat/list/my-page',
     myRooms: '/api/chat/list/my-rooms'
   }
@@ -79,8 +80,8 @@ const loadMoreRooms = async (type = 'all') => {
   const fetchMyPageRooms = async () => {
     try {
       const res = await axios.get(API_ENDPOINTS.myPageRooms, { withCredentials: true })
-      console.log('📦 [내 채팅 응답]', res.data) // 🔥 이거 꼭 찍어봐
-      myPageRooms.value = res.data.content // ✅ 혹은 res.data?.content ?? []
+      console.log('📦 [내 채팅 응답]', res.data)
+      myPageRooms.value = res.data.content
     } catch (err) {
       console.error('❌ myPageRooms 불러오기 실패:', err)
       myPageRooms.value = []
