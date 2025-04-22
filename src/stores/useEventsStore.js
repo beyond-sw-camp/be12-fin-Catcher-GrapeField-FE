@@ -93,9 +93,7 @@ export const useEventsStore = defineStore('events', {
         //공연/전시 즐겨찾기 등록 및 해제(토글식)
         async setEventInterst(idx){
             try{
-                console.log(idx)
-                const response = await axios.get("/api/interest/register", { params: { idx: idx }} )
-                
+                const response = await axios.patch("/api/interest/toggle", null, { params: { idx: idx }} )
                 return response.data;
             }catch (error) {
                 console.error("즐겨찾기 등록 에러:", error);
@@ -106,7 +104,7 @@ export const useEventsStore = defineStore('events', {
         //TODO : 공연전시 알림 등록 및 해제(토글식)
         async setNotify(idx){
             try{
-                const response = await axios.get("/api/notify/event", { params: { idx: idx }} )
+                const response = await axios.patch("/api/notify/event/toggle", null, { params: { idx: idx }} )
                 return response.data;
             }catch (error) {
                 console.error("알림림 등록 에러:", error);

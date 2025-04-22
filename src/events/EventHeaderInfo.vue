@@ -97,6 +97,7 @@
 import { ref, computed } from 'vue';
 import { useEventsStore } from '@/stores/useEventsStore';
 import { useUserStore } from '@/stores/useUserStore';
+import { toast } from 'vue3-toastify';
 
 const props = defineProps({
   event: Object
@@ -126,7 +127,7 @@ const presaleTickets = computed(() =>
 )
 
 const normalTickets = computed(() =>
-props.event.ticketInfoList?.filter(t => !t.isPresale) || []
+  props.event.ticketInfoList?.filter(t => !t.isPresale) || []
 )
 
 const isFavorite = ref(props.event.isFavorite)
@@ -135,60 +136,59 @@ const isNotify = ref(props.event.isNotify)
 // 하트 토글 함수
 async function toggleFavorite() {
   if (!userStore.isLogin) {
-    return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center" });
+    return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center", });
   }
 
-  // 즐겨찾기를 추가할 때 알림도 함께 추가할지
-  if (!isFavorite.value && !isNotify.value) {
+  // 즐겨찾기 토글 요청
+  const favResult = await eventsStore.setEventInterst(props.event.idx);
+  if (favResult === false) {
+    alert("즐겨찾기 변경에 실패했습니다.");
+    return;
+  }
+
+  // 상태 반영
+  isFavorite.value = !isFavorite.value;
+
+  // 알림도 함께 설정할지 물어보는 로직
+  if (isFavorite.value && !isNotify.value) {
     const withNotify = confirm("알림도 함께 설정할까요?");
-    const favResult = await eventsStore.setEventInterst(props.event.idx);
-    console.log("이벤트 idx : ", props.event.idx)
-    if (!favResult) {
-      alert("즐겨찾기 설정에 실패했습니다.");
-      return;
-    }
-
-    isFavorite.value = true;
-
     if (withNotify) {
       const notifyResult = await eventsStore.setNotify(props.event.idx);
-      if (notifyResult) isNotify.value = true;
+      if (notifyResult === false) {
+        alert("알림 설정에 실패했습니다.");
+        return;
+      }      
+      isNotify.value = true;
     }
   }
-  // 즐겨찾기를 해제할 때
-  else if (isFavorite.value) {
-    const favResult = await eventsStore.setEventInterst(props.event.idx); // toggle 방식이므로 한 번 더 호출
-    if (favResult) isFavorite.value = false;
-    else alert("즐겨찾기 해제에 실패했습니다.");
-  }
 }
+
 // 종 토글 함수
 async function toggleNotify() {
   if (!userStore.isLogin) {
     return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center" });
   }
 
+  //알림 토글 요청
+  const notifyResult = await eventsStore.setNotify(props.event.idx);
+  if (notifyResult === false) {
+    alert("알림 설정에 실패했습니다.");
+    return;
+  }
+
+  isNotify.value = !isNotify.value;
+
   // 알림을 추가할 때 즐겨찾기도 함께 추가할지
-  if (!isNotify.value && !isFavorite.value) {
+  if (isNotify.value && !isFavorite.value) {
     const withFavorite = confirm("즐겨찾기도 함께 설정할까요?");
-    const notifyResult = await eventsStore.setNotify(props.event.idx);
-    if (!notifyResult) {
-      alert("알림 설정에 실패했습니다.");
-      return;
-    }
-
-    isNotify.value = true;
-
     if (withFavorite) {
       const favResult = await eventsStore.setEventInterst(props.event.idx);
-      if (favResult) isFavorite.value = true;
+      if(favResult === false){
+        alert("즐겨찾기 설정에 실패했습니다.")
+        return;
+      } 
+      isFavorite.value = !isFavorite.value;
     }
-  }
-  // 알림을 해제할 때
-  else if (isNotify.value) {
-    const notifyResult = await eventsStore.setNotify(props.event.idx); // toggle 방식
-    if (notifyResult) isNotify.value = false;
-    else alert("알림 해제에 실패했습니다.");
   }
 }
 </script>
