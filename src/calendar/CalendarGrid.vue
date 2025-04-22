@@ -107,7 +107,7 @@ const calendarDates = computed(() => getCalendarDates(props.year, props.month))
 function getEventsForDate(date) {
     if (!props.events.startEvents) return [];
     return props.events.startEvents.filter(e => {
-        const eventDate = e.startDate.split('T')[0];  // "2025-04-01T00:00:00" → "2025-04-01"
+        const eventDate = e.saleStart.split('T')[0];  // "2025-04-01T00:00:00" → "2025-04-01"
         return eventDate === date;
     });
 }

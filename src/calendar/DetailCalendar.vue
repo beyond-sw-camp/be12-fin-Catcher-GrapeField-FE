@@ -2,7 +2,8 @@
     <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-28">
         <div class="max-w-screen-xl mx-auto">
             <CalendarHeader :year="year" :month="month" @prev="prevMonth" @next="nextMonth" />
-            <CalendarGrid :year="year" :month="month" :events="events" @date-click="handleDateClick" />
+            <CalendarGrid :year="year" :month="month" :events="calendarStore.filteredEvents"
+                @date-click="handleDateClick" />
             <BookingInfoSection :selectedData="selectedBooking" />
         </div>
     </div>
@@ -15,8 +16,10 @@ import axios from 'axios'
 import CalendarHeader from './CalendarHeader.vue'
 import CalendarGrid from './CalendarGrid.vue'
 import BookingInfoSection from './BookingInfoSection.vue'
-import eventData from '../assets/data/calendarData.json'
-import bookingInfoData from '../assets/data/bookingInfo.json'
+import { useCalendarStore } from '../stores/useCalendarStore'
+
+const calendarStore = useCalendarStore();
+console.log("\n\n\n calendar Store " + calendarStore);  
 
 const today = new Date()
 const year = ref(today.getFullYear())
@@ -31,53 +34,43 @@ const targetDate = new Date(year.value, month.value, 1);
 const isoDateString = targetDate.toISOString().slice(0, 19);
 
 const fetchEvents = async () => {
-    // 월을 변경할 때마다 호출되는 함수
-    const targetDate = new Date(year.value, month.value, 1) // month는 0부터 시작하므로 -1
-    const isoDateString = targetDate.toISOString().slice(0, 19)
-
     try {
         console.log(`${year.value}년 ${month.value}월 데이터 요청중...`)
-        const result = await axios.get("/api/events/calendar_detail", {
-            params: { date: isoDateString }
-        })
+        // result는 이미 response.data 값임
+        const result = await calendarStore.mainList(year.value, month.value + 1);
 
-        console.log("API 응답 데이터:", result.data)
-        events.value = result.data
-        bookingInfo.value = result.data
-
-        // 페이지 이동 시 선택된 날짜 정보 초기화
-        selectedBooking.value = null
+        // API에서 반환된 데이터가 직접 사용됨
+        bookingInfo.value = result;
+        selectedBooking.value = null;
     } catch (error) {
-        console.error("이벤트 데이터 로딩 실패:", error)
-        // 에러 처리 (선택 사항: 폴백 데이터 사용)
-        // events.value = [] 
+        console.error("이벤트 데이터 로딩 실패:", error);
     }
 }
 
 function handleDateClick(date) {
-    // 해당 날짜에 해당하는 모든 이벤트 찾기
-    const matchingEvents = bookingInfo.value.startEvents.filter(event => {
-        const eventDate = event.startDate.split('T')[0] // "2025-04-01T00:00:00" → "2025-04-01"
-        return eventDate === date
-    })
+    console.log("필터링된 이벤트:", calendarStore.filteredEvents);
+    // calendarStore의 filteredEvents 사용
+    const matchingEvents = calendarStore.filteredEvents.startEvents?.filter(event => {
+        const eventDate = event.saleStart.split('T')[0];
+        return eventDate === date;
+    }) || [];
 
-    // BookingInfoSection에 맞는 형식으로 데이터 변환
     if (matchingEvents.length > 0) {
         selectedBooking.value = {
-            date: date, // 날짜 문자열 (YYYY-MM-DD)
+            date: date,
             items: matchingEvents.map(event => ({
                 idx: event.idx,
                 category: event.category,
                 title: event.title,
                 time: formatTime(event.saleStart),
                 vendor: event.ticketVendor,
-                link: event.ticketLink,
-                period: `${formatDate(event.startDate)} ~ ${formatDate(event.endDate)}`,
-                location: event.venue
+                link: event.ticketLink || "#",
+                period: `${formatDate(event.saleStart)} ~ ${formatDate(event.saleEnd)}`,
+                location: event.venue || "정보 없음"
             }))
         }
     } else {
-        selectedBooking.value = null
+        selectedBooking.value = null;
     }
 }
 

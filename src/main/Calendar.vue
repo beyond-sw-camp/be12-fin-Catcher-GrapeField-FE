@@ -66,7 +66,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useCalendarStore } from '@/stores/uesCalendarStore'
+import { useCalendarStore } from '@/stores/useCalendarStore'
 import axios from 'axios'
 
 const CalendarStore = useCalendarStore();
