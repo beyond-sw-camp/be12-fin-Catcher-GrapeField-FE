@@ -42,7 +42,8 @@
             <!-- 인기글 목록 -->
             <div v-if="activeTab === 'popular'" class="w-full">
                 <div v-for="(post, index) in filteredPosts" :key="post.id"
-                    class="w-full h-24 border border-zinc-100 mb-2 flex" @click="goToPost(post.eventIdx, post.idx)">
+                    class="w-full h-24 border border-zinc-100 mb-2 flex cursor-pointer transition-colors hover:bg-violet-50"
+                    @click="goToPost(post.eventIdx, post.idx)">
 
                     <!-- 숫자 박스 -->
                     <div class="w-16 h-16 bg-violet-50 m-2 flex items-center justify-center" v-if="index >= 0">
@@ -57,7 +58,7 @@
                             <p class="text-sm text-stone-500 line-clamp-1">{{ post.content }}</p>
                         </div>
                         <div class="flex justify-between items-center w-full">
-                            <span class="text-xs text-neutral-400">{{ post.eventTitle }} • {{ post.createdAt
+                            <span class="text-xs text-neutral-400">{{ post.eventTitle }} • {{ formatDate(post.createdAt)
                                 }}</span>
                             <span class="text-sm text-purple-700">조회 {{ post.viewCnt }}</span>
                         </div>
@@ -72,7 +73,8 @@
 
             <!-- 최신글 목록 (순위 없이 동일한 폭) -->
             <div v-if="activeTab === 'recent'" class="w-full">
-                <div v-for="post in filteredPosts" :key="post.id" class="w-full h-24 border border-zinc-100 mb-2"
+                <div v-for="post in filteredPosts" :key="post.id"
+                    class="w-full h-24 border border-zinc-100 mb-2 cursor-pointer transition-colors hover:bg-violet-50"
                     @click="goToPost(post.eventIdx, post.idx)">
                     <!-- 게시글 내용 (왼쪽 패딩 없이 시작) -->
                     <div class="p-4 flex flex-col justify-between h-full">
@@ -81,7 +83,8 @@
                             <p class="text-sm text-stone-500 line-clamp-1">{{ post.content }}</p>
                         </div>
                         <div class="flex justify-between items-center w-full">
-                            <span class="text-xs text-neutral-400">{{ post.eventTitle }} • {{ post.createdAt }}</span>
+                            <span class="text-xs text-neutral-400">{{ post.eventTitle }} • {{ formatDate(post.createdAt)
+                                }}</span>
                             <span class="text-sm text-purple-700">조회 {{ post.viewCnt }}</span>
                         </div>
                     </div>
@@ -98,9 +101,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import communityData from '../../assets/data/community.json';
-
+import { useRouter } from 'vue-router';
+import { useEventsStore } from '@/stores/useEventsStore';
 import axios from 'axios';
+
+const eventsStore = useEventsStore()
+const router = useRouter()
 
 // 활성 탭 상태 (인기글/최신글)
 const activeTab = ref('popular');
@@ -125,10 +131,18 @@ const posts = ref([]);
 // 현재 날짜
 const currentDate = ref(new Date().toLocaleString());
 
-const goToPost = (eventIdx, postIdx) => {
-    window.location.href = `/events/${eventIdx}/post/${postIdx}`;
-}
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+};
 
+function goToPost(eventIdx, postIdx) {
+    console.log("hey")
+    eventsStore.setTab('게시판')
+    router.push(`/events/${eventIdx}/post/${postIdx}`)
+}
 // 로드 함수 분리
 const loadPosts = async () => {
     try {
