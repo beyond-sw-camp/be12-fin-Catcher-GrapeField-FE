@@ -13,17 +13,22 @@
     </div>
 
     <!-- 👇 카테고리 색상 레전드 -->
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex items-center gap-4 mb-4" v-if="showLegend">
         <span class="text-base font-bold text-zinc-800">카테고리 색상:</span>
-        <Legend v-for="cat in allCategories" :key="cat.name" :text="cat.name" :color="cat.color"
-            :isActive="selectedCategories.includes(cat.name)" @toggle="toggleCategory(cat.name)" />
+        <Legend v-for="cat in calendarStore.allCategories" :key="cat.name" :text="cat.name" :color="cat.color"
+            :isActive="calendarStore.selectedCategories.includes(cat.name)"
+            @toggle="calendarStore.toggleCategory(cat.name)" />
     </div>
-
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useCalendarStore } from '../stores/useCalendarStore'
 import Legend from './CalendarLegend.vue'
+
+
+const calendarStore = useCalendarStore();
+defineEmits(['prev', 'next']);
 
 defineProps({
     title: {
@@ -45,24 +50,4 @@ defineProps({
 
 const showDropdown = ref(false)
 const selectedFilter = ref('전체')
-
-const allCategories = [
-    { name: '뮤지컬', color: 'purple-700' },
-    { name: '연극', color: 'green-500' },
-    { name: '콘서트', color: 'amber-500' },
-    { name: '전시회', color: 'blue-500' },
-    { name: '박람회', color: 'fuchsia-700' }
-]
-
-// ✅ 전부 선택된 상태로 초기화
-const selectedCategories = ref(allCategories.map(cat => cat.name))
-
-function toggleCategory(name) {
-    const i = selectedCategories.value.indexOf(name)
-    if (i === -1) {
-        selectedCategories.value.push(name)
-    } else {
-        selectedCategories.value.splice(i, 1)
-    }
-}
 </script>

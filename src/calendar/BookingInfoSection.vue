@@ -11,7 +11,7 @@
             </p>
         </div>
         <!-- 예매 정보 카드 목록 -->
-        <div v-for="(item, index) in selectedData.items" :key="index"
+        <div v-for="(item, index) in filteredItems" :key="index"
             :class="['rounded-xl p-6 flex items-center justify-between', bgColorMap[categoryTranslation[item.category]]]">
             <div class="flex items-center gap-4">
                 <div
@@ -41,7 +41,10 @@
     </div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useCalendarStore } from '../stores/useCalendarStore'
+
+const calendarStore = useCalendarStore();
 
 // props를 변수로 받아서 사용
 const props = defineProps({
@@ -53,6 +56,30 @@ const props = defineProps({
 })
 
 const bookingSection = ref(null)
+
+// computed 함수 수정
+const filteredItems = computed(() => {
+    // selectedData가 없으면 빈 배열 반환
+    if (!props.selectedData) return [];
+
+    // items가 없으면 빈 배열 반환 
+    if (!props.selectedData.items) return [];
+
+    // 필터링 로직
+    try {
+        const selectedLabels = calendarStore.selectedCategories.map(name => {
+            const category = calendarStore.allCategories.find(cat => cat.name === name);
+            return category?.label || null;
+        }).filter(Boolean);
+
+        return props.selectedData.items.filter(item =>
+            selectedLabels.includes(item.category)
+        );
+    } catch (error) {
+        console.error("필터링 오류:", error);
+        return props.selectedData.items || []; // 에러 발생 시 원본 반환
+    }
+});
 
 // props.selectedData로 접근
 watch(() => props.selectedData, (newVal) => {
