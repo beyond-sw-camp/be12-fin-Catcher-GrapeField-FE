@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-28">
+    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-10">
         <div class="max-w-screen-xl mx-auto">
             <CalendarHeader :year="year" :month="month" @prev="prevMonth" @next="nextMonth" />
             <CalendarGrid :year="year" :month="month" :events="events" @date-click="handleDateClick" />
@@ -15,8 +15,6 @@ import axios from 'axios'
 import CalendarHeader from './CalendarHeader.vue'
 import CalendarGrid from './CalendarGrid.vue'
 import BookingInfoSection from './BookingInfoSection.vue'
-import eventData from '../assets/data/calendarData.json'
-import bookingInfoData from '../assets/data/bookingInfo.json'
 
 const today = new Date()
 const year = ref(today.getFullYear())
@@ -25,7 +23,6 @@ const month = ref(today.getMonth() + 1)
 const events = ref([])
 const bookingInfo = ref([])
 const selectedBooking = ref(null)
-
 
 const targetDate = new Date(year.value, month.value, 1);
 const isoDateString = targetDate.toISOString().slice(0, 19);
