@@ -4,7 +4,10 @@ import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
-import {connect, stompClient} from '@/utils/webSocketClient'
+// import {connect, stompClient} from '@/utils/webSocketClient'
+
+// reactive 변수
+const chatBody = ref(null)
 
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
@@ -12,95 +15,30 @@ const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 
-
-/*
-// 토큰 변수 설정
-const token = ref(null)
-const cookieToken = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('ATOKEN='))
-if (cookieToken) token.value = cookieToken.split('=')[1]
-*/
 // 세션 변수 설정
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
 
-// reactive 변수들
-const roomTitle = ref('')
-const participantCount = ref(0)
-const messages = ref([])
-const highlightedTimes = ref([])
-const newMessage = ref('')
-const chatBody = ref(null)
+
+
 
 // 새로운 메시지 알림 버튼 상태
-const showNewMessageButton = ref(false)
-let subscription = null
+// const showNewMessageButton = ref(false)
 
-function loadChatRoomData() {
-  const roomIdx = Number(roomId.value)
-  chatRoomStore.fetchChatRoom(roomIdx /*, token */)
-      .then(data => {
-        roomTitle.value = data.roomName
-        participantCount.value = data.memberList.length
-        messages.value = data.messageList.map(msg => ({
-          id: msg.messageIdx,
-          sender: msg.username,
-          avatar: msg.profileImageUrl,
-          content: msg.content,
-          timestamp: new Date(msg.createdAt),
-          isMe: msg.userIdx === currentUserIdx,
-          isHighlighted: msg.isHighlighted
-        }))
-        highlightedTimes.value = data.highlightList.map(h => ({
-          id: h.idx,
-          messageIdx: h.messageIdx,
-          summary: h.description,
-          time1: new Date(h.startTime),
-          time2: new Date(h.endTime)
-        }))
-        nextTick(() => {
-          if (chatBody.value) {
-            chatBody.value.scrollTop = chatBody.value.scrollHeight
-          }
-        })
-      })
-      .catch(error => {
-        router.push('/chat-list')
-        alert('페이지 접근 권한이 없습니다.')
-        console.error(error)
-      })
-}
 
+// 시간 포맷 함수
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
 }
-
+// 하이라이트 시간 포맷 (시작에 10분 더하기)
 function formatHighlightTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${(parseInt(minutes) + 10).toString().padStart(2, '0')}`
 }
 
-function sendMessage() {
-  if (!newMessage.value.trim() || !stompClient?.connected) return
-  const messagePayload = {
-    roomIdx: roomId.value,
-    // sendUserIdx: currentUserIdx,
-    content: newMessage.value
-  }
-  if (stompClient.publish) {
-    stompClient.publish({
-      destination: `/app/chat.send.${roomId.value}`,
-      body: JSON.stringify(messagePayload)
-    })
-  } else {
-    stompClient.send(`/app/chat.send.${roomId.value}`, {}, JSON.stringify(messagePayload))
-  }
-  newMessage.value = ''
-}
 
 function scrollToBottom() {
   if (!chatBody.value) return
@@ -126,8 +64,9 @@ function scrollToBottom() {
 }
 
 function onNewMessageClick() {
-  scrollToBottom()
-  showNewMessageButton.value = false
+  // scrollToBottom()
+  chatRoomStore.scrollToBottom(chatBody.value)
+  chatRoomStore.onNewMessageClick()
 }
 
 
@@ -165,24 +104,30 @@ function goBack() {
   router.push('/chat-list')
 }
 
-function handleIncomingMessage(frame) {
-  const msg = JSON.parse(frame.body)
-  const newMsg = {
-    id: msg.messageIdx,
-    sender: msg.username,
-    avatar: msg.profileImageUrl,
-    content: msg.content,
-    timestamp: new Date(msg.createdAt),
-    isMe: msg.userIdx === currentUserIdx,
-    isHighlighted: msg.isHighlighted
-  }
-  messages.value.push(newMsg)
-  if (!newMsg.isMe) showNewMessageButton.value = true
-  else nextTick(scrollToBottom)
+function sendMessage() {
+  console.log("Deatil Componenet 에서 sendMessage 실행", chatRoomStore.newMessage, chatRoomStore.stompClient);
+  chatRoomStore.sendMessage(roomId.value)
+  nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
 }
 
+// function handleIncomingMessage(frame) {
+//   const msg = JSON.parse(frame.body)
+//   const newMsg = {
+//     id: msg.messageIdx,
+//     sender: msg.username,
+//     avatar: msg.profileImageUrl,
+//     content: msg.content,
+//     timestamp: new Date(msg.createdAt),
+//     isMe: msg.userIdx === currentUserIdx,
+//     isHighlighted: msg.isHighlighted
+//   }
+//   messages.value.push(newMsg)
+//   if (!newMsg.isMe) showNewMessageButton.value = true
+//   else nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
+// }
+
 // 애니메이션용 하트 리스트
-const hearts = ref([])
+// const hearts = ref([])
 const getRandomColor = () => {
   const colors = [
     '#FF4D4D', '#FF9900', '#FFD700',
@@ -199,22 +144,22 @@ const handleLike = async () => {
   //   console.error('API 오류:', err)
   // }
   chatRoomStore.sendHeart(roomId.value)
-  triggerHearts()  // 내 화면에서도 뿅뿅
+  // triggerHearts()  // 내 화면에서도 뿅뿅
 
 }
 
 // 애니메이션용 하트 추가
-function triggerHearts() {
-  for (let i = 0; i < 5; i++) {
-    const id = Date.now() + Math.random()
-    setTimeout(() => {
-      hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
-      setTimeout(() => {
-        hearts.value = hearts.value.filter(h => h.id !== id)
-      }, 10000)
-    }, i * 150)
-  }
-}
+// function triggerHearts() {
+//   for (let i = 0; i < 5; i++) {
+//     const id = Date.now() + Math.random()
+//     setTimeout(() => {
+//       hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
+//       setTimeout(() => {
+//         hearts.value = hearts.value.filter(h => h.id !== id)
+//       }, 10000)
+//     }, i * 150)
+//   }
+// }
 
 // 채팅방 퇴장
 
@@ -229,15 +174,23 @@ const leaveChatRoom = async () => {
   router.push('/chat-list')
 }
 
-onMounted(() => {
-  loadChatRoomData()
-  connect((client) => {
-    subscription = client.subscribe(`/topic/chat.room.${roomId.value}`, handleIncomingMessage)
-  }/*, token*/)
+onMounted(async () => {
+  try {
+    await chatRoomStore.fetchChatRoom(roomId.value);
+    await nextTick(() => {
+      chatRoomStore.connectWebSocket(roomId.value, chatBody.value)
+      chatRoomStore.initialScroll(chatBody.value)
+    })
+  } catch (error) {
+    router.push('/chat-list')
+    alert('페이지 접근 권한이 없습니다.')
+    console.error(error)
+  }
+
 })
 
 onBeforeUnmount(() => {
-  if (subscription) subscription.unsubscribe()
+  chatRoomStore.disconnectWebSocket()
 })
 </script>
 
@@ -247,18 +200,18 @@ onBeforeUnmount(() => {
     <div class="chat-header">
       <div class="chat-title">
         <button class="back-button" @click="goBack">←</button>
-        <h2 style="color: white">{{ roomTitle }}</h2>
+        <h2 style="color: white">{{ chatRoomStore.roomTitle }}</h2>
       </div>
       <div class="chat-info">
-        <span class="participant-count">{{ participantCount }}명 참여중</span>
+        <span class="participant-count">{{ chatRoomStore.participantCount }}명 참여중</span>
         <button class="leave-button" @click="leaveChatRoom">퇴장</button>
       </div>
     </div>
-    <div v-if="highlightedTimes.length > 0" class="highlight-section">
+    <div v-if="chatRoomStore.highlightedTimes.length > 0" class="highlight-section">
       <h3>🔥 하이라이트 시간대</h3>
       <div class="highlight-list">
         <div
-            v-for="(highlight, index) in highlightedTimes"
+            v-for="(highlight, index) in chatRoomStore.highlightedTimes"
             :key="highlight.id"
             class="highlight-item"
             @click="scrollToHighlight(highlight.messageIdx, highlight)"
@@ -269,14 +222,14 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <!-- 새 메시지 알림 버튼 -->
-    <div v-if="showNewMessageButton" class="new-message-notification">
+    <div v-if="chatRoomStore.showNewMessageButton" class="new-message-notification">
       <button class="new-message-button" @click="onNewMessageClick">✨새로운 메시지가 왔어요!</button>
     </div>
 
     <div ref="chatBody" class="chat-body">
       <transition-group class="message-list" name="message" tag="div">
         <div
-            v-for="(message, index) in messages"
+            v-for="(message, index) in chatRoomStore.formattedMessages"
             :key="message.id"
             :class="['message-container', message.isMe ? 'my-message' : '']"
         >
@@ -306,7 +259,7 @@ onBeforeUnmount(() => {
 
         <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
         <span
-            v-for="heart in hearts"
+            v-for="heart in chatRoomStore.hearts"
             :key="heart.id"
             :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
             class="heart-pop"
@@ -330,7 +283,7 @@ onBeforeUnmount(() => {
 
 
       </button>
-      <input v-model="newMessage" placeholder="메시지 입력..." type="text" @keyup.enter="sendMessage"/>
+      <input v-model="chatRoomStore.newMessage" placeholder="메시지 입력..." type="text" @keyup.enter="sendMessage"/>
       <button class="send-button" @click="sendMessage">전송</button>
     </div>
   </div>
@@ -536,6 +489,7 @@ onBeforeUnmount(() => {
 }
 
 .heart-button {
+  position: relative;
   background: none;
   border: none;
   cursor: pointer;
