@@ -3,41 +3,58 @@
         <!-- 상단 제목/부제목 한 줄 정렬 -->
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
             <h2 class="text-xl font-bold text-zinc-800">
-                {{ selectedData.date }} {{ isMyCalendar ? '예매 일정' : '예매 오픈 정보' }}
+                {{ selectedData.date }} {{ isMyCalendar ? '일정' : '예매 오픈 정보' }}
             </h2>
             <p class="text-base text-stone-500">
-                {{ selectedData.items.length }}개의 {{ isMyCalendar ? '예매 일정이' : '공연/전시회가' }}
-                {{ isMyCalendar ? '등록되어 있습니다' : '예매를 시작합니다' }}
+                {{ selectedData.items.length }}개의 {{ isMyCalendar ? '일정이' : '공연/전시회가' }}
+                {{ isMyCalendar ? '있습니다' : '예매를 시작합니다' }}
             </p>
         </div>
         <!-- 예매 정보 카드 목록 -->
-        <div v-for="(item, index) in selectedData.items" :key="index"
-            :class="['rounded-xl p-6 flex items-center justify-between', bgColorMap[categoryTranslation[item.category]]]">
+        <div v-for="(item, index) in selectedData.items" :key="index" :class="[
+            'rounded-xl p-6 flex items-center justify-between',
+            bgColorMap[categoryTranslation[item.category]] ?? 'bg-gray-100'
+        ]">
             <div class="flex items-center gap-4">
-                <div
-                    :class="['w-20 h-6 rounded-full text-white text-xs text-center flex items-center justify-center', badgeColorMap[categoryTranslation[item.category]]]">
-                    {{ categoryTranslation[item.category] }}
+                <div :class="[
+                    'w-20 h-6 rounded-full text-white text-xs text-center flex items-center justify-center',
+                    badgeColorMap[categoryTranslation[item.category]] ?? 'bg-gray-500'
+                ]">
+                    {{ categoryTranslation[item.category] || '개인 일정' }}
                 </div>
                 <div>
-                    <a :href="`/events/${item.idx}`">
-                        <div class="text-base font-bold text-zinc-800">{{ item.title }}</div>
-                    </a>
-                    <div class="text-sm text-stone-500">예매 시작: {{ item.time }}</div>
-                    <div class="flex items-center text-sm text-stone-500">
-                        <span>예매처: {{ item.vendor }}</span>
-                        <div class="ml-2 text-sm" :class="linkColorMap[categoryTranslation[item.category]]">
-                            <a :href="item.link" target="_blank">바로가기 &gt;</a>
+                    <div class="text-base font-bold text-zinc-800">{{ item.title }}</div>
+
+                    <!-- 공연/전시 정보일 때만 표시 -->
+                    <template v-if="item.vendor">
+                        <div class="text-sm text-stone-500">예매 시작: {{ item.time }}</div>
+                        <div class="flex items-center text-sm text-stone-500">
+                            <span>예매처: {{ item.vendor }}</span>
+                            <div class="ml-2 text-sm" :class="linkColorMap[categoryTranslation[item.category]]">
+                                <a :href="item.link" target="_blank">바로가기 &gt;</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-sm text-stone-500">공연 기간: {{ item.period }}</div>
-                    <div class="text-sm text-stone-500">장소: {{ item.location }}</div>
+                        <div class="text-sm text-stone-500">공연 기간: {{ item.period }}</div>
+                        <div class="text-sm text-stone-500">장소: {{ item.location }}</div>
+                    </template>
+
+                    <!-- 개인 일정일 때만 표시 -->
+                    <template v-else>
+                        <div v-if="item.description" class="text-sm text-stone-500">메모: {{ item.description }}</div>
+                    </template>
                 </div>
             </div>
-            <button
-                :class="['w-24 h-7 rounded-full border text-sm', borderColorMap[categoryTranslation[item.category]], textColorMap[categoryTranslation[item.category]]]">
+
+            <!-- 알림 설정 버튼은 공통 -->
+            <button :class="[
+                'w-24 h-7 rounded-full border text-sm',
+                borderColorMap[categoryTranslation[item.category]] ?? 'border-gray-500',
+                textColorMap[categoryTranslation[item.category]] ?? 'text-gray-600'
+            ]">
                 알림 설정
             </button>
         </div>
+
     </div>
 </template>
 <script setup>
@@ -57,7 +74,6 @@ const bookingSection = ref(null)
 // props.selectedData로 접근
 watch(() => props.selectedData, (newVal) => {
     if (newVal && bookingSection.value) {
-        console.log(bookingSection.value)
         // 부드럽게 스크롤
         bookingSection.value.scrollIntoView({ behavior: 'smooth' })
     }

@@ -23,16 +23,20 @@
             </div>
 
             <div v-else class="flex items-center gap-4 mb-4">
+                <!-- 'all' 버튼 -->
                 <button @click="$emit('filter-change', 'all')"
-                    :class="filter === 'all' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
+                    :class="props.filter === 'all' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
                     class="px-4 py-1 rounded-lg">전체</button>
-                <button @click="$emit('filter-change', 'event')"
-                    :class="filter === 'event' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
-                    class="px-4 py-1 rounded-lg">공연/전시 일정</button>
-                <button @click="$emit('filter-change', 'personal')"
-                    :class="filter === 'personal' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
-                    class="px-4 py-1 rounded-lg">내 일정</button>
 
+                <!-- 'event' 버튼 -->
+                <button @click="$emit('filter-change', 'event')"
+                    :class="props.filter === 'event' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
+                    class="px-4 py-1 rounded-lg">공연/전시 일정</button>
+
+                <!-- 'personal' 버튼 -->
+                <button @click="$emit('filter-change', 'personal')"
+                    :class="props.filter === 'personal' ? 'bg-purple-700 text-white' : 'bg-gray-200 text-zinc-800'"
+                    class="px-4 py-1 rounded-lg">내 일정</button>
                 <button @click="addSchedule" class="ml-auto px-4 py-1 rounded-lg bg-green-500 text-white">+ 내 일정
                     추가</button>
                 <AddSchedule :isOpen="isModalOpen" @close="isModalOpen = false" />
@@ -48,7 +52,7 @@ import { useRoute } from 'vue-router'
 import Legend from './CalendarLegend.vue'
 import AddSchedule from '@/user/mypage/calendar/AddSchedule.vue'
 
-defineEmits(['prev', 'next', 'addPersonalSchedule'])
+defineEmits(['prev', 'next', 'addPersonalSchedule', 'filter-change'])
 
 const props = defineProps({
     title: {
@@ -64,6 +68,10 @@ const props = defineProps({
     showLegend: {
         type: Boolean,
         default: true
+    },
+    filter: {
+        type: String,
+        default: 'all'
     }
 })
 

@@ -63,7 +63,6 @@ import { computed } from 'vue'
 const props = defineProps(['year', 'month', 'events'])
 const emit = defineEmits(['date-click'])
 
-
 const today = new Date()
 
 function formatDate(y, m, d) {

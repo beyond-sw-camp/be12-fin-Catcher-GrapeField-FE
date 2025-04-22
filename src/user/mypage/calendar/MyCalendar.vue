@@ -1,7 +1,7 @@
 <template>
   <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-10">
     <div class="max-w-screen-xl mx-auto">
-      <CalendarHeader :year="year" :month="month" title="나의 캘린더" subtitle="예매한 공연과 관심 있는 일정을 한눈에 확인하세요."
+      <CalendarHeader :year="year" :month="month" :filter="filter" title="나의 캘린더" subtitle="예매한 공연과 관심 있는 일정을 한눈에 확인하세요."
         :showLegend="false" @prev="prevMonth" @next="nextMonth" @filter-change="handleFilterChange" />
 
       <!-- 캘린더 바에 표시될 events (flat 구조) -->
@@ -48,7 +48,8 @@ const fetchEvents = async () => {
     } else if (filter.value === 'event') {
       result = await calendarStore.getInterestSchedule(isoDateString)
     } else if (filter.value === 'personal') {
-      result = await calendarStore.getPersonalSchedule(isoDateString)
+      const data = await calendarStore.getPersonalSchedule(isoDateString) // 배열
+      result = { startEvents: data } 
     }
 
     events.value = result
@@ -58,6 +59,7 @@ const fetchEvents = async () => {
     console.error("캘린더 데이터 로딩 오류:", error)
   }
 }
+
 
 const filter = ref('all') // 초기값은 전체
 async function handleFilterChange(selectedFilter) {

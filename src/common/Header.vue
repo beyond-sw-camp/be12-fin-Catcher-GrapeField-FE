@@ -30,7 +30,8 @@
       </nav>
       <!-- search-box-->
       <div class="search-box px-1.5 flex items-center gap-2">
-        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)" class="border px-2 py-1 rounded" />
+        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)"
+          class="border px-2 py-1 rounded" />
         <button class="search-button" @click="SearchKeyword(keyword)">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -64,10 +65,32 @@
           </button>
 
           <!-- 알림 버튼 -->
-          <button
+          <!-- <button
             class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
             🔔
-          </button>
+          </button> -->
+          <div class="relative" @click="toggleDropdown">
+            <button
+              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
+              🔔
+            </button>
+            <span v-if="unreadCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+              {{ unreadCount }}
+            </span>
+
+            <!-- 알림 목록 드롭다운 -->
+            <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-80 bg-white border rounded shadow-lg z-50">
+              <div v-if="notifications.length === 0" class="p-4 text-sm text-gray-500 text-center">알림이 없습니다</div>
+              <ul>
+                <li v-for="noti in notifications" :key="noti.id" class="p-3 border-b hover:bg-gray-50 cursor-pointer"
+                  @click="markAsRead(noti)">
+                  <div class="text-sm font-semibold">{{ noti.title }}</div>
+                  <div class="text-xs text-gray-500">{{ formatTime(noti.notificationTime) }}</div>
+                </li>
+              </ul>
+            </div>
+          </div>
 
           <!-- 점 세 개 메뉴 버튼 -->
           <div class="relative">
@@ -120,7 +143,8 @@ const logout = () => {
 
 // 초기 경로 설정
 onMounted(() => {
-  currentPath.value = route.path
+  currentPath.value = route.path;
+  fetchNotifications;
 })
 
 // 라우트 변경 감지
@@ -139,12 +163,39 @@ const isActive = (path) => {
 const keyword = ref('')
 const SearchKeyword = (keyword) => {
   if (!keyword || keyword.trim() === '') {
-    router.push({path: '/community'}) //검색어가 없으면 커뮤니티 페이지로 이동
-  }else{
+    router.push({ path: '/community' }) //검색어가 없으면 커뮤니티 페이지로 이동
+  } else {
     searchStore.setTab("통합 검색")
     router.push({ path: '/search', query: { keyword } })
   }
 }
+
+//알림 관련 설정
+const notifications = ref([])
+const unreadCount = ref(0)
+const dropdownOpen = ref(false)
+function toggleDropdown() {
+  dropdownOpen.value = !dropdownOpen.value
+}
+// 알림 불러오기
+async function fetchNotifications() {
+  const res = await axios.get('/api/notifications/unread', { withCredentials: true })
+  notifications.value = res.data
+  unreadCount.value = res.data.length
+}
+
+// 알림 클릭 시 읽음 처리
+async function markAsRead(noti) {
+  await axios.post(`/api/notifications/read/${noti.id}`, {}, { withCredentials: true })
+  notifications.value = notifications.value.filter(n => n.id !== noti.id)
+  unreadCount.value--
+}
+
+function formatTime(str) {
+  const date = new Date(str)
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}시`
+}
+
 </script>
 
 

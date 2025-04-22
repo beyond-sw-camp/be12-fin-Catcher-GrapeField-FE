@@ -26,8 +26,14 @@
         <span v-if="event.score" class="flex items-center text-yellow-500 text-sm font-semibold">
           ⭐ {{ event.score }}
         </span>
-        <span class="text-purple-500">❤️</span>
-        <span class="text-purple-500">🔔</span>
+        <div class="flex gap-2 items-center">
+          <button @click="toggleFavorite" class="text-xl">
+            <img :src="isFavorite ? '/assets/icons/heart_fill.png' : '/assets/icons/heart_empty.png'" alt="즐겨찾기"
+              class="w-6 h-6" /></button>
+          <button @click="toggleNotify" class="text-xl">
+            <img :src="isNotify ? '/assets/icons/notification_fill.png' : '/assets/icons/notification_empty.png'"
+              alt="알림" class="w-6 h-6" /></button>
+        </div>
       </div>
 
       <!-- 공연 메타 정보 -->
@@ -48,7 +54,7 @@
           </div>
           <div class="flex"></div>
           <!-- 선 예매 -->
-          <div class="flex flex-col sm:flex-row sm:items-start sm:gap-2">
+          <div class="flex flex-col sm:flex-row sm:items-start">
             <span class="w-full sm:w-24 font-bold text-neutral-800 truncate mb-1 sm:mb-0">선 예매</span>
             <div class="flex flex-wrap gap-1">
               <template v-if="presaleTickets.length > 0">
@@ -65,7 +71,7 @@
             </div>
           </div>
           <!-- 일반 예매 -->
-          <div class="flex flex-col sm:flex-row sm:items-start sm:gap-2 mt-2">
+          <div class="flex flex-col sm:flex-row sm:items-start mt-2">
             <span class="w-full sm:w-24 font-bold text-neutral-800 truncate mb-1 sm:mb-0">일반 예매</span>
             <div class="flex flex-wrap gap-1">
               <template v-if="normalTickets.length > 0">
@@ -88,10 +94,17 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-const { event } = defineProps({
-  event: Object,
-});
+import { ref, computed } from 'vue';
+import { useEventsStore } from '@/stores/useEventsStore';
+import { useUserStore } from '@/stores/useUserStore';
+
+const props = defineProps({
+  event: Object
+})
+
+
+const userStore = useUserStore()
+const eventsStore = useEventsStore();
 
 //NOTE: 이미지 링크 임의 설정
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
@@ -109,10 +122,73 @@ const getVendorClass = (vendor) => {
 }
 
 const presaleTickets = computed(() =>
-  event.ticketInfoList?.filter(t => t.isPresale) || []
+  props.event.ticketInfoList?.filter(t => t.isPresale) || []
 )
 
 const normalTickets = computed(() =>
-  event.ticketInfoList?.filter(t => !t.isPresale) || []
+props.event.ticketInfoList?.filter(t => !t.isPresale) || []
 )
+
+const isFavorite = ref(props.event.isFavorite)
+const isNotify = ref(props.event.isNotify)
+
+// 하트 토글 함수
+async function toggleFavorite() {
+  if (!userStore.isLogin) {
+    return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center" });
+  }
+
+  // 즐겨찾기를 추가할 때 알림도 함께 추가할지
+  if (!isFavorite.value && !isNotify.value) {
+    const withNotify = confirm("알림도 함께 설정할까요?");
+    const favResult = await eventsStore.setEventInterst(props.event.idx);
+    console.log("이벤트 idx : ", props.event.idx)
+    if (!favResult) {
+      alert("즐겨찾기 설정에 실패했습니다.");
+      return;
+    }
+
+    isFavorite.value = true;
+
+    if (withNotify) {
+      const notifyResult = await eventsStore.setNotify(props.event.idx);
+      if (notifyResult) isNotify.value = true;
+    }
+  }
+  // 즐겨찾기를 해제할 때
+  else if (isFavorite.value) {
+    const favResult = await eventsStore.setEventInterst(props.event.idx); // toggle 방식이므로 한 번 더 호출
+    if (favResult) isFavorite.value = false;
+    else alert("즐겨찾기 해제에 실패했습니다.");
+  }
+}
+// 종 토글 함수
+async function toggleNotify() {
+  if (!userStore.isLogin) {
+    return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center" });
+  }
+
+  // 알림을 추가할 때 즐겨찾기도 함께 추가할지
+  if (!isNotify.value && !isFavorite.value) {
+    const withFavorite = confirm("즐겨찾기도 함께 설정할까요?");
+    const notifyResult = await eventsStore.setNotify(props.event.idx);
+    if (!notifyResult) {
+      alert("알림 설정에 실패했습니다.");
+      return;
+    }
+
+    isNotify.value = true;
+
+    if (withFavorite) {
+      const favResult = await eventsStore.setEventInterst(props.event.idx);
+      if (favResult) isFavorite.value = true;
+    }
+  }
+  // 알림을 해제할 때
+  else if (isNotify.value) {
+    const notifyResult = await eventsStore.setNotify(props.event.idx); // toggle 방식
+    if (notifyResult) isNotify.value = false;
+    else alert("알림 해제에 실패했습니다.");
+  }
+}
 </script>
