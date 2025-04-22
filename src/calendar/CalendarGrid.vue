@@ -21,7 +21,7 @@
                 <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
 
                 <div class="h-6">
-                    <span v-if="getEventsForDate(date.fullDate).length > 1"
+                    <span v-if="getEventsForDate(date.fullDate).length > 0"
                         class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
                         {{ date.day }}
                     </span>

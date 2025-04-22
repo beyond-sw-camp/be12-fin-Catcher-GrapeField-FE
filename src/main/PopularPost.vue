@@ -1,11 +1,32 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
+import axios from 'axios'
+import { useEventsStore } from '../stores/useEventsStore'
 import postData from '../assets/data/popular-post.json'
 
+const router = useRouter();
+const eventsStore = useEventsStore();
 const posts = ref([])
 
-onMounted(() => {
-  posts.value = postData.posts
+function goToPost(eventIdx, idx) {
+    console.log("hey")
+    eventsStore.setTab('게시판')
+    router.push(`/events/${eventIdx}/post/${idx}`)
+}
+
+
+onMounted(async () => {
+    const res = await axios.get('/api/post/list', {
+        params: {
+            orderBy: 'popular',
+            category: 'ALL'
+        }
+    });
+
+    posts.value = res.data.instances;
+    console.log(posts.value)
+    console.log(res.data.instances)
 })
 </script>
 
@@ -16,13 +37,13 @@ onMounted(() => {
 
     <div class="flex flex-col gap-1">
       <div
-          v-for="(post, index) in posts.slice(0,6)"
+          v-for="(post, index) in posts.slice(0,6)" @click="goToPost(post.eventIdx, post.idx)"
           :key="index"
           class="flex items-center px-4 py-3 border border-gray-100 rounded-lg min-w-0 gap-2"
       >
         <!-- 게시판 제목 -->
         <div class="w-[30%] min-w-0 truncate text-purple-800 text-sm font-medium text-center">
-          {{ post.event }}
+          {{ post.eventTitle }}
         </div>
 
         <!-- 게시글 제목 -->
@@ -38,12 +59,12 @@ onMounted(() => {
         <!-- 통계 -->
         <div class="w-[20%] flex justify-between">
           <div class="flex items-center gap-1">
-            <img src="../assets/icons/comment.png" alt="comment" class="w-4 h-4" />
-            <div class="text-purple-800 text-sm">{{ post.comments }}</div>
+            <img src="../assets/icons/view.png" alt="comment" class="w-4 h-4" />
+            <div class="text-purple-800 text-sm">{{ post.viewCnt }}</div>
           </div>
           <div class="flex items-center gap-1">
             <img src="../assets/icons/like.png" alt="like" class="w-4 h-4" />
-            <div class="text-purple-800 text-sm">{{ post.likes }}</div>
+            <div class="text-purple-800 text-sm">{{ post.recommendCnt }}</div>
           </div>
         </div>
       </div>
