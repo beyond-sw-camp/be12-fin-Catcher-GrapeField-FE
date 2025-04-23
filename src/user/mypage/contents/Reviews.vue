@@ -1,27 +1,58 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios';
+import { useEventsStore } from '@/stores/useEventsStore';
 
-const reviews = ref([
-    {
-        id: 1,
-        events: '[연극]햄릿',
-        posterUrl: '/sample/images/poster1.jpg',
-        rating: 5,
-        comment: '햄릿의 독백 장면이 압권이었습니다. 배우의 감정 표현이 정말 섬세했어요!',
-        date: '2025.04.18',
-        selected: false
-    },
-    {
-        id: 2,
-        events: '[뮤지컬]별이',
-        posterUrl: '/sample/images/poster2.jpg',
-        rating: 4,
-        comment: '배우 연기가 인상 깊었어요!',
-        date: '2025.04.18',
-        selected: false
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
+const router = useRouter();
+const eventsStore = useEventsStore();
+
+// 페이지네이션 관련 데이터 
+const currentPage = ref(1);
+const totalPages = ref(1);
+const hasNext = ref(false);
+const hasPrevious = ref(false);
+const pageSize = 10; // 페이지당 항목 개수
+
+const loadData = async (page = 0) => {  // 기본값 0으로 설정
+    try {
+        const res = await axios.get(`/api/user/mypage/review?page=${page}&size=${pageSize}`, {
+            withCredentials: true
+        });
+
+        // API 응답 로깅하여 구조 확인
+        console.log('API Response:', res.data);
+
+        // 응답 구조에 따라 데이터 설정
+        if (res.data.content) {
+            // Spring Data의 Page 객체 구조를 가진 경우
+            reviews.value = res.data.content;
+            totalPages.value = res.data.totalPages || 1;
+            currentPage.value = page + 1;
+            hasNext.value = !res.data.last;
+            hasPrevious.value = !res.data.first;
+        } else {
+            // 단순 배열이 반환된 경우
+            reviews.value = res.data;
+            totalPages.value = 1;
+            currentPage.value = 1;
+            hasNext.value = false;
+            hasPrevious.value = false;
+            console.warn('응답에 페이지네이션 정보가 없습니다.');
+        }
+    } catch (e) {
+        console.error('리뷰 로딩 중 오류:', e);
+        reviews.value = [];
+        totalPages.value = 1;
+        currentPage.value = 1;
+        hasNext.value = false;
+        hasPrevious.value = false;
     }
-    // 추가 데이터...
-])
+}
+
+const reviews = ref([])
 
 const selectAll = ref(false)
 
@@ -36,6 +67,25 @@ watch(reviews, () => {
 function deleteSelected() {
     reviews.value = reviews.value.filter(r => !r.selected)
 }
+
+function goToPage(page) {
+    if (page >= 1 && page <= totalPages.value) {
+        loadData(page - 1); // API는 0부터 시작하는 페이지를 사용
+    }
+}
+
+function goToPost(eventIdx) {
+    eventsStore.setTab('한줄평')
+    router.push(`/events/${eventIdx}`)
+}
+
+const formatDate = (dateStr) => {
+    return dateStr?.split('T')[0].replace(/-/g, '.') ?? ''
+}
+
+onMounted(() => {
+    loadData(0);
+})
 </script>
 
 <template>
@@ -44,7 +94,7 @@ function deleteSelected() {
 
         <!-- 리뷰 리스트 -->
         <div class="space-y-4">
-            <div v-for="review in reviews" :key="review.id"
+            <div v-for="review in reviews" :key="review.idx" @click="goToPost(review.eventIdx)"
                 class="flex flex-col md:flex-row bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4">
                 <!-- 좌측: 체크박스 + 포스터 묶음 -->
                 <div class="flex items-center gap-4 w-28">
@@ -56,7 +106,7 @@ function deleteSelected() {
                     <!-- 포스터: 같은 높이로 통일 -->
                     <div
                         class="w-20 h-28 overflow-hidden rounded-md border border-gray-300 flex justify-center items-center shrink-0">
-                        <img :src="review.posterUrl" alt="poster" class="w-full h-full object-cover" />
+                        <img :src="BASE_IMAGE_URL + encodeURI(review.poster_img_url)" alt="poster" class="w-full h-full object-cover" />
                     </div>
                 </div>
 
@@ -67,14 +117,40 @@ function deleteSelected() {
                     </h3>
 
                     <div class="text-yellow-400 text-sm mb-1">
-                        <span v-for="n in review.rating" :key="n">★</span>
-                        <span v-for="n in 5 - review.rating" :key="'empty' + n" class="text-gray-300">★</span>
+                        <span v-for="n in Math.min(review.rating || 0, 100)" :key="n">★</span>
+                        <span v-for="n in Math.max(0, Math.min(5, 5 - (review.rating || 0)))" :key="'empty' + n"
+                            class="text-gray-300">★</span>
                     </div>
 
-                    <p class="text-sm text-gray-700 mb-2">{{ review.comment }}</p>
-                    <span class="text-sm text-gray-500">{{ review.date }}</span>
+                    <p class="text-sm text-gray-700 mb-2">{{ review.content }}</p>
+                    <span class="text-sm text-gray-500">{{ formatDate (review.createdAt) }}</span>
                 </div>
             </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div v-if="totalPages > 1" class="mt-6 flex justify-center items-center gap-2 flex-wrap">
+            <button @click="goToPage(currentPage - 1)" :disabled="!hasPrevious" class="px-3 py-1 rounded border text-sm"
+                :class="hasPrevious ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                이전
+            </button>
+
+            <!-- 페이지 버튼 개선 - 최대 5개만 표시 -->
+            <template v-for="n in totalPages" :key="n">
+                <button v-if="n === 1 || n === totalPages || (n >= currentPage - 1 && n <= currentPage + 1)"
+                    @click="goToPage(n)" class="px-2 py-1 rounded-md text-xs font-semibold border transition" :class="{
+                        'bg-violet-600 text-white border-violet-600': currentPage === n,
+                        'bg-white text-gray-600 border-gray-300 hover:bg-gray-100': currentPage !== n
+                    }">
+                    {{ n }}
+                </button>
+                <span v-else-if="n === currentPage - 2 || n === currentPage + 2" class="px-1">...</span>
+            </template>
+
+            <button @click="goToPage(currentPage + 1)" :disabled="!hasNext" class="px-3 py-1 rounded border text-sm"
+                :class="hasNext ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                다음
+            </button>
         </div>
 
         <!-- 하단 선택/삭제 -->
