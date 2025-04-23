@@ -22,7 +22,7 @@ import { ref, onMounted, isRuntimeOnly } from 'vue'
 import CalendarHeader from '../../../calendar/CalendarHeader.vue'
 import CalendarGrid from '../../../calendar/CalendarGrid.vue'
 import BookingInfoSection from '../../../calendar/BookingInfoSection.vue'
-import { useCalendarStore } from '@/stores/uesCalendarStore'
+import { useCalendarStore } from '@/stores/useCalendarStore'
 
 const calendarStore = useCalendarStore()
 

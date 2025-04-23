@@ -47,7 +47,7 @@
 
 <script setup>
 import { reactive, watch } from 'vue'
-import { useCalendarStore } from '@/stores/uesCalendarStore'
+import { useCalendarStore } from '@/stores/useCalendarStore'
 
 const calendarStore = useCalendarStore()
 
