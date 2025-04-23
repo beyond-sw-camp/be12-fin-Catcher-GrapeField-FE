@@ -69,9 +69,7 @@ function goBack() {
 }
 
 function sendMessage() {
-  console.log("Deatil Componenet 에서 sendMessage 실행", chatRoomStore.newMessage, chatRoomStore.stompClient);
   chatRoomStore.sendMessage(roomId.value)
-  nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
 }
 
 

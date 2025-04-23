@@ -94,9 +94,6 @@ async function showChatRoom(room) {
   await chatRoomStore.connectWebSocket(room.roomIdx);
   await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody.value);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
-  // connect((client) => {
-  //   subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)
-  // }/*, token*/)
   await nextTick(() => {
     chatRoomStore.initialScroll(chatBody.value)
   }); // 패널 채팅방 스크롤을 맨 아래로 이동
