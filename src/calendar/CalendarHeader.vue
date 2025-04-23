@@ -90,7 +90,7 @@ const allCategories = [
     { name: '연극', color: 'green-500' },
     { name: '콘서트', color: 'amber-500' },
     { name: '전시회', color: 'blue-500' },
-    { name: '박람회', color: 'fuchsia-700' }
+    { name: '클래식', color: 'fuchsia-700' }
 ]
 
 const selectedCategories = ref(allCategories.map(cat => cat.name))

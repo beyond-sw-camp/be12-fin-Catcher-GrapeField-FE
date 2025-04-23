@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const favoriteEvents = ref([
     { id: 1, title: '햄릿', category: '연극' },
     { id: 2, title: '알라딘', category: '뮤지컬' },
-    { id: 3, title: '케이펫페어', category: '박람회' },
+    { id: 3, title: '케이펫페어', category: '클래식' },
     { id: 4, title: '고흐 인사이드', category: '전시회' },
     { id: 5, title: '라라랜드 심포니', category: '공연' }
 ])

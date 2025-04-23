@@ -158,7 +158,7 @@ const bgColorMap = {
     전시: 'bg-green-100',
     연극: 'bg-orange-100',
     콘서트: 'bg-fuchsia-100',
-    박람회: 'bg-amber-100',
+    클래식: 'bg-amber-100',
 }
 
 const badgeColorMap = {
@@ -166,7 +166,7 @@ const badgeColorMap = {
     전시: 'bg-green-500',
     연극: 'bg-orange-500',
     콘서트: 'bg-fuchsia-700',
-    박람회: 'bg-amber-500',
+    클래식: 'bg-amber-500',
 }
 
 const textColorMap = {
@@ -174,7 +174,7 @@ const textColorMap = {
     전시: 'text-green-500',
     연극: 'text-orange-500',
     콘서트: 'text-fuchsia-700',
-    박람회: 'text-amber-500',
+    클래식: 'text-amber-500',
 }
 
 const borderColorMap = {
@@ -182,7 +182,7 @@ const borderColorMap = {
     전시: 'border-green-500',
     연극: 'border-orange-500',
     콘서트: 'border-fuchsia-700',
-    박람회: 'border-amber-500',
+    클래식: 'border-amber-500',
 }
 
 const linkColorMap = {
@@ -190,6 +190,6 @@ const linkColorMap = {
     전시: 'text-green-500',
     연극: 'text-orange-500',
     콘서트: 'text-fuchsia-700',
-    박람회: 'text-amber-500',
+    클래식: 'text-amber-500',
 }
 </script>

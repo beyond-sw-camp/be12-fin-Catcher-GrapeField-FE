@@ -1,25 +1,58 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios';
+import { useEventsStore } from '@/stores/useEventsStore';
 
-const comments = ref([
-  {
-    id: 1,
-    board: '[뮤지컬] 웃는 남자',
-    postTitle: '웃는 남자 보고 왔습니다',
-    myComment: '저두 보고 왔어요!',
-    date: '2025-03-30',
-    selected: false
-  },
-  {
-    id: 2,
-    board: '[뮤지컬] 오페라의 유령',
-    postTitle: '영어 버전도 좋지만 한국어 버전도 좋아요',
-    myComment: '둘 다 좋죠 ㅎㅎ',
-    date: '2025-03-29',
-    selected: false
-  },
-  // 추가 댓글...
-])
+const router = useRouter();
+const eventsStore = useEventsStore();
+
+// 페이지네이션 관련 데이터
+const currentPage = ref(1);
+const totalPages = ref(1);
+const hasNext = ref(false);
+const hasPrevious = ref(false);
+const pageSize = 10; // 페이지당 항목 개수
+
+// loadData 함수 수정 - 페이지 파라미터 추가 및 API 요청에 페이지 정보 포함
+const loadData = async (page = 0) => {  // 기본값 0으로 설정
+  try {
+    const res = await axios.get(`/api/user/mypage/comment?page=${page}&size=${pageSize}`, {
+      withCredentials: true
+    });
+    comments.value = res.data.content;
+
+    // 페이지네이션 정보 업데이트
+    totalPages.value = res.data.totalPages || 1;
+    currentPage.value = page + 1;  // 이제 page 파라미터 사용 가능
+    hasNext.value = currentPage.value < totalPages.value;
+    hasPrevious.value = currentPage.value > 1;
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const formatDate = (dateStr) => {
+  return dateStr?.split('T')[0].replace(/-/g, '.') ?? ''
+}
+
+function goToPage(page) {
+  if (page >= 1 && page <= totalPages.value) {
+    loadData(page - 1); // API는 0부터 시작하는 페이지를 사용
+  }
+}
+
+function goToPost(eventIdx, idx) {
+  eventsStore.setTab('게시판')
+  router.push(`/events/${eventIdx}/post/${idx}`)
+}
+
+onMounted(() => {
+  loadData(); // 첫 페이지(인덱스 0) 로드
+});
+
+
+const comments = ref([])
 
 const selectAll = ref(false)
 
@@ -49,7 +82,7 @@ function deleteSelected() {
       </div>
 
       <!-- 리스트 항목 -->
-      <div v-for="comment in comments" :key="comment.id"
+      <div v-for="comment in comments" :key="comment.id" @click="goToPost(comment.eventIdx, comment.postIdx)"
         class="flex justify-center border-t text-sm text-gray-800 hover:bg-violet-50 px-4 py-3 items-start gap-4">
 
         <!-- 체크박스 -->
@@ -58,15 +91,46 @@ function deleteSelected() {
         </div>
         <!-- 내용 -->
         <div class="flex-1">
-          <p class="text-violet-600 font-semibold truncate">[{{ comment.board }}] {{ comment.postTitle }}</p>
-          <p class="text-gray-700 line-clamp-2">내 댓글 : {{ comment.myComment }}</p>
+          <p class="text-violet-600 font-semibold truncate">[{{ comment.category }}] {{ comment.eventTitle }} - {{
+            comment.postTitle }}</p>
+          <p class="text-gray-700 line-clamp-2">내 댓글 : {{ comment.comment }}</p>
         </div>
 
         <!-- 날짜 -->
         <div class="w-32 mt-1 text-center">
-          {{ comment.date }}
+          {{ formatDate(comment.createdAt) }}
         </div>
       </div>
+    </div>
+
+    <!-- 게시글 없을 때 메시지 -->
+    <div v-if="comments.length === 0" class="py-10 text-center text-gray-500">
+      작성한 댓글이 없습니다.
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div v-if="totalPages > 1" class="mt-6 flex justify-center items-center gap-2 flex-wrap">
+      <button @click="goToPage(currentPage - 1)" :disabled="!hasPrevious" class="px-3 py-1 rounded border text-sm"
+        :class="hasPrevious ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+        이전
+      </button>
+
+      <!-- 페이지 버튼 개선 - 최대 5개만 표시 -->
+      <template v-for="n in totalPages" :key="n">
+        <button v-if="n === 1 || n === totalPages || (n >= currentPage - 1 && n <= currentPage + 1)"
+          @click="goToPage(n)" class="px-2 py-1 rounded-md text-xs font-semibold border transition" :class="{
+            'bg-violet-600 text-white border-violet-600': currentPage === n,
+            'bg-white text-gray-600 border-gray-300 hover:bg-gray-100': currentPage !== n
+          }">
+          {{ n }}
+        </button>
+        <span v-else-if="n === currentPage - 2 || n === currentPage + 2" class="px-1">...</span>
+      </template>
+
+      <button @click="goToPage(currentPage + 1)" :disabled="!hasNext" class="px-3 py-1 rounded border text-sm"
+        :class="hasNext ? 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+        다음
+      </button>
     </div>
 
     <!-- 하단 선택/삭제 영역 -->

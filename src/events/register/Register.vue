@@ -10,7 +10,7 @@ const userStore = useUserStore()
 
 // 사용자 역할
 const role = userStore.role;
-const genres = ['콘서트', '뮤지컬', '연극', '전시회', '박람회',]
+const genres = ['콘서트', '뮤지컬', '연극', '전시회', '클래식',]
 
 //참가자 정보
 const participants = ref([
