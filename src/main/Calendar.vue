@@ -89,26 +89,21 @@ const fetchEventsForCurrentMonth = async () => {
     const groupedEvents = {};
 
     eventData.forEach(event => {
-
-      if (events.isPresale == null) {
-
+      if (event.isPresale == null) {  // event로 접근
         const saleStartDate = new Date(event.saleStart);
         const day = saleStartDate.getDate();
         const eventMonth = saleStartDate.getMonth() + 1;
         const eventYear = saleStartDate.getFullYear();
 
-        // 현재 표시중인 달력의 연월과 일치하는 이벤트만 필터링
         if (eventYear === displayYear.value && eventMonth === displayMonth.value) {
           if (!groupedEvents[day]) {
             groupedEvents[day] = [];
           }
 
-          // 이벤트 시간 추출
           const hours = saleStartDate.getHours();
           const minutes = saleStartDate.getMinutes();
           const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
-          // 이벤트 정보 가공
           groupedEvents[day].push({
             id: event.idx,
             title: `${event.title} 예매 오픈 (${timeString})`,
