@@ -4,26 +4,14 @@ import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
-// import {connect, stompClient} from '@/utils/webSocketClient'
 
 // reactive 변수
 const chatBody = ref(null)
 
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
-
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
-
-// 세션 변수 설정
-const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
-const currentUserIdx = loginUser?.userIdx
-
-
-
-
-// 새로운 메시지 알림 버튼 상태
-// const showNewMessageButton = ref(false)
 
 
 // 시간 포맷 함수
@@ -37,30 +25,6 @@ function formatHighlightTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${(parseInt(minutes) + 10).toString().padStart(2, '0')}`
-}
-
-
-function scrollToBottom() {
-  if (!chatBody.value) return
-  const element = chatBody.value
-  const start = element.scrollTop
-  const end = element.scrollHeight - element.clientHeight
-  const duration = 600
-  const startTime = performance.now()
-
-  function easeInOutQuad(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
-  }
-
-  function animateScroll(currentTime) {
-    const elapsed = currentTime - startTime
-    const progress = Math.min(elapsed / duration, 1)
-    const ease = easeInOutQuad(progress)
-    element.scrollTop = start + (end - start) * ease
-    if (progress < 1) requestAnimationFrame(animateScroll)
-  }
-
-  requestAnimationFrame(animateScroll)
 }
 
 function onNewMessageClick() {
@@ -110,24 +74,8 @@ function sendMessage() {
   nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
 }
 
-// function handleIncomingMessage(frame) {
-//   const msg = JSON.parse(frame.body)
-//   const newMsg = {
-//     id: msg.messageIdx,
-//     sender: msg.username,
-//     avatar: msg.profileImageUrl,
-//     content: msg.content,
-//     timestamp: new Date(msg.createdAt),
-//     isMe: msg.userIdx === currentUserIdx,
-//     isHighlighted: msg.isHighlighted
-//   }
-//   messages.value.push(newMsg)
-//   if (!newMsg.isMe) showNewMessageButton.value = true
-//   else nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
-// }
 
 // 애니메이션용 하트 리스트
-// const hearts = ref([])
 const getRandomColor = () => {
   const colors = [
     '#FF4D4D', '#FF9900', '#FFD700',
@@ -137,29 +85,8 @@ const getRandomColor = () => {
 }
 
 const handleLike = async () => {
-  // try {
-  //   await chatRoomStore.likeRoom(roomId.value)
-  //   console.log('좋아요 완료!')
-  // } catch (err) {
-  //   console.error('API 오류:', err)
-  // }
   chatRoomStore.sendHeart(roomId.value)
-  // triggerHearts()  // 내 화면에서도 뿅뿅
-
 }
-
-// 애니메이션용 하트 추가
-// function triggerHearts() {
-//   for (let i = 0; i < 5; i++) {
-//     const id = Date.now() + Math.random()
-//     setTimeout(() => {
-//       hearts.value.push({ id, x: 10 + Math.random() * 20, y: 0 })
-//       setTimeout(() => {
-//         hearts.value = hearts.value.filter(h => h.id !== id)
-//       }, 10000)
-//     }, i * 150)
-//   }
-// }
 
 // 채팅방 퇴장
 
@@ -176,9 +103,9 @@ const leaveChatRoom = async () => {
 
 onMounted(async () => {
   try {
-    await chatRoomStore.fetchChatRoom(roomId.value);
+    await chatRoomStore.fetchChatRoom(roomId.value, chatBody.value);
     await nextTick(() => {
-      chatRoomStore.connectWebSocket(roomId.value, chatBody.value)
+      chatRoomStore.connectWebSocket(roomId.value)
       chatRoomStore.initialScroll(chatBody.value)
     })
   } catch (error) {
@@ -235,7 +162,7 @@ onBeforeUnmount(() => {
       <transition-group class="message-list" name="message" tag="div">
         <div
             v-for="(message, index) in chatRoomStore.formattedMessages"
-            :key="message.id"
+            :key="index"
             :class="['message-container', message.isMe ? 'my-message' : '']"
         >
           <div v-if="!message.isMe" class="message-avatar">
