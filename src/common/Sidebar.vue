@@ -253,9 +253,15 @@ onMounted(() => {
             <div class="flex flex-col gap-2 w-full">
               <!-- 프로필 (내정보) 메뉴 -->
               <router-link to="/mypage" class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">내 정보 수정</router-link>
-              <div class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm cursor-pointer">나의 예약 내역</div>
-              <div class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm cursor-pointer">관심 이벤트</div>
-              <div class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm cursor-pointer">알림 설정</div>
+              <router-link :to="{ path: '/mypage', query: { menu: 'contents' } }"
+                  class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                  게시글 관리 </router-link>
+              <router-link :to="{ path: '/mypage', query: { menu: 'calender' } }"
+                  class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                  캘린더 </router-link>
+              <router-link :to="{ path: '/mypage', query: { menu: 'favorite' } }"
+                  class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                즐겨찾기 </router-link>
               <button @click="logout" class="border border-purple-700 text-purple-700 px-4 py-2 rounded text-sm hover:bg-purple-100 mt-4">로그아웃</button>
             </div>
           </div>
