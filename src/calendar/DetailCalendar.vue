@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-28">
+    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-10">
         <div class="max-w-screen-xl mx-auto">
             <CalendarHeader :year="year" :month="month" @prev="prevMonth" @next="nextMonth" />
             <CalendarGrid :year="year" :month="month" :events="calendarStore.filteredEvents"
@@ -28,7 +28,6 @@ const month = ref(today.getMonth() + 1)
 const events = ref([])
 const bookingInfo = ref([])
 const selectedBooking = ref(null)
-
 
 const targetDate = new Date(year.value, month.value, 1);
 const isoDateString = targetDate.toISOString().slice(0, 19);

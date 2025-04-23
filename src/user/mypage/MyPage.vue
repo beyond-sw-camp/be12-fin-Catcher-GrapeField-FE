@@ -4,11 +4,11 @@ import { useRoute, useRouter } from 'vue-router'
 import Header from '../../common/Header.vue';
 import Footer from '../../common/Footer.vue';
 import Sidebar from './Sidebar.vue';
-import UserInfo from './UserInfo.vue';
-import Contents from './Contents.vue';
+import UserInfo from './user_info/UserInfo.vue';
+import Contents from './contents/Contents.vue';
 import Favorite from './Favorite.vue';
 import QnA from './QnA.vue';
-import MyCalendar from './MyCalendar.vue';
+import MyCalendar from './calendar/MyCalendar.vue';
 
 const route = useRoute()
 const router = useRouter()
