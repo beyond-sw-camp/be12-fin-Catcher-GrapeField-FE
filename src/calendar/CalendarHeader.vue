@@ -54,10 +54,10 @@ import Legend from './CalendarLegend.vue'
 import AddSchedule from '@/user/mypage/calendar/AddSchedule.vue'
 
 defineEmits(['prev', 'next', 'addPersonalSchedule', 'filter-change'])
-const props = defineProps({
+
 const calendarStore = useCalendarStore();
 
-defineProps({
+const props = defineProps({
     title: {
         type: String,
         default: '공연 예매 캘린더'
