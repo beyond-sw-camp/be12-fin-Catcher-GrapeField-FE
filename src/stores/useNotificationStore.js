@@ -6,6 +6,7 @@ export const useNotificationStore = defineStore("notification", {
         notifications: []
     }),
     actions: {
+        //시간 상관없이 모든 알림(미래 알림까지)
         async fetchNotifications() {
             try {
                 // withCredentials: true를 설정하여 쿠키를 요청에 포함
@@ -13,6 +14,21 @@ export const useNotificationStore = defineStore("notification", {
                     withCredentials: true
                 });
                 console.log("모든 알림 API 응답:", response.data);
+                return response.data;
+            } catch (error) {
+                console.error("알림 목록 조회 실패:", error);
+                return [];
+            }
+        },
+
+        //현재 시간에 맞춘 선택적 알림림
+        async fetchAvailableNotifications() {
+            try {
+                // withCredentials: true를 설정하여 쿠키를 요청에 포함
+                const response = await axios.get("/api/notify/noti", {
+                    withCredentials: true
+                });
+                console.log("시간에 맞춘춘 알림 API 응답:", response.data);
                 return response.data;
             } catch (error) {
                 console.error("알림 목록 조회 실패:", error);

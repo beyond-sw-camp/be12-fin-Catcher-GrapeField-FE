@@ -79,8 +79,12 @@ export function subscribe(destination, callback) {
         return null;
     }
     
-    const subscription = stompClient.subscribe(destination, callback);
-    
+    // const subscription = stompClient.subscribe(destination, callback);
+    // WebSocket 연결된 이후에
+    const subscription = stompClient.subscribe("/queue/notifications", (msg) => {
+        const notification = JSON.parse(msg.body);
+        onNotificationReceived(notification);
+    });
     // 구독 정보 저장
     activeSubscriptions.push({
         id: subscription.id,

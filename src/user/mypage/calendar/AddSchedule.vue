@@ -83,7 +83,6 @@ async function submitForm() {
     description: form.description,
     isNotify: form.notify,
   })
-
   close()
 }
 

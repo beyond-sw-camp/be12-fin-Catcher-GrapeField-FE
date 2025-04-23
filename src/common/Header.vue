@@ -257,7 +257,7 @@ const getNotificationMessage = (noti) => {
 const fetchNotifications = async () => {
   try {
     //모든 알림 가져오기
-    const response = await notificationStore.fetchNotifications();
+    const response = await notificationStore.fetchAvailableNotifications();
     if (response && Array.isArray(response)) {
       notifications.value = response;
       unreadCount.value = response.length;
