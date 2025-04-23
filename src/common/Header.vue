@@ -104,7 +104,7 @@
                   </div>
                 </li>
               </ul>
-              <div class="p-2 border-t flex items-center justify-between">
+              <div v-if="notifications.length !== 0" class="p-2 border-t flex items-center justify-between">
                 <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800 ml-2">
                   모두 읽음으로 표시
                 </button>
