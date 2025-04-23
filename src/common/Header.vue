@@ -105,7 +105,7 @@
                 </li>
               </ul>
               <div class="p-2 text-center border-t">
-                <button @click="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800">모두 읽음으로 표시</button>
+                <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800">모두 읽음으로 표시</button>
               </div>
             </div>
           </div>
@@ -260,7 +260,9 @@ const fetchNotifications = async () => {
     const response = await notificationStore.fetchAvailableNotifications();
     if (response && Array.isArray(response)) {
       notifications.value = response;
-      unreadCount.value = response.length;
+
+      //읽지 않은 알림만 필터링
+      unreadCount.value = response.filter(noti => !noti.isRead).length;
 
       console.log("가져온 알림 목록:", notifications.value);
       console.log("읽지 않은 알림 개수:", unreadCount.value);
@@ -286,7 +288,7 @@ const markAsRead = async (notification) => {
   }
 };
 
-// TODO :  모든 알림 읽음 처리
+// 모든 알림 읽음 처리
 const markAllAsRead = async () => {
   try {
     const response = await notificationStore.markAllAsRead();
