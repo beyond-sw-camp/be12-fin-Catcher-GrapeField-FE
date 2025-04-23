@@ -563,6 +563,30 @@ onBeforeUnmount(() => {
 .send-button:hover {
   background-color: #5A0C9D;
 }
+.chat-info {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+/* 퇴장 버튼 */
+.leave-button {
+  margin-left: 0.8vw;
+  padding: 0.3vh 1vw;
+  font-size: 0.8vw;
+  border-radius: 9999px;
+  border: 2px solid white;
+  background-color: white;
+  color: #6A0DAD;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.leave-button:hover {
+  background-color: #6A0DAD;
+  color: white;
+  border-color: white;
+}
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
@@ -619,28 +643,6 @@ onBeforeUnmount(() => {
   .send-button {
     font-size: 3.5vw;
     padding: 1vh 3vw;
-  }
-
-  /* 퇴장 버튼 */
-  .leave-button {
-    background-color: white;
-    border: 2px solid #6A0DAD;
-    border-radius: 9999px;
-    color: #6A0DAD;
-    padding: 0.5vh 1vw;
-    font-size: 0.9vw;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .leave-button:hover {
-    background-color: #6A0DAD;
-    color: white;
-  }
-
-  .leave-button:active {
-    transform: scale(0.95);
   }
 }
 </style>
