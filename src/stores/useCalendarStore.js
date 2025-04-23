@@ -4,7 +4,7 @@ import axios from "axios";
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
     events: [],
-    selectedCategories: ['뮤지컬', '연극', '콘서트', '전시회', '박람회'], // 모든 카테고리 선택됨
+    selectedCategories: ['뮤지컬', '연극', '콘서트', '전시회', '클래식'], // 모든 카테고리 선택됨
     allCategories: [
       { name: '뮤지컬', label: 'MUSICAL', color: 'purple-700' },
       { name: '연극', label: 'PLAY', color: 'green-500' },

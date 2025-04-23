@@ -198,7 +198,7 @@ const removeProfileImage = () => {
   form.value.profileImg = null
   previewUrl.value = ''
 }
-const interests = ["뮤지컬", "연극", "콘서트", "전시회", "박람회"];
+const interests = ["뮤지컬", "연극", "콘서트", "전시회", "클래식"];
 const selectedInterests = ref([]);
 
 const toggleInterest = (item) => {

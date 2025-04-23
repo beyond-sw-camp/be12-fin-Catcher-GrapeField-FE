@@ -133,6 +133,6 @@ const categoryStyleMap = {
     전시: { bg: 'bg-green-100', border: 'bg-green-500' },
     연극: { bg: 'bg-orange-100', border: 'bg-orange-500' },
     콘서트: { bg: 'bg-fuchsia-100', border: 'bg-fuchsia-700' },
-    박람회: { bg: 'bg-amber-100', border: 'bg-amber-500' }
+    클래식: { bg: 'bg-amber-100', border: 'bg-amber-500' }
 }
 </script>
