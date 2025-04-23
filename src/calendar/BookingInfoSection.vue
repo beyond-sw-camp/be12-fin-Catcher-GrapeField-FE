@@ -23,8 +23,18 @@
                     {{ categoryTranslation[item.category] || '개인 일정' }}
                 </div>
                 <div>
-                    <div class="text-base font-bold text-zinc-800">{{ item.title }}</div>
-
+                    <div class="text-base font-bold text-zinc-800">
+                        <template v-if="item.vendor">
+                            <!-- 공연/전시인 경우: 링크로 이동 -->
+                            <router-link :to="`/events/${item.idx}`" class="hover:underline">
+                                {{ item.title }}
+                            </router-link>
+                        </template>
+                        <template v-else>
+                            <!-- 개인 일정인 경우: 일반 텍스트 -->
+                            {{ item.title }}
+                        </template>
+                    </div>
                     <!-- 공연/전시 정보일 때만 표시 -->
                     <template v-if="item.vendor">
                         <div class="text-sm text-stone-500">예매 시작: {{ item.time }}</div>
