@@ -96,7 +96,7 @@
                   </button>
 
                   <!-- 알림 내용 (클릭 영역) -->
-                  <div @click="markAsRead(noti)" class="cursor-pointer">
+                  <div @click.stop="markAsRead(noti)" class="cursor-pointer">
                     <div class="text-sm font-semibold" :class="{ 'pl-4': !noti.isRead }">{{ noti.title }}</div>
                     <div class="text-sm text-gray-700" :class="{ 'pl-4': !noti.isRead }">{{ noti.message }}</div>
                     <div class="text-xs text-gray-500 mt-1" :class="{ 'pl-4': !noti.isRead }">{{ noti.formattedTime }}
@@ -275,10 +275,10 @@ const fetchNotifications = async () => {
   }
 };
 
-// TODO :  알림 읽음 처리
+// 알림 읽음 처리
 const markAsRead = async (notification) => {
   if (!notification.isRead) {
-    const response = await notificationStore.markAsRead(notification.id);
+    const response = await notificationStore.markAsRead(notification.idx);
     if (response) {
       notification.isRead = true;
       unreadCount.value = Math.max(0, unreadCount.value - 1);

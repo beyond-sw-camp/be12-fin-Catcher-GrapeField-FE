@@ -38,7 +38,7 @@ export const useNotificationStore = defineStore("notification", {
         
         async markAsRead(notificationIdx) {
             try {
-                const response = await axios.post(`/api/notify/${notificationIdx}/read`, {}, {
+                const response = await axios.put(`/api/notify/${notificationIdx}/read`, {}, {
                     withCredentials: true
                 });
 
