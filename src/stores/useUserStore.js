@@ -8,6 +8,7 @@ export const useUserStore = defineStore('user', {
     isLogin: false,
     user: null,
     role: '',
+    userDetail: null, // 마이페이지용 상세 정보 저장
   }),
   //추후 운영 환경에서는 persist 삭제 
   persist: {
@@ -17,6 +18,7 @@ export const useUserStore = defineStore('user', {
     userIdx: (state) => state.user?.userIdx,
     email: (state) => state.user?.email,
     username: (state) => state.user?.username,
+    profileImg: (state) => state.userDetail?.profileImg || '/images/default/profile.png',
   },
   actions: {
     async login(email, password) {
@@ -170,6 +172,15 @@ export const useUserStore = defineStore('user', {
         return false
       }
     },
+    async fetchUserDetail() {
+      try {
+        const res = await axiosInstance.get("/api/user/mypage", { withCredentials: true });
+        this.userDetail = res.data;
+      } catch (e) {
+        console.error("유저 정보 조회 실패", e);
+        this.userDetail = null;
+      }
+    },
     
     resetUserState() {
       this.isLogin = false;
@@ -229,4 +240,5 @@ export const useUserStore = defineStore('user', {
       }
     },
   }
+
 });
