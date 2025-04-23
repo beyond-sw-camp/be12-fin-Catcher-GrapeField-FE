@@ -25,9 +25,9 @@ const loadTicketEventsData = async (category = 'ALL') => {
     try {
         loadingStore.startLoading();
 
-        const response = eventsStore.getMainEventsTicketSchedule();
+        const response = await eventsStore.getMainEventsTicketSchedule();
         if (response) {
-            openEvents.value = response.openings?.content || [];
+            openEvents.value = response.openings.content || [];
             closeEvents.value = response.closures?.content || [];
         }
     } catch (error) {

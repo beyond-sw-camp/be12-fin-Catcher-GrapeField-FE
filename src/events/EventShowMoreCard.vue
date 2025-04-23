@@ -27,7 +27,7 @@ const props = defineProps({
 
 // 날짜만 추출
 const formatDate = (dateStr) => {
-  return dateStr?.split('T')[0] ?? ''
+  return dateStr?.split('T')[0].replace(/-/g, '.') ?? ''
 }
 const formattedStartDate = computed(() => formatDate(props.startDate))
 const formattedEndDate = computed(() => formatDate(props.endDate))
