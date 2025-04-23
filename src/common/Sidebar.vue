@@ -218,8 +218,13 @@ function formatDateRange(start, end) {
 
 
 onMounted(() => {
+  // 내가 참여 중인 채팅방 리스트
   if (chatListStore.myRooms.length === 0) {
     chatListStore.fetchMyRooms()
+  }
+   // 로그인한 사용자 상세정보 (사이드바용)
+   if (userStore.isLogin && !userStore.userDetail) {
+    userStore.fetchUserDetail()
   }
 })
 </script>
@@ -243,8 +248,8 @@ onMounted(() => {
             <div class="w-16 h-16 rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-6 flex items-center justify-center">
               <img :src="profileImgUrl" alt="프로필" class="w-full h-full object-contain" />
             </div>
-            <div class="text-lg font-semibold text-gray-800 mb-2">사용자</div>
-            <div class="text-sm text-gray-600 mb-6">grapefield@example.com</div>
+            <div class="text-lg font-semibold text-gray-800 mb-2">{{ userStore.username }}</div>
+            <div class="text-sm text-gray-600 mb-6">{{ userStore.email }}</div>
             <div class="flex flex-col gap-2 w-full">
               <!-- 프로필 (내정보) 메뉴 -->
               <router-link to="/mypage" class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">내 정보 수정</router-link>
