@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, defineExpose } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useCommentStore } from '@/stores/useCommentStore'
 const commentStore = useCommentStore()
 

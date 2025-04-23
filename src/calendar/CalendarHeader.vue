@@ -7,7 +7,6 @@
                     <p class="text-base text-stone-500 mt-1">{{ subtitle }}</p>
                 </div>
             </div>
-
             <div class="flex items-center gap-2 mb-6 justify-center">
                 <button @click="$emit('prev')"
                     class="w-10 h-10 rounded-full bg-violet-50 text-purple-700 text-lg">◀</button>
@@ -49,12 +48,16 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useCalendarStore } from '../stores/useCalendarStore'
+
 import Legend from './CalendarLegend.vue'
 import AddSchedule from '@/user/mypage/calendar/AddSchedule.vue'
 
 defineEmits(['prev', 'next', 'addPersonalSchedule', 'filter-change'])
-
 const props = defineProps({
+const calendarStore = useCalendarStore();
+
+defineProps({
     title: {
         type: String,
         default: '공연 예매 캘린더'
@@ -108,4 +111,6 @@ function addSchedule() {
     isModalOpen.value = true
 }
 
+const showDropdown = ref(false)
+const selectedFilter = ref('전체')
 </script>

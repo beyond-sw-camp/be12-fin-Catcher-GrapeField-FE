@@ -6,24 +6,22 @@
     </div>
 
     <div class="flex flex-wrap gap-y-[2vh] gap-x-[2vw]">
-      <div
-        v-for="(event, i) in events"
-        :key="i"
-        class="relative flex w-[48%] h-[17vh] bg-white border border-zinc-200 rounded-md overflow-hidden mb-[2vh]"
-      >
-        <div class="w-[30%] h-full flex items-start pt-[1.5vh] pl-[1vw] relative">
-          <router-link :to="`/events/${event.id}`">
-            <img v-if="event.imageUrl" :src="event.imageUrl" class="absolute top-0 left-0 w-full h-full object-cover" alt="" />
+      <div v-for="(event, i) in events" :key="i"
+        class="relative flex w-[48%] h-[17vh] bg-white border border-zinc-200 rounded-md overflow-hidden mb-[2vh]">
+        <div class="w-[30%] h-fu ll flex items-start pt-[1.5vh] pl-[1vw] relative">
+          <router-link :to="`/events/${event.idx}`">
+            <img v-if="event.posterImgUrl" :src="BASE_IMAGE_URL + event.posterImgUrl"
+              class="absolute top-0 left-0 w-full h-full object-cover" alt="" />
             <div v-else class="absolute top-0 left-0 w-full h-full bg-gray-200"></div>
           </router-link>
-          <div class="bg-black/50 px-[0.6vw] py-[0.3vh] rounded z-10">
-            <span class="text-white text-[1.3vmin]">{{ event.badge }}</span>
-          </div>
         </div>
         <div class="w-[75%] p-[1.5vh_1.5vw] flex flex-col">
           <h2 class="text-[1.9vmin] font-bold text-zinc-900 mb-[0.8vh]">{{ event.title }}</h2>
-          <div class="text-[1.8vmin] text-stone-500 mb-[0.6vh]">
-            {{ event.date }} <br />| {{ event.location }}
+          <div v-if="type.includes('openings')" class="text-[1.8vmin] text-stone-500 mb-[0.6vh]">
+            오픈일: {{ formatDate(event.saleStart) }} <br /><br />| {{ event.venue }}
+          </div>
+          <div v-else-if="type.includes('closures')" class="text-[1.8vmin] text-stone-500 mb-[0.6vh]">
+            종료일 : {{ formatDate(event.saleEnd) }} <br /><br />| {{ event.venue }}
           </div>
         </div>
       </div>
@@ -35,7 +33,16 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
 const router = useRouter();
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`;
+};
 
 // props 정의 - events 배열을 추가로 받음
 const props = defineProps({
@@ -55,6 +62,7 @@ const props = defineProps({
 
 // title에 따라 type 값을 매핑
 const type = computed(() => props.title.includes('오픈') ? 'openings' : 'closures');
+console.log('heyyyy!!! '+type.value)  
 
 // 더보기 클릭 시 라우팅
 const goToMore = () => {

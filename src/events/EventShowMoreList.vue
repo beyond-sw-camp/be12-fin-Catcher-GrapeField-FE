@@ -28,7 +28,7 @@ const loadingStore = useLoadingStore()
 const props = defineProps({
   category: {
     type: String,
-    default: 'ALL',
+    default: 'ALL', 
   },
   array: {
     type: String,

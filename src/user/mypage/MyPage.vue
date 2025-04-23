@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../../common/Header.vue';
 import Footer from '../../common/Footer.vue';
@@ -24,6 +24,13 @@ const handleMenuType = (menu) => {
         router.replace({ query: {}  }) // 또는 route.path
     }
 }
+onMounted(() => {
+  const menuQuery = route.query.menu
+  if (menuQuery) {
+    selectedMenu.value.menu = menuQuery
+  }
+})
+
 </script>
 
 <template>

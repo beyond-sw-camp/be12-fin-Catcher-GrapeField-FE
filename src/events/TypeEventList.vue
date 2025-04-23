@@ -4,7 +4,7 @@
 
         <div class="wrapper grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 mt-10">
             <EventShowMoreCard v-for="event in events" :key="event.id" :id="event.id" :title="event.title"
-                :venue="event.venue" :startDate="event.startDate" :endDate="event.endDate" :posterUrl="event.imageUrl"
+                :venue="event.venue" :startDate="event.saleStart" :endDate="event.saleEnd" :posterUrl="BASE_IMAGE_URL + encodeURI(event.posterImgUrl)"
                 :badge="event.badge" />
         </div>
 
@@ -21,6 +21,8 @@ import { ref, computed, watch } from 'vue'
 import EventShowMoreCard from './EventShowMoreCard.vue'
 import { useEventsStore } from '@/stores/useEventsStore'
 import { useLoadingStore } from '@/stores/useLoadingStore'
+
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
 const props = defineProps({
     type: {

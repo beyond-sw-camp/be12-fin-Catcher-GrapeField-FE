@@ -12,6 +12,17 @@ const activeTab = ref('all')
 const router = useRouter()
 const scrollTrigger = ref(null)
 
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
+const isLogin = computed(() => !!loginUser)
+
+const handleMyChatClick = () => {
+  if (!isLogin.value) {
+    alert('로그인이 필요한 기능입니다.')
+    return
+  }
+  activeTab.value = 'myPageRooms'
+}
+
 
 // 💡 필터 탭 변경 감지 → API 호출
 watch(activeTab, async (newTab) => {
@@ -117,15 +128,19 @@ const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
             <div class="tab" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">
                 전체
             </div>
-            <div class="tab" :class="{ active: activeTab === 'performances' }" @click="activeTab = 'performances'">
-                공연
+            <div class="tab" :class="{ active: activeTab === 'popular' }" @click="activeTab = 'popular'">
+                인기 채팅방
             </div>
-            <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
+            <!-- <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
                 전시
-            </div>
-            <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="activeTab = 'myPageRooms'">
-                내 채팅
-            </div>
+            </div> -->
+            <div
+  class="tab"
+  :class="{ active: activeTab === 'myPageRooms' }"
+  @click="handleMyChatClick"
+>
+  내 채팅
+</div>
         </div>
 
         <div class="chat-rooms">

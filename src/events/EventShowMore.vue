@@ -31,6 +31,8 @@ import Array from './Array.vue'
 import TypeEventList from './TypeEventList.vue'
 import cardData from '../assets/data/card.json'
 
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
 const route = useRoute()
 
 // route.query.type을 직접 참조하는 ref 생성
