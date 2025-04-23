@@ -7,6 +7,7 @@ import {nextTick} from "vue";
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const currentUserIdx = loginUser?.userIdx
 
+
 export const useChatRoomStore = defineStore('chatRoom', {
     state: () => ({
         roomData: null,
@@ -37,9 +38,27 @@ export const useChatRoomStore = defineStore('chatRoom', {
     },
 
     actions: {
-        async fetchChatRoom(roomIdx/*, token*/) {
+        getSubscriptionCount() {
+            if(this._stompSubscription) {
+                console.log("[Store] _stompSubscription 존재:");
+            }
+            if(this._likeSubscription) {
+                console.log("[Store] _likeSubscription 존재:");
+            }
+            if(this._highlightSubscription) {
+                console.log("[Store] _highlightSubscription 존재:");
+            }
+            return [
+                this._stompSubscription,
+                this._likeSubscription,
+                this._highlightSubscription
+            ].filter(sub => !!sub).length
+        }
+        ,
+        async fetchChatRoom(roomIdx, chatBodyElement) {
             this.loading = true
             this.error = null
+            this.chatBodyElement = chatBodyElement
             try {
                 const {data} = await axios.get(`/api/chat/${roomIdx}`, {
                     withCredentials: true,
@@ -71,26 +90,26 @@ export const useChatRoomStore = defineStore('chatRoom', {
             } finally {
                 this.loading = false
             }
-            
+
         },
         addHighlightRealtime(highlightResp) {
             console.log('🟡 실시간 하이라이트 수신:', highlightResp)
             this.highlightedTimes.push({
-              id: highlightResp.idx,
-              messageIdx: highlightResp.messageIdx,
-              summary: highlightResp.description,
-              time1: new Date(highlightResp.startTime),
-              time2: new Date(highlightResp.endTime)
+                id: highlightResp.idx,
+                messageIdx: highlightResp.messageIdx,
+                summary: highlightResp.description,
+                time1: new Date(highlightResp.startTime),
+                time2: new Date(highlightResp.endTime)
             })
             this.triggerHighlightPopup()
-          },
-          
-          triggerHighlightPopup() {
+        },
+
+        triggerHighlightPopup() {
             this.showHighlightEffect = true
             setTimeout(() => {
-              this.showHighlightEffect = false
+                this.showHighlightEffect = false
             }, 2000)
-          },
+        },
         // 채팅방 하트 로직
         sendHeart(roomId) {
             console.log('🧪 stompClient 상태 확인:', this.stompClient)
@@ -108,11 +127,32 @@ export const useChatRoomStore = defineStore('chatRoom', {
             })
         },
 
-        connectWebSocket(roomId, chatBodyElement) {
+        connectWebSocket(roomId) {
+            console.log(this.getSubscriptionCount())
+            if (this._stompSubscription) {
+                this._stompSubscription.unsubscribe()
+                this._stompSubscription = null
+                console.log('[Store] stompSubscription 기존 구독 해제 완료')
+            }
+            if (this._likeSubscription) {
+                this._likeSubscription.unsubscribe()
+                this._likeSubscription = null
+                console.log('[Store] likeSubscription 기존 구독 해제 완료')
+            }
+            if (this._highlightSubscription) {
+                this._highlightSubscription.unsubscribe()
+                this._highlightSubscription = null
+                console.log('[Store] highlightSubscription 기존 구독 해제 완료')
+            }
+            if (this.stompClient) {
+                this.stompClient.deactivate?.()
+                this.stompClient = null
+                console.log('[Store] stompClient deactivate 완료')
+            }
+
             createWebSocketConnection(client => {
                 console.log('[Store] onConnect 콜백, client.connected:', client.connected);
                 this.stompClient = client;
-                this.chatBodyElement = chatBodyElement
                 // 채팅 메시지 수신
                 this._stompSubscription = client.subscribe(
                     `/topic/chat.room.${roomId}`,
@@ -140,16 +180,16 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 )
 
                 console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`);
-                            // ✅ 하이라이트 실시간 구독
-    this._highlightSubscription = client.subscribe(
-        `/topic/chat.room.highlight.${roomId}`,
-        (frame) => {
-          const highlight = JSON.parse(frame.body);
-          console.log("📡 하이라이트 수신!", highlight);
-          this.addHighlightRealtime(highlight);
-        }
-      );
-      console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
+                // ✅ 하이라이트 실시간 구독
+                this._highlightSubscription = client.subscribe(
+                    `/topic/chat.room.highlight.${roomId}`,
+                    (frame) => {
+                        const highlight = JSON.parse(frame.body);
+                        console.log("📡 하이라이트 수신!", highlight);
+                        this.addHighlightRealtime(highlight);
+                    }
+                );
+                console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
             }/*, token*/)
         },
 
@@ -165,7 +205,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             if (this._highlightSubscription) {
                 this._highlightSubscription.unsubscribe();
                 this._highlightSubscription = null;
-              }
+            }
         },
 
         sendMessage(roomId) {
@@ -201,6 +241,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
 
         handleIncomingMessage(frame) {
+            console.log('[Store] 현재 구독 개수:', this.getSubscriptionCount());
+            console.log('chatBodyElement:', this.chatBodyElement)
             const msg = JSON.parse(frame.body)
             const newMsg = {
                 id: msg.messageIdx,
@@ -212,17 +254,19 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 isHighlighted: msg.isHighlighted
             }
             this.messages.push(newMsg)
-            if (!newMsg.isMe) this.showNewMessageButton = true
-            else nextTick(() => {this.scrollToBottom(this.chatBodyElement)})
+            nextTick(() => {
+                if(!this.chatBodyElement) {console.log("chatBodyElement 없음"); return}
+                this.scrollToBottom(this.chatBodyElement)
+            })
         },
         onNewMessageClick() {
             this.showNewMessageButton = false
         },
 
-        initialScroll(chatBodyElement){
-                if (chatBodyElement) {
-                    chatBodyElement.scrollTop = chatBodyElement.scrollHeight
-                }
+        initialScroll(chatBodyElement) {
+            if (chatBodyElement) {
+                chatBodyElement.scrollTop = chatBodyElement.scrollHeight
+            }
         },
 
 

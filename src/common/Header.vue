@@ -141,7 +141,7 @@ import { ref, watch, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useSearchStore } from '@/stores/useSearchStore'
-import { connect, subscribeToNotifications } from '@/utils/webSocketClient_notify'
+import { disconnect, connect, subscribeToNotifications } from '@/utils/webSocketClient_notify'
 import { useNotificationStore } from '@/stores/useNotificationStore';
 
 const userStore = useUserStore()
@@ -167,16 +167,45 @@ const logout = () => {
   router.push('/')
 }
 
+watch(isLogin, (loggedIn, prev) => {
+  if (loggedIn) {
+    // 로그인 시 알림 웹소켓 연결
+    const username = getCurrentUsername();
+    if (username) {
+      connect(() => {
+        notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
+        fetchNotifications();
+      });
+    } else {
+      console.error('사용자 이름을 찾을 수 없습니다.');
+    }
+  } else {
+      if (notificationSubscription.value) {
+        notificationSubscription.value.unsubscribe();
+       }
+      // 로그아웃 시 웹소켓 연결 해제
+       disconnect();
+  }},
+  {
+  immediate: false
+})
+
+
 // 초기 경로 설정, 알림 웹소켓 연결
 onMounted(() => {
   currentPath.value = route.path;
   const username = getCurrentUsername();
-  connect(() => {
-    // 알림 구독
-    notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
-    // 기존 알림 목록 조회
-    fetchNotifications();
-  });
+  if (username) {
+    // 사용자 이름이 존재할 때만 웹소켓 연결
+    connect(() => {
+      // 알림 구독
+      notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
+      // 기존 알림 목록 조회
+      fetchNotifications();
+    });
+  } else {
+    console.error('사용자 이름을 찾을 수 없습니다.');
+  }
 })
 
 // 라우트 변경 감지
@@ -210,6 +239,9 @@ const notificationSubscription = ref(null);
 
 // 현재 사용자 이름 가져오기
 const getCurrentUsername = () => {
+  console.log('현재 사용자 userStore.username:', userStore.username);
+  console.log('현재 사용자 userStore.user:', userStore.user);
+  console.log('현재 사용자 이메일 userStore.user?.email:', userStore.user?.email);
   return userStore.user?.username || userStore.user?.email;
 };
 
@@ -360,6 +392,8 @@ onBeforeUnmount(() => {
   if (notificationSubscription.value) {
     notificationSubscription.value.unsubscribe();
   }
+  disconnect();
+
 });
 
 </script>
