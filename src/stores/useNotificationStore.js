@@ -91,6 +91,18 @@ export const useNotificationStore = defineStore("notification", {
                 }
         },
 
+        async removeAll() {
+            try {
+                const response = await axios.delete('/api/notify/delete-all', {
+                    withCredentials: true
+                });
+                return response.status === 200  || response.status === 204;
+                } catch (error) {
+                console.error("전체 알림 삭제 실패:", error);
+                return false;
+                }
+        },
+
         async togglePersonalNotify(scheduleIdx) {
             try {
                 await axios.post(`/api/notify/personal/${scheduleIdx}/toggle`, {}, { withCredentials: true })

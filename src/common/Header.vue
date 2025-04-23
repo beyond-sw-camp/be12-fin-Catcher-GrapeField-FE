@@ -104,27 +104,32 @@
                   </div>
                 </li>
               </ul>
-              <div class="p-2 text-center border-t">
-                <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800">모두 읽음으로 표시</button>
+              <div class="p-2 border-t flex items-center justify-between">
+                <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800 ml-2">
+                  모두 읽음으로 표시
+                </button>
+                <button @click.stop="removeAllNotifications" class="text-xs text-red-400 hover:text-red-600 mr-2">
+                  (전체 삭제)
+                </button>
               </div>
             </div>
           </div>
 
-            <!-- 점 세 개 메뉴 버튼 -->
-            <div class="relative">
-              <button
-                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
-                @click="toggleMenu">
-                ⋯
-              </button>
+          <!-- 점 세 개 메뉴 버튼 -->
+          <div class="relative">
+            <button
+              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
+              @click="toggleMenu">
+              ⋯
+            </button>
 
-              <!-- 드롭다운 메뉴 -->
-              <div v-if="showMenu"
-                class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
-                <router-link to="/mypage" class="text-gray-700 hover:underline whitespace-nowrap">설정</router-link>
-                <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
-              </div>
+            <!-- 드롭다운 메뉴 -->
+            <div v-if="showMenu"
+              class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
+              <router-link to="/mypage" class="text-gray-700 hover:underline whitespace-nowrap">설정</router-link>
+              <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
             </div>
+          </div>
         </template>
       </div>
     </div>
@@ -307,28 +312,39 @@ const markAllAsRead = async () => {
 };
 
 // 알림 삭제(소프트)
-const removeNotification = async(notificationIdx) => {
+const removeNotification = async (notificationIdx) => {
   try {
     const response = await notificationStore.removeNotification(notificationIdx);
     if (response) {
       // 삭제 성공 시 화면에서도 해당 알림 제거
       const removedNotification = notifications.value.find(noti => noti.idx === notificationIdx);
-      
+
       // 배열에서 해당 알림 제거
       notifications.value = notifications.value.filter(noti => noti.idx !== notificationIdx);
-      
+
       // 읽지 않은 알림이었다면 카운트도 감소
       if (removedNotification && !removedNotification.isRead) {
         unreadCount.value = Math.max(0, unreadCount.value - 1);
       }
-      
+
       console.log(`알림 ID ${notificationIdx} 삭제 완료`);
     }
-  } catch(error) {
+  } catch (error) {
     console.error("알림 삭제 실패", error);
   }
 }
 
+const removeAllNotifications = async () => {
+  try {
+    const response = await notificationStore.removeAll();
+    if (response) {
+      notifications.value = []
+      unreadCount.value = 0
+    }
+  } catch (e) {
+    console.error('전체 삭제 실패:', e)
+  }
+}
 // 드롭다운 토글
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
