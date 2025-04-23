@@ -1,8 +1,9 @@
 <template>
   <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-10">
     <div class="max-w-screen-xl mx-auto">
-      <CalendarHeader :year="year" :month="month" :filter="filter" title="나의 캘린더" subtitle="예매한 공연과 관심 있는 일정을 한눈에 확인하세요."
-        :showLegend="false" @prev="prevMonth" @next="nextMonth" @filter-change="handleFilterChange" />
+      <CalendarHeader :year="year" :month="month" :filter="filter" title="나의 캘린더"
+        subtitle="예매한 공연과 관심 있는 일정을 한눈에 확인하세요." :showLegend="false" @prev="prevMonth" @next="nextMonth"
+        @filter-change="handleFilterChange" />
 
       <!-- 캘린더 바에 표시될 events (flat 구조) -->
       <CalendarGrid :year="year" :month="month" :events="events" @date-click="handleDateClick" />
@@ -44,12 +45,13 @@ const fetchEvents = async () => {
   try {
     let result
     if (filter.value === 'all') {
-      result = await calendarStore.getAllSchedule(isoDateString)
+      result = await calendarStore.getAllSchedule(isoDateString) 
     } else if (filter.value === 'event') {
-      result = await calendarStore.getInterestSchedule(isoDateString)
+      const data = await calendarStore.getInterestSchedule(isoDateString)
+      result = { startEvents: data }
     } else if (filter.value === 'personal') {
-      const data = await calendarStore.getPersonalSchedule(isoDateString) // 배열
-      result = { startEvents: data } 
+      const data = await calendarStore.getPersonalSchedule(isoDateString)
+      result = { startEvents: data }
     }
 
     events.value = result
@@ -68,25 +70,32 @@ async function handleFilterChange(selectedFilter) {
 }
 
 function handleDateClick(date) {
-  // 해당 날짜에 해당하는 모든 이벤트 찾기
-  const matchingEvents = bookingInfo.value.startEvents.filter(event => {
-    const eventDate = event.startDate.split('T')[0] // "2025-04-01T00:00:00" → "2025-04-01"
+  const mergedEvents = [
+    ...(bookingInfo.value.personal || []),
+    ...(bookingInfo.value.event || []),
+    ...(bookingInfo.value.startEvents || [])
+  ]
+
+  const matchingEvents = mergedEvents.filter(event => {
+    const eventDate = event.startDate.split('T')[0]
     return eventDate === date
   })
 
-  // BookingInfoSection에 맞는 형식으로 데이터 변환
   if (matchingEvents.length > 0) {
     selectedBooking.value = {
-      date: date, // 날짜 문자열 (YYYY-MM-DD)
+      date: date,
       items: matchingEvents.map(event => ({
         idx: event.idx,
         category: event.category,
         title: event.title,
-        time: formatTime(event.saleStart),
+        time: formatTime(event.saleStart || event.startDate), // 개인 일정엔 saleStart가 없으므로
         vendor: event.ticketVendor,
         link: event.ticketLink,
-        period: `${formatDate(event.startDate)} ~ ${formatDate(event.endDate)}`,
-        location: event.venue
+        period: event.endDate
+          ? `${formatDate(event.startDate)} ~ ${formatDate(event.endDate)}`
+          : formatDate(event.startDate), // 개인일정은 기간 없음
+        location: event.venue,
+        description: event.description // 개인일정용
       }))
     }
   } else {

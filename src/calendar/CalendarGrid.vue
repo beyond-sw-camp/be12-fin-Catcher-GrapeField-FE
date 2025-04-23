@@ -33,7 +33,7 @@
 
 
                     <!-- 이벤트 바 -->
-                    <div v-for="event in getEventsForDate(date.fullDate).slice(0, 2)" :key="event.title + event.time"
+                    <div v-for="event in getEventsForDate(date.fullDate).slice(0, 2)" :key="event.title + '-' + (event.startDate || event.saleStart || '')"
                         class="mt-1">
                         <div :class="[
                             'flex items-center min-w-0 h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate',
@@ -45,7 +45,7 @@
                         </div>
 
                     </div>
-                    <div v-if="getEventsForDate(date.fullDate).length > 3" class="flex justify-center items-center h-6">
+                    <div v-if="getEventsForDate(date.fullDate).length > 2" class="flex justify-center items-center h-6">
                         <div class="text-xs font-bold text-zinc-800 cursor-pointer hover:underline">
                             ...
 
@@ -106,12 +106,13 @@ function getCalendarDates(y, m) {
 const calendarDates = computed(() => getCalendarDates(props.year, props.month))
 
 function getEventsForDate(date) {
-    if (!props.events.startEvents) return [];
-    return props.events.startEvents.filter(e => {
-        const eventDate = e.startDate.split('T')[0];  // "2025-04-01T00:00:00" → "2025-04-01"
-        return eventDate === date;
-    });
+    const allEvents = [...(props.events.personal || []), ...(props.events.event || []), ...(props.events.startEvents || [])]
+    return allEvents.filter(e => {
+        const eventDate = e.startDate?.split('T')[0]
+        return eventDate === date
+    })
 }
+
 
 const categoryTranslation = {
     'MUSICAL': '뮤지컬',
