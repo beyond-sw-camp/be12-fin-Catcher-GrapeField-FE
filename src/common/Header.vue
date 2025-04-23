@@ -141,7 +141,7 @@ import { ref, watch, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useSearchStore } from '@/stores/useSearchStore'
-import { connect, subscribeToNotifications } from '@/utils/webSocketClient';
+import { connect, subscribeToNotifications } from '@/utils/webSocketClient_notify'
 import { useNotificationStore } from '@/stores/useNotificationStore';
 
 const userStore = useUserStore()

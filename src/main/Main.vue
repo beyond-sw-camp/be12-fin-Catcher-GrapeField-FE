@@ -65,15 +65,15 @@ watch(() => selectedCategory.value, async (newCategory) => {
                 <PopularChatRoom />
             </div>
         </div>
-        
+
         <!-- v-model로 카테고리 양방향 바인딩 -->
         <Category v-model="selectedCategory" />
-        
+
         <!-- 선택된 카테고리 전달 -->
         <Card :category="selectedCategory" />
-        
+
         <Calendar />
-        
+
         <!-- 데이터와 카테고리를 props로 직접 전달 -->
         <CardList title="오픈" index="1" :events="openEvents" :category="selectedCategory" />
         <CardList title="종료" index="6" :events="closeEvents" :category="selectedCategory" />
