@@ -101,7 +101,7 @@ export const useEventsStore = defineStore('events', {
             }
         },
 
-        //TODO : 공연전시 알림 등록 및 해제(토글식)
+        //공연전시 알림 등록 및 해제(토글식)
         async setNotify(idx){
             try{
                 const response = await axios.patch("/api/notify/event/toggle", null, { params: { idx: idx }} )

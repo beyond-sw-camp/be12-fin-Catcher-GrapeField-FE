@@ -46,19 +46,25 @@
             </div>
 
             <!-- 알림 설정 버튼은 공통 -->
-            <button :class="[
+            <button @click="manageNotify(item.idx)" :class="[
                 'w-24 h-7 rounded-full border text-sm',
                 borderColorMap[categoryTranslation[item.category]] ?? 'border-gray-500',
                 textColorMap[categoryTranslation[item.category]] ?? 'text-gray-600'
             ]">
-                알림 설정
+                {{ item.isNotify ? '알림 끄기' : '알림 받기' }}
             </button>
+
         </div>
 
     </div>
 </template>
 <script setup>
 import { ref, watch } from 'vue'
+import { useNotificationStore } from '@/stores/useNotificationStore'
+import { useEventsStore } from '@/stores/useEventsStore'
+
+const notificationStore = useNotificationStore()
+const eventsStore = useEventsStore()
 
 // props를 변수로 받아서 사용
 const props = defineProps({
@@ -79,6 +85,26 @@ watch(() => props.selectedData, (newVal) => {
     }
 }, { immediate: true }) // immediate 옵션 추가하면 초기 렌더링 시에도 확인함
 
+async function manageNotify(idx) {
+    const targetItem = props.selectedData.items.find(i => i.idx === idx)
+
+    if (!targetItem) return
+
+    // 공연/전시
+    if (targetItem.vendor) {
+        const success = await eventsStore.setNotify(idx)
+        if (success) {
+            targetItem.isNotify = !targetItem.isNotify // 수동으로 반영
+        }
+    }
+    // 개인 일정
+    else {
+        const success = await notificationStore.togglePersonalNotify(idx)
+        if (success) {
+            targetItem.isNotify = !targetItem.isNotify // 수동으로 반영
+        }
+    }
+}
 
 
 const categoryTranslation = {

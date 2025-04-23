@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, isRuntimeOnly } from 'vue'
 import CalendarHeader from '../../../calendar/CalendarHeader.vue'
 import CalendarGrid from '../../../calendar/CalendarGrid.vue'
 import BookingInfoSection from '../../../calendar/BookingInfoSection.vue'
@@ -95,7 +95,8 @@ function handleDateClick(date) {
           ? `${formatDate(event.startDate)} ~ ${formatDate(event.endDate)}`
           : formatDate(event.startDate), // 개인일정은 기간 없음
         location: event.venue,
-        description: event.description // 개인일정용
+        description: event.description, // 개인일정용
+        isNotify: event.isNotify
       }))
     }
   } else {

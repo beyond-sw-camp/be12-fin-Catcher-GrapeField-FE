@@ -21,7 +21,7 @@ export const useNotificationStore = defineStore("notification", {
             }
         },
 
-        //현재 시간에 맞춘 선택적 알림림
+        //현재 시간에 맞춘 선택적 알림
         async fetchAvailableNotifications() {
             try {
                 // withCredentials: true를 설정하여 쿠키를 요청에 포함
@@ -90,5 +90,15 @@ export const useNotificationStore = defineStore("notification", {
                 return false;
                 }
         },
+
+        async togglePersonalNotify(scheduleIdx) {
+            try {
+                await axios.post(`/api/notify/personal/${scheduleIdx}/toggle`, {}, { withCredentials: true })
+                return true
+            } catch (e) {
+                console.error("개인 일정 알림 변경 실패", e)
+                return false
+            }
+        }
     },
 });
