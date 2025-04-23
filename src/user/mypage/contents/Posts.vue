@@ -17,7 +17,7 @@ const pageSize = 10; // 페이지당 항목 개수
 
 const loadData = async (page = 0) => {
     try {
-        const res = await axios.get(`/api/user/hey?page=${page}&size=${pageSize}`, {
+        const res = await axios.get(`/api/user/mypage/post?page=${page}&size=${pageSize}`, {
             withCredentials: true
         });
         posts.value = res.data.content;
