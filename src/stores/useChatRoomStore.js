@@ -14,6 +14,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         stompClient: null,
         currentUserIdx: loginUser?.userIdx,
         highlightedTimes: [],
+        showHighlightEffect: false,
         participantCount: 0,
         roomTitle: '',
         loading: false,
@@ -70,7 +71,26 @@ export const useChatRoomStore = defineStore('chatRoom', {
             } finally {
                 this.loading = false
             }
+            
         },
+        addHighlightRealtime(highlightResp) {
+            console.log('🟡 실시간 하이라이트 수신:', highlightResp)
+            this.highlightedTimes.push({
+              id: highlightResp.idx,
+              messageIdx: highlightResp.messageIdx,
+              summary: highlightResp.description,
+              time1: new Date(highlightResp.startTime),
+              time2: new Date(highlightResp.endTime)
+            })
+            this.triggerHighlightPopup()
+          },
+          
+          triggerHighlightPopup() {
+            this.showHighlightEffect = true
+            setTimeout(() => {
+              this.showHighlightEffect = false
+            }, 2000)
+          },
         // 채팅방 하트 로직
         sendHeart(roomId) {
             console.log('🧪 stompClient 상태 확인:', this.stompClient)
@@ -119,7 +139,17 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     }
                 )
 
-                console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`)
+                console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`);
+                            // ✅ 하이라이트 실시간 구독
+    this._highlightSubscription = client.subscribe(
+        `/topic/chat.room.highlight.${roomId}`,
+        (frame) => {
+          const highlight = JSON.parse(frame.body);
+          console.log("📡 하이라이트 수신!", highlight);
+          this.addHighlightRealtime(highlight);
+        }
+      );
+      console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
             }/*, token*/)
         },
 
@@ -132,6 +162,10 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this._likeSubscription.unsubscribe()
                 this._likeSubscription = null
             }
+            if (this._highlightSubscription) {
+                this._highlightSubscription.unsubscribe();
+                this._highlightSubscription = null;
+              }
         },
 
         sendMessage(roomId) {
