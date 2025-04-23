@@ -3,8 +3,7 @@ import { ref, onMounted } from 'vue'
 import PasswordChangeModal from './PasswordChange.vue'
 import Withdraw from './Withdraw.vue'
 import axios from 'axios'
-import { useUserStore } from '../../stores/useUserStore'
-
+import { useUserStore } from '../../../stores/useUserStore'
 
 // 상태 변수
 const isEditMode = ref(false)

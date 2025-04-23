@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-28">
+    <div class="w-full min-h-screen bg-white px-4 sm:px-10 md:px-20 pt-10">
         <div class="max-w-screen-xl mx-auto">
             <CalendarHeader :year="year" :month="month" @prev="prevMonth" @next="nextMonth" />
             <CalendarGrid :year="year" :month="month" :events="calendarStore.filteredEvents"
@@ -12,7 +12,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import CalendarHeader from './CalendarHeader.vue'
 import CalendarGrid from './CalendarGrid.vue'
 import BookingInfoSection from './BookingInfoSection.vue'
@@ -29,7 +28,6 @@ const events = ref([])
 const bookingInfo = ref([])
 const selectedBooking = ref(null)
 
-
 const targetDate = new Date(year.value, month.value, 1);
 const isoDateString = targetDate.toISOString().slice(0, 19);
 
@@ -38,6 +36,7 @@ const fetchEvents = async () => {
         console.log(`${year.value}년 ${month.value}월 데이터 요청중...`)
         // result는 이미 response.data 값임
         const result = await calendarStore.mainList(year.value, month.value + 1);
+        console.log(result);
 
         // API에서 반환된 데이터가 직접 사용됨
         bookingInfo.value = result;

@@ -30,7 +30,8 @@
       </nav>
       <!-- search-box-->
       <div class="search-box px-1.5 flex items-center gap-2">
-        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)" class="border px-2 py-1 rounded" />
+        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)"
+          class="border px-2 py-1 rounded" />
         <button class="search-button" @click="SearchKeyword(keyword)">
           <div class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -64,10 +65,55 @@
           </button>
 
           <!-- 알림 버튼 -->
-          <button
-            class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
-            🔔
-          </button>
+          <div class="relative" @click="toggleDropdown">
+            <button
+              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
+              🔔
+            </button>
+            <span v-if="unreadCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+              {{ unreadCount }}
+            </span>
+
+            <!-- 알림 목록 드롭다운 -->
+            <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-80 bg-white border rounded shadow-lg z-50">
+              <div v-if="notifications.length === 0" class="p-4 text-sm text-gray-500 text-center">알림이 없습니다</div>
+              <ul v-else class="max-h-80 overflow-y-auto"> <!-- 스크롤 가능하도록 최대 높이 설정 -->
+                <li v-for="noti in notifications" :key="noti.idx"
+                  class="p-3 border-b hover:bg-gray-50 cursor-pointer relative group">
+                  <!-- 읽지 않은 알림 표시 -->
+                  <div v-if="!noti.isRead"
+                    class="absolute left-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
+
+                  <!-- 휴지통 아이콘 (호버 시 표시) -->
+                  <button @click.stop="removeNotification(noti.idx)"
+                    class="absolute right-2 pr-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+
+                  <!-- 알림 내용 (클릭 영역) -->
+                  <div @click.stop="markAsRead(noti)" class="cursor-pointer">
+                    <div class="text-sm font-semibold" :class="{ 'pl-4': !noti.isRead }">{{ noti.title }}</div>
+                    <div class="text-sm text-gray-700" :class="{ 'pl-4': !noti.isRead }">{{ noti.message }}</div>
+                    <div class="text-xs text-gray-500 mt-1" :class="{ 'pl-4': !noti.isRead }">{{ noti.formattedTime }}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div v-if="notifications.length !== 0" class="p-2 border-t flex items-center justify-between">
+                <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800 ml-2">
+                  모두 읽음으로 표시
+                </button>
+                <button @click.stop="removeAllNotifications" class="text-xs text-red-400 hover:text-red-600 mr-2">
+                  (전체 삭제)
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- 점 세 개 메뉴 버튼 -->
           <div class="relative">
@@ -91,15 +137,18 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useSearchStore } from '@/stores/useSearchStore'
+import { connect, subscribeToNotifications } from '@/utils/webSocketClient_notify'
+import { useNotificationStore } from '@/stores/useNotificationStore';
 
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const searchStore = useSearchStore()
+const notificationStore = useNotificationStore()
 
 const currentPath = ref('')
 // 로그인 상태 확인
@@ -118,9 +167,16 @@ const logout = () => {
   router.push('/')
 }
 
-// 초기 경로 설정
+// 초기 경로 설정, 알림 웹소켓 연결
 onMounted(() => {
-  currentPath.value = route.path
+  currentPath.value = route.path;
+  const username = getCurrentUsername();
+  connect(() => {
+    // 알림 구독
+    notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
+    // 기존 알림 목록 조회
+    fetchNotifications();
+  });
 })
 
 // 라우트 변경 감지
@@ -139,12 +195,173 @@ const isActive = (path) => {
 const keyword = ref('')
 const SearchKeyword = (keyword) => {
   if (!keyword || keyword.trim() === '') {
-    router.push({path: '/community'}) //검색어가 없으면 커뮤니티 페이지로 이동
-  }else{
+    router.push({ path: '/community' }) //검색어가 없으면 커뮤니티 페이지로 이동
+  } else {
     searchStore.setTab("통합 검색")
     router.push({ path: '/search', query: { keyword } })
   }
 }
+
+//알림 관련 설정
+const notifications = ref([]);
+const unreadCount = ref(0);
+const dropdownOpen = ref(false);
+const notificationSubscription = ref(null);
+
+// 현재 사용자 이름 가져오기
+const getCurrentUsername = () => {
+  return userStore.user?.username || userStore.user?.email;
+};
+
+// 알림 수신 핸들러
+const onNotificationReceived = (payload) => {
+  const notification = JSON.parse(payload.body);
+  console.log('새 알림 수신:', notification);
+
+  // 알림 목록에 추가
+  notifications.value.unshift(notification);
+
+  // 읽지 않은 알림 카운트 증가
+  unreadCount.value += 1;
+};
+
+// 알림 데이터 매핑 함수 추가
+const mapNotification = (noti) => {
+  return {
+    id: noti.idx, // idx를 id로 매핑
+    title: getNotificationTitle(noti),
+    message: getNotificationMessage(noti),
+    notificationTime: noti.notificationTime,
+    isRead: noti.isRead
+  };
+};
+
+// 알림 제목 생성
+const getNotificationTitle = (noti) => {
+  if (noti.scheduleType === 'EVENTS_INTEREST') {
+    return '공연/전시 알림';
+  } else if (noti.scheduleType === 'PERSONAL_SCHEDULE') {
+    return '개인 일정 알림';
+  }
+  return '알림';
+};
+
+// 알림 메시지 생성
+const getNotificationMessage = (noti) => {
+  if (noti.notificationType === 'BEFORE_10MIN') {
+    return '10분 후 일정이 있습니다.';
+  } else if (noti.notificationType === 'BEFORE_1HOUR') {
+    return '1시간 후 일정이 있습니다.';
+  } else if (noti.notificationType === 'DAY_9AM') {
+    return '오늘 일정이 있습니다.';
+  }
+  return '새 알림이 있습니다.';
+};
+
+// 기존 알림 목록 조회
+const fetchNotifications = async () => {
+  try {
+    //모든 알림 가져오기
+    const response = await notificationStore.fetchAvailableNotifications();
+    if (response && Array.isArray(response)) {
+      notifications.value = response;
+
+      //읽지 않은 알림만 필터링
+      unreadCount.value = response.filter(noti => !noti.isRead).length;
+
+      console.log("가져온 알림 목록:", notifications.value);
+      console.log("읽지 않은 알림 개수:", unreadCount.value);
+    } else {
+      notifications.value = [];
+      unreadCount.value = 0;
+    }
+  } catch (error) {
+    console.error("알림 목록 조회 오류:", error);
+    notifications.value = [];
+    unreadCount.value = 0;
+  }
+};
+
+// 알림 읽음 처리
+const markAsRead = async (notification) => {
+  if (!notification.isRead) {
+    const response = await notificationStore.markAsRead(notification.idx);
+    if (response) {
+      notification.isRead = true;
+      unreadCount.value = Math.max(0, unreadCount.value - 1);
+    }
+  }
+};
+
+// 모든 알림 읽음 처리
+const markAllAsRead = async () => {
+  try {
+    const response = await notificationStore.markAllAsRead();
+    if (response) {
+      // 알림이 있을 때만 처리
+      if (notifications.value && notifications.value.length > 0) {
+        notifications.value.forEach((noti) => {
+          noti.isRead = true;
+        });
+        unreadCount.value = 0;
+      }
+    }
+  } catch (error) {
+    console.error('모든 알림 읽음 처리 중 오류 발생:', error);
+  }
+};
+
+// 알림 삭제(소프트)
+const removeNotification = async (notificationIdx) => {
+  try {
+    const response = await notificationStore.removeNotification(notificationIdx);
+    if (response) {
+      // 삭제 성공 시 화면에서도 해당 알림 제거
+      const removedNotification = notifications.value.find(noti => noti.idx === notificationIdx);
+
+      // 배열에서 해당 알림 제거
+      notifications.value = notifications.value.filter(noti => noti.idx !== notificationIdx);
+
+      // 읽지 않은 알림이었다면 카운트도 감소
+      if (removedNotification && !removedNotification.isRead) {
+        unreadCount.value = Math.max(0, unreadCount.value - 1);
+      }
+
+      console.log(`알림 ID ${notificationIdx} 삭제 완료`);
+    }
+  } catch (error) {
+    console.error("알림 삭제 실패", error);
+  }
+}
+
+const removeAllNotifications = async () => {
+  try {
+    const response = await notificationStore.removeAll();
+    if (response) {
+      notifications.value = []
+      unreadCount.value = 0
+    }
+  } catch (e) {
+    console.error('전체 삭제 실패:', e)
+  }
+}
+// 드롭다운 토글
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value;
+};
+
+// 날짜/시간 포맷팅
+const formatTime = (time) => {
+  return new Date(time).toLocaleString();
+};
+
+// 컴포넌트 언마운트 시 구독 해제
+onBeforeUnmount(() => {
+  if (notificationSubscription.value) {
+    notificationSubscription.value.unsubscribe();
+  }
+});
+
 </script>
 
 

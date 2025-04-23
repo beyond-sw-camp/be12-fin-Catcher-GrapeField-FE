@@ -14,6 +14,7 @@ export function connect(onConnectCallback /*, token */) {
         // transports: ['websocket'], // 웹소켓만 사용하고 싶다면 이 줄을 사용
         withCredentials: true // 쿠키 전송 시 필수! 쿠키 포함시키는 설정
     });
+
     stompClient = new Client({
         webSocketFactory: () => socket,
         // connectHeaders: token.value ? { Authorization: `Bearer ${token.value}` } : {},
@@ -27,10 +28,8 @@ export function connect(onConnectCallback /*, token */) {
         onStompError: (frame) => {
             console.error('STOMP 오류 발생:', frame);
         },
-
     });
 
     stompClient.activate();
 }
-
 export { stompClient }; // 외부에서 구독을 직접 연결할 수 있도록 내보내기

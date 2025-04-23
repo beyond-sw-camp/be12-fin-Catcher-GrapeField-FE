@@ -26,7 +26,14 @@ export default defineConfig({
       "/ws": {
         target: "http://localhost:8080",
         changeOrigin: true,
+        secure: false,
         ws: true,
+        // 쿠키 전달을 위해 필요
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            proxyReq.setHeader('origin', 'http://localhost:5173');
+          });
+        }
       }
     }
   }

@@ -92,7 +92,7 @@ export const useUserStore = defineStore('user', {
 
     async logout() {
       try {
-        await axiosInstance.post("/logout");
+        await axiosInstance.post("/api/logout");
 
         this.resetUserState();
         return true;

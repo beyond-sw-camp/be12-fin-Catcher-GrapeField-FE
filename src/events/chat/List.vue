@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, nextTick, watchEffect } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
@@ -14,6 +14,12 @@ const scrollTrigger = ref(null)
 
 const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
 const isLogin = computed(() => !!loginUser)
+
+watchEffect(() => {
+  if (activeTab.value === 'myPageRooms' && isLogin.value) {
+    chatListStore.fetchMyPageRooms()
+  }
+})
 
 const handleMyChatClick = () => {
   if (!isLogin.value) {

@@ -8,7 +8,10 @@ import Vue3Toastify from 'vue3-toastify';
 import "vue3-toastify/dist/index.css";
 import InfiniteLoading from "v3-infinite-loading";
 // 커스텀 axios 인스턴스 사용
+import axios from 'axios';
 import axiosInstance from "./utils/axios";
+
+axios.defaults.withCredentials = true;
 
 const app = createApp(App);
 const pinia = createPinia();

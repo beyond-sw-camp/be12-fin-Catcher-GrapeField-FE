@@ -207,6 +207,11 @@ onBeforeUnmount(() => {
         <button class="leave-button" @click="leaveChatRoom">퇴장</button>
       </div>
     </div>
+    <transition name="fade">
+  <div v-if="chatRoomStore.showHighlightEffect" class="highlight-popup">
+    🎯 하이라이트 발생!
+  </div>
+</transition>
     <div v-if="chatRoomStore.highlightedTimes.length > 0" class="highlight-section">
       <h3>🔥 하이라이트 시간대</h3>
       <div class="highlight-list">
@@ -587,6 +592,45 @@ onBeforeUnmount(() => {
   color: white;
   border-color: white;
 }
+
+.highlight-popup {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #FFD700;
+  color: #333;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 9999;
+  animation: popUp 0.5s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes popUp {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
 
 /* 모바일 대응 */
 @media (max-width: 768px) {

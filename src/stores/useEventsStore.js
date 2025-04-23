@@ -89,5 +89,27 @@ export const useEventsStore = defineStore('events', {
                 return false;
             }
         },
+
+        //공연/전시 즐겨찾기 등록 및 해제(토글식)
+        async setEventInterst(idx){
+            try{
+                const response = await axios.patch("/api/interest/toggle", null, { params: { idx: idx }} )
+                return response.data;
+            }catch (error) {
+                console.error("즐겨찾기 등록 에러:", error);
+                return false;
+            }
+        },
+
+        //공연전시 알림 등록 및 해제(토글식)
+        async setNotify(idx){
+            try{
+                const response = await axios.patch("/api/notify/event/toggle", null, { params: { idx: idx }} )
+                return response.data;
+            }catch (error) {
+                console.error("알림림 등록 에러:", error);
+                return false;
+            }
+        },
     }
 })
