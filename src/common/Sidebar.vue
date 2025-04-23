@@ -218,8 +218,8 @@ function formatDateRange(start, end) {
 
 
 onMounted(() => {
-  // 내가 참여 중인 채팅방 리스트
-  if (chatListStore.myRooms.length === 0) {
+  // 내가 참여 중인 채팅방 리스트 (로그인 상태에서만 호출)
+  if (userStore.isLogin && chatListStore.myRooms.length === 0) {
     chatListStore.fetchMyRooms()
   }
    // 로그인한 사용자 상세정보 (사이드바용)
