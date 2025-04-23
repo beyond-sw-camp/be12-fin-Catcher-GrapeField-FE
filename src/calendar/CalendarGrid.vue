@@ -11,27 +11,27 @@
                 <div class="text-center py-2">금</div>
                 <div class="text-blue-500 text-center py-2">토</div>
             </div>
-        <!-- 날짜 셀 -->
-        <div class="grid grid-cols-7 border-neutral-200">
-            <!-- 날짜 셀 클릭 이벤트 추가 -->
-            <div v-for="(date, index) in calendarDates" :key="index"
-                class="h-32 border border-neutral-200 relative px-2 py-1 cursor-pointer"
-                :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }"
-                @click="$emit('date-click', date.fullDate)">
-                <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
+            <!-- 날짜 셀 -->
+            <div class="grid grid-cols-7 border-neutral-200">
+                <!-- 날짜 셀 클릭 이벤트 추가 -->
+                <div v-for="(date, index) in calendarDates" :key="index"
+                    class="h-32 border border-neutral-200 relative px-2 py-1 cursor-pointer"
+                    :class="{ 'bg-violet-50 opacity-50': date.today, 'text-zinc-400': date.monthOffset !== 0 }"
+                    @click="$emit('date-click', date.fullDate)">
+                    <!-- 날짜 (이벤트 2개 이상이면 동그라미 표시) -->
 
-                <div class="h-6">
-                    <span v-if="getEventsForDate(date.fullDate).length > 0"
-                        class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
-                        {{ date.day }}
-                    </span>
-                    <span v-else class="text-sm text-zinc-800">
-                        {{ date.day }}
-                    </span>
-                </div>
+                    <div class="h-6">
+                        <span v-if="getEventsForDate(date.fullDate).length > 0"
+                            class="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-zinc-800 bg-violet-100 rounded-full">
+                            {{ date.day }}
+                        </span>
+                        <span v-else class="text-sm text-zinc-800">
+                            {{ date.day }}
+                        </span>
+                    </div>
                     <!-- 이벤트 바 -->
-                    <div v-for="event in getEventsForDate(date.fullDate).slice(0, 2)" :key="event.title + '-' + (event.startDate || event.saleStart || '')"
-                        class="mt-1">
+                    <div v-for="event in getEventsForDate(date.fullDate).slice(0, 2)"
+                        :key="event.title + '-' + (event.startDate || event.saleStart || '')" class="mt-1">
                         <div :class="[
                             'flex items-center min-w-0 h-6 px-1 rounded-md text-xs font-bold text-zinc-800 truncate',
                             categoryStyleMap[categoryTranslation[event.category]]?.bg
@@ -57,7 +57,15 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps(['year', 'month', 'events'])
+const props = defineProps({
+    year: Number,
+    month: Number,
+    events: {
+        type: Object,
+        default: () => ({})
+    }
+})
+
 const emit = defineEmits(['date-click'])
 
 const today = new Date()
@@ -105,7 +113,7 @@ const calendarDates = computed(() => getCalendarDates(props.year, props.month))
 function getEventsForDate(date) {
     const allEvents = [...(props.events.personal || []), ...(props.events.event || []), ...(props.events.startEvents || [])]
     return allEvents.filter(e => {
-        const eventDate = e.startDate?.split('T')[0]
+        const eventDate = (e.startDate || e.saleStart || e.date)?.split('T')[0]
         return eventDate === date
     })
 

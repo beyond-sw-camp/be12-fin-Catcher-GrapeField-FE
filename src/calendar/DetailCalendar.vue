@@ -12,7 +12,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import CalendarHeader from './CalendarHeader.vue'
 import CalendarGrid from './CalendarGrid.vue'
 import BookingInfoSection from './BookingInfoSection.vue'
@@ -37,6 +36,7 @@ const fetchEvents = async () => {
         console.log(`${year.value}년 ${month.value}월 데이터 요청중...`)
         // result는 이미 response.data 값임
         const result = await calendarStore.mainList(year.value, month.value + 1);
+        console.log(result);
 
         // API에서 반환된 데이터가 직접 사용됨
         bookingInfo.value = result;
