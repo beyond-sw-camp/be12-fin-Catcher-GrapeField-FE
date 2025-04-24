@@ -190,9 +190,12 @@ watch(searchQuery, (newQuery) => {
       <div class="tab" :class="{ active: activeTab === 'popular' }" @click="activeTab = 'popular'">
         인기 채팅방
       </div>
-      <!-- <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
-                전시
-            </div> -->
+      <div class="tab" :class="{ active: activeTab === 'performances' }" @click="activeTab = 'performances'">
+        공연
+      </div>
+      <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
+                전시/클래식
+            </div>
       <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="handleMyChatClick">
         내 채팅
       </div>
@@ -207,8 +210,10 @@ watch(searchQuery, (newQuery) => {
         <div class="chat-room-info">
           <h3 class="chat-room-title">{{ room.roomName }}</h3>
           <div class="chat-room-details">
-            <span class="chat-room-date">{{ room.eventStartDate.slice(0, 10) }} ~ {{ room.eventEndDate.slice(0, 10)
-              }}</span>
+            <span class="chat-room-date">
+  {{ room.eventStartDate ? room.eventStartDate.slice(0, 10) : '시작일 미정' }} ~
+  {{ room.eventEndDate ? room.eventEndDate.slice(0, 10) : '종료일 미정' }}
+</span>
             <span class="chat-room-participants">{{ room.participantCount }}명 참여중</span>
           </div>
           <p class="chat-room-preview">{{ room.eventDescription }}</p>
