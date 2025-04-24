@@ -5,8 +5,10 @@ import Header from './common/Header.vue'
 import Footer from './common/Footer.vue'
 import Sidebar from './common/Sidebar.vue'
 import GlobalLoading from './common/GlobalLoading.vue'
-import { onMounted } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
+// import { connectSocket, disconnectSocket} from "@/utils/socketService.js";
+
 
 const route = useRoute()
 const router = useRouter()
@@ -15,11 +17,17 @@ const userStore = useUserStore()
 // 초기 상태 확인이 끝났는지 여부
 const isInitialized = ref(false)
 
+
 //로그인 여부 확인
 onMounted(async () => {
   const result = await userStore.checkAuthStatus()
   console.log('🔍 checkAuthStatus 결과:', result)
   isInitialized.value = true
+  // await connectSocket()
+})
+
+onBeforeUnmount(async () => {
+  // await disconnectSocket()
 })
 
 // 전역 세션 만료 핸들러 등록
