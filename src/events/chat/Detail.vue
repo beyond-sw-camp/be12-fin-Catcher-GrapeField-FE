@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
             :class="['message-container', message.isMe ? 'my-message' : '']"
         >
           <div v-if="!message.isMe" class="message-avatar">
-            <img :src="message.avatar || '../assets/icons/default-avatar.png'" alt="프로필"/>
+            <img :src="message.avatar || '@/assets/icons/default-avatar.png'" alt="프로필"/>
           </div>
           <div class="message-content">
             <div v-if="!message.isMe" class="message-sender">{{ message.sender }}</div>

@@ -262,7 +262,7 @@ watch(searchQuery, (newQuery) => {
   border: 1px solid #e0e0e0;
   border-radius: 50px;
   font-size: 1rem;
-  background-image: url('../assets/icons/search.png');
+  /* background-image: url('@/assets/icons/search.png'); */
   background-position: right 1rem center;
   background-repeat: no-repeat;
   background-size: 1.2rem;

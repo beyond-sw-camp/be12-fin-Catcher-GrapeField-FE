@@ -22,8 +22,8 @@
                         <span class="text-sm font-bold text-purple-700">{{ selectedCategoryLabel }}</span>
                         <div class="ml-2 w-5 h-5 bg-violet-50 flex items-center justify-center"
                             @click.stop="toggleCategory">
-                            <img v-if="!showCategoryMenu" src="../../assets/icons/down.png" alt="down">
-                            <img v-else src="../../assets/icons/up.png" alt="up">
+                            <img v-if="!showCategoryMenu" src="@/assets/icons/down.png" alt="down">
+                            <img v-else src="@/assets/icons/up.png" alt="up">
                         </div>
                     </div>
                     <div v-if="showCategoryMenu" class="absolute top-full left-0 w-36 bg-white shadow-md z-10">

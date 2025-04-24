@@ -38,7 +38,7 @@ const user = {
                 <!-- 이미지가 없을 경우 기본 이미지 -->
                 <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
                     class="w-full h-full rounded-full object-cover" />
-                <img v-else="user.profileImg" src="../../assets/icons/profile.png" alt="기본 이미지"
+                <img v-else="user.profileImg" src="@/assets/icons/profile.png" alt="기본 이미지"
                     class="w-full h-full rounded-full object-cover" />
             </div>
 

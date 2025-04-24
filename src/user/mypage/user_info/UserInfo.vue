@@ -119,7 +119,7 @@ const saveChanges = async () => {
                         <div class="w-16 h-16 rounded-full bg-violet-200 overflow-hidden">
                             <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
                                 class="w-full h-full object-cover" />
-                            <img v-else src="../../assets/icons/profile.png" alt="기본 이미지"
+                            <img v-else src="@/assets/icons/profile.png" alt="기본 이미지"
                                 class="w-full h-full object-cover" />
                         </div>
                     </label>
@@ -128,7 +128,7 @@ const saveChanges = async () => {
                     <div v-else class="w-16 h-16 rounded-full bg-violet-200 overflow-hidden">
                         <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
                             class="w-full h-full object-cover" />
-                        <img v-else src="../../assets/icons/profile.png" alt="기본 이미지"
+                        <img v-else src="@/assets/icons/profile.png" alt="기본 이미지"
                             class="w-full h-full object-cover" />
                     </div>
 
