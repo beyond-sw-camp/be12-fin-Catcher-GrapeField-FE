@@ -194,7 +194,7 @@ watch(searchQuery, (newQuery) => {
         공연
       </div>
       <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
-                전시/클래식
+                전시
             </div>
       <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="handleMyChatClick">
         내 채팅
