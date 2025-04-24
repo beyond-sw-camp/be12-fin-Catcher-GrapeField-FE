@@ -65,7 +65,7 @@ const routes = [
       ]
     },
     { path: "/post/register", name:'PostRegister', component: PostRegister},
-    { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: true } },
+    { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: false } },
     { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
     // { path:"/mypage", component: MyPage},
     {path: "/calendar_detail", name: 'DetailCalendar', component: DetailCalendar},
