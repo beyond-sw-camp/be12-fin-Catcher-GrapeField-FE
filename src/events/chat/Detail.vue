@@ -4,6 +4,7 @@ import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import axios from 'axios'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
+import {useChatStore} from "@/stores/useChatStore.js";
 
 // reactive 변수
 const chatBody = ref(null)
@@ -12,7 +13,7 @@ const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
-
+const chatStore = useChatStore()
 
 // 시간 포맷 함수
 function formatTime(date) {
@@ -89,14 +90,10 @@ const handleLike = async () => {
 // 채팅방 퇴장
 
 const leaveChatRoom = async () => {
-  if (!confirm('채팅방을 퇴장하시겠습니까?')) return
+  const res = chatStore.leaveRoom(roomId.value)
 
-  const res = await axios.delete(`/api/chatroom/leave/${roomId.value}`, {
-    withCredentials: true
-  })
-
-  alert(res.data.message || '채팅방을 퇴장했습니다.')
-  router.push('/chat-list')
+  alert(res.data || '채팅방을 퇴장했습니다.')
+  await router.push('/chat-list')
 }
 
 onMounted(async () => {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import TopBanner from './TopBanner.vue';
 import PopularPost from './PopularPost.vue';
 import PopularChatRoom from './PopularChatRoom.vue';
@@ -9,9 +9,13 @@ import Calendar from './Calendar.vue';
 import CardList from './CardList.vue';
 import { useLoadingStore } from '@/stores/useLoadingStore';
 import { useEventsStore } from '@/stores/useEventsStore';
+import {useUserStore} from "@/stores/useUserStore.js";
+import { useChatStore } from '@/stores/useChatStore.js';
 
 const loadingStore = useLoadingStore();
 const eventsStore = useEventsStore();
+
+const isLogin = computed(() => useUserStore().isLogin)
 
 // 공통 카테고리 상태 정의
 const selectedCategory = ref('ALL');
@@ -36,6 +40,18 @@ const loadTicketEventsData = async (category = 'ALL') => {
         loadingStore.stopLoading();
     }
 };
+
+watch(isLogin, (loggedIn, prev) => {
+      if (loggedIn) {
+        useChatStore().preloadJoinedRooms() // 이거 추가!
+      } else {
+        useChatStore().joinedRoomIds = [] // 이거 추가! x
+      }
+    },
+    {
+      immediate: false
+    }
+)
 
 // 컴포넌트 마운트 시 데이터 로드
 onMounted(async () => {

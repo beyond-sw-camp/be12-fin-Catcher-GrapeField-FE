@@ -72,10 +72,12 @@ const filteredRooms = computed(() => {
 const openChatRoom = async (roomId) => {
   try {
     await chatStore.joinRoom(roomId) // 이미 참여중이면 백엔드 요청 생략됨
-    router.push(`/chat-room/${roomId}`)
   } catch (err) {
     alert('채팅방 입장 실패. 로그인 상태를 확인하세요.')
   }
+  await chatListStore.fetchMyRooms() // useChatStore의 joinRoom함수 내부로부터 이동
+  await chatListStore.fetchMyPageRooms() // useChatStore의 joinRoom함수 호출 내부로부터 이동
+  await router.push(`/chat-room/${roomId}`)
 }
 
 // 채팅방 목록 무한스크롤
