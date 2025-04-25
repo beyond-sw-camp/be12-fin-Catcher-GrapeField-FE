@@ -12,15 +12,19 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
   const isLast = ref(false)
 
   const API_ENDPOINTS = {
-    all: '/api/chat/list/all',
-    popular: '/api/chat/list/popular',
-    performances: '/api/chat/list/performance',
+    // all: '/api/chat/list/all',
+    // popular: '/api/chat/list/popular',
+    musical: '/api/chat/list/musical',
+    concert: '/api/chat/list/concert',
+    play: '/api/chat/list/play',
+    // performances: '/api/chat/list/performance',
     exhibitions: '/api/chat/list/exhibition',
+    classic: '/api/chat/list/classic',
     myPageRooms: '/api/chat/list/my-page',
     myRooms: '/api/chat/list/my-rooms'
   }
 
-  const fetchRooms = async (type = 'all') => {
+  const fetchRooms = async (type = 'musical') => {
     loading.value = true
     error.value = null
   
@@ -28,11 +32,13 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
     page.value = 0
     isLast.value = false
     rooms.value = []
+
   
     try {
-      const res = await axios.get(`${API_ENDPOINTS[type]}?page=0&size=20`, )
-      rooms.value = res.data.content
-      isLast.value = res.data.last
+      const res = await axios.get(`${API_ENDPOINTS[type]}?page=0&size=20`)
+      console.log('📦 [채팅방 첫 로딩 응답]', res.data)
+      rooms.value = res.data.content ?? []
+      isLast.value = res.data.last ?? true
     } catch (err) {
       error.value = err
       rooms.value = []
@@ -43,7 +49,7 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
   
 
   // 📍 loadMoreRooms
-const loadMoreRooms = async (type = 'all') => {
+const loadMoreRooms = async (type = 'musical') => {
   if (loading.value || isLast.value) return
   loading.value = true
 
