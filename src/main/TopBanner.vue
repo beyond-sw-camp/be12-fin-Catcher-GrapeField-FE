@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-import bannerData from '../assets/data/banner-slides.json';
+import bannerData from '@/assets/data/banner-slides.json';
 
 const router = useRouter();
 

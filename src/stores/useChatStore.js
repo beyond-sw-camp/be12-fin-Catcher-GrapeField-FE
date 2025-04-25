@@ -38,7 +38,6 @@ export const useChatStore = defineStore('chat', {
           withCredentials: true
         })
         console.log(`🚪 입장 요청 완료 (roomId: ${roomId})`)
-
         this.joinedRoomIds.push(Number(roomId))
       } catch (err) {
         console.error('❌ 입장 실패:', err)

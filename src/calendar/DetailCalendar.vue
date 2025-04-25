@@ -18,7 +18,6 @@ import BookingInfoSection from './BookingInfoSection.vue'
 import { useCalendarStore } from '../stores/useCalendarStore'
 
 const calendarStore = useCalendarStore();
-console.log("\n\n\n calendar Store " + calendarStore);  
 
 const today = new Date()
 const year = ref(today.getFullYear())
@@ -33,10 +32,7 @@ const isoDateString = targetDate.toISOString().slice(0, 19);
 
 const fetchEvents = async () => {
     try {
-        console.log(`${year.value}년 ${month.value}월 데이터 요청중...`)
-        // result는 이미 response.data 값임
         const result = await calendarStore.mainList(year.value, month.value + 1);
-        console.log(result);
 
         // API에서 반환된 데이터가 직접 사용됨
         bookingInfo.value = result;
@@ -47,7 +43,6 @@ const fetchEvents = async () => {
 }
 
 function handleDateClick(date) {
-    console.log("필터링된 이벤트:", calendarStore.filteredEvents);
     // calendarStore의 filteredEvents 사용
     const matchingEvents = calendarStore.filteredEvents.startEvents?.filter(event => {
         const eventDate = event.saleStart.split('T')[0];

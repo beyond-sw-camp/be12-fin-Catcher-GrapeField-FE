@@ -128,10 +128,10 @@ export const useUserStore = defineStore('user', {
 
     async refreshToken() {
       try {
-        console.log('리프레시 토큰 갱신 시도...')
+        //console.log('리프레시 토큰 갱신 시도...')
         const response = await axiosNoInterceptor.post("/api/auth/refresh-token")
         
-        console.log('리프레시 응답:', response.data)
+        //console.log('리프레시 응답:', response.data)
         
         if (response.data) {
           this.user = {

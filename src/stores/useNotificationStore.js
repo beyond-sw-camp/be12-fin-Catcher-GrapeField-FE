@@ -13,7 +13,7 @@ export const useNotificationStore = defineStore("notification", {
                 const response = await axios.get("/api/notify/all", {
                     withCredentials: true
                 });
-                console.log("모든 알림 API 응답:", response.data);
+                //console.log("모든 알림 API 응답:", response.data);
                 return response.data;
             } catch (error) {
                 console.error("알림 목록 조회 실패:", error);
@@ -28,7 +28,7 @@ export const useNotificationStore = defineStore("notification", {
                 const response = await axios.get("/api/notify/noti", {
                     withCredentials: true
                 });
-                console.log("시간에 맞춘춘 알림 API 응답:", response.data);
+                //console.log("시간에 맞춘춘 알림 API 응답:", response.data);
                 return response.data;
             } catch (error) {
                 console.error("알림 목록 조회 실패:", error);
@@ -69,7 +69,7 @@ export const useNotificationStore = defineStore("notification", {
                     withCredentials: true
                 });
             
-                console.log("읽지 않은 알림 API 응답:", response.data);
+                //console.log("읽지 않은 알림 API 응답:", response.data);
                 return response.data;
                 } catch (error) {
                 console.error("읽지 않은 알림 목록 조회 실패:", error);

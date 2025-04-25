@@ -72,7 +72,6 @@ const loadEventDetail = async () => {
     error.value = null
     const response = await eventStore.getEventDetail(eventIdx)
     event.value = response
-    console.log(response)
   } catch (err) {
     console.error('상세 페이지 불러오기 실패', err)
     error.value = '데이터를 불러오는 중 오류가 발생했습니다.'

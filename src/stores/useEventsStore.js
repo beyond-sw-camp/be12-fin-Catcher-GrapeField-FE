@@ -16,7 +16,7 @@ export const useEventsStore = defineStore('events', {
             try {
                 const response = await axios.get("/api/events/contents/main", {
                     params: { category: category}})
-                console.log(response.data)
+                //console.log(response.data)
                 return response.data;
             }catch (error) {
                 console.error("공연/전시 목록 불러오기 에러:", error);
@@ -62,7 +62,7 @@ export const useEventsStore = defineStore('events', {
         async getEventDetail(idx) {
             try {
                 const response = await axios.get(`/api/events/${idx}`, {})
-                console.log(response.data)
+                //console.log(response.data)
                 return response.data;
             }catch (error) {
                 console.error("상세 정보 불러오기 에러:", error);

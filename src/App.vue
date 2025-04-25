@@ -21,7 +21,7 @@ const isInitialized = ref(false)
 //로그인 여부 확인
 onMounted(async () => {
   const result = await userStore.checkAuthStatus()
-  console.log('🔍 checkAuthStatus 결과:', result)
+  //console.log('🔍 checkAuthStatus 결과:', result)
   isInitialized.value = true
   // await connectSocket()
 })

@@ -37,7 +37,7 @@ function onNewMessageClick() {
 
 
 function scrollToHighlight(hStartMessageIdx, highlight) {
-  console.log(hStartMessageIdx);
+  //console.log(hStartMessageIdx);
   const element = chatBody.value;
   const targetElement = element.children[0].children[hStartMessageIdx];
   if (!element || !targetElement) {
@@ -198,7 +198,6 @@ onBeforeUnmount(() => {
         ✨새로운 메시지가 왔어요!
       </button>
     </div>
-
     <!-- chat-body -->
     <div ref="chatBody" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col">
       <transition-group class="flex-1 mb-4" name="message" tag="div">
@@ -206,7 +205,7 @@ onBeforeUnmount(() => {
              :class="['flex mb-4 gap-3', msg.isMe ? 'flex-row-reverse' : 'flex-row']">
           <div v-if="!msg.isMe"
                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            <img :src="msg.avatar || '../assets/icons/default-avatar.png'"
+            <img :src="msg.avatar || '@/assets/icons/default-avatar.png'"
                  alt="프로필" class="w-full h-full object-cover"/>
           </div>
           <div class="flex flex-col max-w-2/3">

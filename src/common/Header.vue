@@ -251,16 +251,15 @@ const notificationSubscription = ref(null);
 
 // 현재 사용자 이름 가져오기
 const getCurrentUsername = () => {
-  console.log('현재 사용자 userStore.username:', userStore.username);
-  console.log('현재 사용자 userStore.user:', userStore.user);
-  console.log('현재 사용자 이메일 userStore.user?.email:', userStore.user?.email);
+  //console.log('현재 사용자 userStore.username:', userStore.username);
+  //console.log('현재 사용자 userStore.user:', userStore.user);
+  //console.log('현재 사용자 이메일 userStore.user?.email:', userStore.user?.email);
   return userStore.user?.username || userStore.user?.email;
 };
 
 // 알림 수신 핸들러
 const onNotificationReceived = (payload) => {
   const notification = JSON.parse(payload.body);
-  console.log('새 알림 수신:', notification);
 
   // 알림 목록에 추가
   notifications.value.unshift(notification);
@@ -312,9 +311,6 @@ const fetchNotifications = async () => {
 
       //읽지 않은 알림만 필터링
       unreadCount.value = response.filter(noti => !noti.isRead).length;
-
-      console.log("가져온 알림 목록:", notifications.value);
-      console.log("읽지 않은 알림 개수:", unreadCount.value);
     } else {
       notifications.value = [];
       unreadCount.value = 0;
@@ -370,8 +366,6 @@ const removeNotification = async (notificationIdx) => {
       if (removedNotification && !removedNotification.isRead) {
         unreadCount.value = Math.max(0, unreadCount.value - 1);
       }
-
-      console.log(`알림 ID ${notificationIdx} 삭제 완료`);
     }
   } catch (error) {
     console.error("알림 삭제 실패", error);

@@ -99,12 +99,12 @@ const setFilter = (filter) => {
         </div>
         <div class="room-stats">
           <div class="stat-item">
-            <img src="../assets/icons/participant.png" alt="">
+            <img src="@/assets/icons/participant.png" alt="">
             <div class="stat-count xs:text-xs sm:text-sm xl:text-xs">{{ room.comments }}</div>
           </div>
           <div class="stat-item">
             <div class="stat-item">
-              <img src="../assets/icons/heart.png" alt="">
+              <img src="@/assets/icons/heart.png" alt="">
               <div class="stat-count xs:text-sm sm:text-sm xl:text-xs">{{ room.likes }}</div>
             </div>
           </div>

@@ -28,7 +28,7 @@ onMounted(async () => {
         });
 
         // 응답 로깅 및 직접 접근
-        console.log("응답:", JSON.stringify(res.data)); // 처음 200자만 출력
+        //console.log("응답:", JSON.stringify(res.data)); // 처음 200자만 출력
 
         // 데이터 안전하게 추출
         const username = res.data?.username || '';
@@ -37,7 +37,7 @@ onMounted(async () => {
         const profileImg = res.data?.profileImg || '';
 
         user.value = { name: username, email, phone, profileImg };
-        console.log("추출된 데이터:", user.value);
+        //console.log("추출된 데이터:", user.value);
     } catch (error) {
         console.error('에러 발생:', error);
     }
@@ -119,7 +119,7 @@ const saveChanges = async () => {
                         <div class="w-16 h-16 rounded-full bg-violet-200 overflow-hidden">
                             <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
                                 class="w-full h-full object-cover" />
-                            <img v-else src="../../assets/icons/profile.png" alt="기본 이미지"
+                            <img v-else src="@/assets/icons/profile.png" alt="기본 이미지"
                                 class="w-full h-full object-cover" />
                         </div>
                     </label>
@@ -128,7 +128,7 @@ const saveChanges = async () => {
                     <div v-else class="w-16 h-16 rounded-full bg-violet-200 overflow-hidden">
                         <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
                             class="w-full h-full object-cover" />
-                        <img v-else src="../../assets/icons/profile.png" alt="기본 이미지"
+                        <img v-else src="@/assets/icons/profile.png" alt="기본 이미지"
                             class="w-full h-full object-cover" />
                     </div>
 

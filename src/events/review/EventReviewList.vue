@@ -80,7 +80,7 @@ const selectRating = (rating) => {
 // TODO: 리뷰 수정 메서드
 const editReview = (review) => {
     // 리뷰 수정 로직 구현 (예: 모달 오픈)
-    console.log('Edit review:', review)
+    //console.log('Edit review:', review)
 }
 
 // TODO : 리뷰 삭제 메서드
