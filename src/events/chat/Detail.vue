@@ -1,9 +1,10 @@
 <!-- events/chat/Detail.vue -->
 <script setup>
-import { ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
+import {ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import axios from 'axios'
-import { useChatRoomStore } from '@/stores/useChatRoomStore'
+import {useChatRoomStore} from '@/stores/useChatRoomStore'
+import {useChatStore} from "@/stores/useChatStore.js";
+
 
 // reactive 변수
 const chatBody = ref(null)
@@ -12,7 +13,7 @@ const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
-
+const chatStore = useChatStore()
 
 // 시간 포맷 함수
 function formatTime(date) {
@@ -20,6 +21,7 @@ function formatTime(date) {
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
 }
+
 // 하이라이트 시간 포맷 (시작에 10분 더하기)
 function formatHighlightTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -51,6 +53,7 @@ function scrollToHighlight(hStartMessageIdx, highlight) {
     function easeInOutQuad(t) {
       return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
     }
+
     function animateScroll(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -60,6 +63,7 @@ function scrollToHighlight(hStartMessageIdx, highlight) {
         requestAnimationFrame(animateScroll);
       }
     }
+
     requestAnimationFrame(animateScroll);
   });
 }
@@ -69,11 +73,30 @@ function goBack() {
 }
 
 function sendMessage() {
-  //console.log("Deatil Componenet 에서 sendMessage 실행", chatRoomStore.newMessage, chatRoomStore.stompClient);
   chatRoomStore.sendMessage(roomId.value)
-  nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
 }
+function scrollToBottom() {
+  if (!chatBody.value) return
+  const element = chatBody.value
+  const start = element.scrollTop
+  const end = element.scrollHeight - element.clientHeight
+  const duration = 600
+  const startTime = performance.now()
 
+  function easeInOutQuad(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+  }
+
+  function animateScroll(currentTime) {
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const ease = easeInOutQuad(progress)
+    element.scrollTop = start + (end - start) * ease
+    if (progress < 1) requestAnimationFrame(animateScroll)
+  }
+
+  requestAnimationFrame(animateScroll)
+}
 
 // 애니메이션용 하트 리스트
 const getRandomColor = () => {
@@ -91,14 +114,10 @@ const handleLike = async () => {
 // 채팅방 퇴장
 
 const leaveChatRoom = async () => {
-  if (!confirm('채팅방을 퇴장하시겠습니까?')) return
+  const res = chatStore.leaveRoom(roomId.value)
 
-  const res = await axios.delete(`/api/chatroom/leave/${roomId.value}`, {
-    withCredentials: true
-  })
-
-  alert(res.data.message || '채팅방을 퇴장했습니다.')
-  router.push('/chat-list')
+  alert(res.data || '채팅방을 퇴장했습니다.')
+  await router.push('/chat-list')
 }
 
 onMounted(async () => {
@@ -123,100 +142,134 @@ onBeforeUnmount(() => {
 
 
 <template>
-  <div class="chat-room-container">
-    <div class="chat-header">
-      <div class="chat-title">
-        <button class="back-button" @click="goBack">←</button>
-        <h2 style="color: white">{{ chatRoomStore.roomTitle }}</h2>
+  <div class="flex flex-col h-screen bg-gray-100 relative">
+    <!-- chat-header -->
+    <div class="bg-purple-700 text-white px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <button class="text-white bg-transparent border-none flex items-center justify-center
+                       w-8 h-8 sm:w-10 sm:h-10 text-lg sm:text-2xl"
+                @click="goBack">
+          ←
+        </button>
+        <h2 class="m-0 text-xl sm:text-2xl font-semibold">{{ chatRoomStore.roomTitle }}</h2>
       </div>
-      <div class="chat-info">
-        <span class="participant-count">{{ chatRoomStore.participantCount }}명 참여중</span>
-        <button class="leave-button" @click="leaveChatRoom">퇴장</button>
+      <div class="flex items-center gap-4">
+        <span class="text-sm sm:text-base text-white/80">{{ chatRoomStore.participantCount }}명 참여중</span>
+        <button class="px-3 py-1 text-xs sm:text-sm font-semibold rounded-full border-2 border-white
+                       bg-white text-purple-700 hover:bg-purple-700 hover:text-white transition"
+                @click="leaveChatRoom">
+          퇴장
+        </button>
       </div>
     </div>
-    <transition name="fade">
-  <div v-if="chatRoomStore.showHighlightEffect" class="highlight-popup">
-    🎯 하이라이트 발생!
-  </div>
-</transition>
-    <div v-if="chatRoomStore.highlightedTimes.length > 0" class="highlight-section">
-      <h3>🔥 하이라이트 시간대</h3>
-      <div class="highlight-list">
-        <div
-            v-for="(highlight, index) in chatRoomStore.highlightedTimes"
-            :key="highlight.id"
-            class="highlight-item"
-            @click="scrollToHighlight(highlight.messageIdx, highlight)"
-        ><div>{{ formatHighlightTime(highlight.time1) }}~{{ formatHighlightTime(highlight.time2) }}</div>
-          <div>{{ highlight.summary }}</div>
 
+    <!-- highlight popup -->
+    <transition name="fade">
+      <div v-if="chatRoomStore.showHighlightEffect"
+           class="fixed top-1/6 left-1/2 transform -translate-x-1/2
+                  bg-yellow-400 text-gray-800 px-8 py-4 rounded-2xl text-lg sm:text-xl font-bold
+                  shadow-lg animate-popUp z-50">
+        🎯 하이라이트 발생!
+      </div>
+    </transition>
+
+    <!-- highlight section -->
+    <div v-if="chatRoomStore.highlightedTimes.length"
+         class="bg-purple-50 p-4 sm:p-6 rounded-lg mt-2 sm:mt-4">
+      <h3 class="text-purple-700 text-lg sm:text-xl font-semibold mb-2">🔥 하이라이트 시간대</h3>
+      <div class="flex flex-wrap gap-2 sm:gap-4">
+        <div v-for="(highlight, index) in chatRoomStore.highlightedTimes" :key="highlight.id"
+             class="cursor-pointer bg-white text-purple-700 px-3 py-1 sm:px-4 sm:py-2
+                    rounded-full text-sm sm:text-base shadow hover:bg-purple-700 hover:text-white
+                    transition"
+             @click="scrollToHighlight(highlight.messageIdx, highlight)">
+          <div>{{ formatHighlightTime(highlight.time1) }}~{{ formatHighlightTime(highlight.time2) }}</div>
+          <div>{{ highlight.summary }}</div>
         </div>
       </div>
     </div>
-    <!-- 새 메시지 알림 버튼 -->
-    <div v-if="chatRoomStore.showNewMessageButton" class="new-message-notification">
-      <button class="new-message-button" @click="onNewMessageClick">✨새로운 메시지가 왔어요!</button>
-    </div>
 
-    <div ref="chatBody" class="chat-body">
-      <transition-group class="message-list" name="message" tag="div">
-        <div
-            v-for="(message, index) in chatRoomStore.formattedMessages"
-            :key="index"
-            :class="['message-container', message.isMe ? 'my-message' : '']"
-        >
-          <div v-if="!message.isMe" class="message-avatar">
-            <img :src="message.avatar || '@/assets/icons/default-avatar.png'" alt="프로필"/>
+    <!-- new message button -->
+    <div v-if="chatRoomStore.showNewMessageButton"
+         class="fixed bottom-24 left-1/2 transform -translate-x-1/2">
+      <button class="bg-purple-700 text-white px-4 py-2 rounded-full text-base sm:text-lg
+                     shadow hover:bg-purple-800 transition"
+              @click="onNewMessageClick">
+        ✨새로운 메시지가 왔어요!
+      </button>
+    </div>
+    <!-- chat-body -->
+    <div ref="chatBody" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col">
+      <transition-group class="flex-1 mb-4" name="message" tag="div">
+        <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="idx"
+             :class="['flex mb-4 gap-3', msg.isMe ? 'flex-row-reverse' : 'flex-row']">
+          <div v-if="!msg.isMe"
+               class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+            <img :src="msg.avatar || '@/assets/icons/default-avatar.png'"
+                 alt="프로필" class="w-full h-full object-cover"/>
           </div>
-          <div class="message-content">
-            <div v-if="!message.isMe" class="message-sender">{{ message.sender }}</div>
-            <div class="message-bubble">{{ message.content }}</div>
-            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+          <div class="flex flex-col max-w-2/3">
+            <div v-if="!msg.isMe" class="text-sm sm:text-base text-gray-600 mb-1">
+              {{ msg.sender }}
+            </div>
+            <div :class="['px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow',
+                          msg.isMe ? 'bg-purple-200 text-gray-800' : 'bg-white text-gray-800']"
+                 class="text-base sm:text-lg">
+              {{ msg.content }}
+            </div>
+            <div :class="msg.isMe ? 'self-start' : ''"
+                 class="text-xs sm:text-sm text-gray-500 mt-1 self-end">
+              {{ formatTime(msg.timestamp) }}
+            </div>
           </div>
         </div>
       </transition-group>
     </div>
 
-    <div class="chat-input">
-      <button aria-label="좋아요" class="heart-button" @click="handleLike">
-        <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
-          <path
-              d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
-       2 5 4.5 2.8 7.5 2.8c1.7 0 3.2.8 4.5 2.2
-       1.3-1.4 2.8-2.2 4.5-2.2C19.5 2.8 22 5 22 8.2
-       c0 3.75-3.2 6.9-7.1 10.45-1.3 1.25-2.5 2.35-2.9 2.7z"
-              fill="#e1306c"
-          />
+    <!-- 하단 메세지 입력창 -->
+    <div class="bg-white px-6 py-4 flex items-center gap-4 border-t border-gray-200">
+      <button class="relative p-0 hover:scale-110 transform transition"
+              @click="handleLike">
+        <svg class="w-12 h-12 sm:w-14 sm:h-14 fill-current text-pink-500" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
+                   2 5 4.5 2.8 7.5 2.8c1.7 0 3.2.8 4.5 2.2
+                   1.3-1.4 2.8-2.2 4.5-2.2C19.5 2.8 22 5 22 8.2
+                   c0 3.75-3.2 6.9-7.1 10.45-1.3 1.25-2.5 2.35-2.9 2.7z"/>
         </svg>
-
         <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
         <span
             v-for="heart in chatRoomStore.hearts"
             :key="heart.id"
             :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
-            class="heart-pop"
-        >
-  <svg
-      height="16"
-      viewBox="0 0 24 24"
-      width="16"
-      xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-        :fill="getRandomColor()"
+            class="heart-pop">
+          <svg
+            height="16"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              :fill="getRandomColor()"
         d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
          2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81
          4.5 2.09C13.09 3.81 14.76 3 16.5 3
          19.58 3 22 5.42 22 8.5c0 3.78-3.4
-         6.86-8.55 11.54L12 21.35z"
-    />
-  </svg>
-</span>
-
-
+         6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </span>
       </button>
-      <input v-model="chatRoomStore.newMessage" placeholder="메시지 입력..." type="text" @keyup.enter="sendMessage"/>
-      <button class="send-button" @click="sendMessage">전송</button>
+      <input v-model="chatRoomStore.newMessage"
+             class="flex-1 border border-gray-300 rounded-full px-4 py-2
+                    text-base sm:text-lg focus:outline-none focus:ring-2
+                    focus:ring-purple-500"
+             placeholder="메시지 입력..."
+             type="text"
+             @keyup.enter="sendMessage"/>
+      <button class="bg-purple-700 text-white px-6 py-2 rounded-full text-base sm:text-lg
+                     hover:bg-purple-800 transition"
+              @click="sendMessage">
+        전송
+      </button>
     </div>
   </div>
 </template>
@@ -495,11 +548,13 @@ onBeforeUnmount(() => {
 .send-button:hover {
   background-color: #5A0C9D;
 }
+
 .chat-info {
   display: flex;
   align-items: center;
   gap: 1vw;
 }
+
 /* 퇴장 버튼 */
 .leave-button {
   margin-left: 0.8vw;
@@ -554,6 +609,7 @@ onBeforeUnmount(() => {
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
+
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }

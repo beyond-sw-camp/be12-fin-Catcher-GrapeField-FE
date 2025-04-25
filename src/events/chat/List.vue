@@ -72,10 +72,12 @@ const filteredRooms = computed(() => {
 const openChatRoom = async (roomId) => {
   try {
     await chatStore.joinRoom(roomId) // 이미 참여중이면 백엔드 요청 생략됨
-    router.push(`/chat-room/${roomId}`)
   } catch (err) {
     alert('채팅방 입장 실패. 로그인 상태를 확인하세요.')
   }
+  await chatListStore.fetchMyRooms() // useChatStore의 joinRoom함수 내부로부터 이동
+  await chatListStore.fetchMyPageRooms() // useChatStore의 joinRoom함수 호출 내부로부터 이동
+  await router.push(`/chat-room/${roomId}`)
 }
 
 // 채팅방 목록 무한스크롤
@@ -188,9 +190,12 @@ watch(searchQuery, (newQuery) => {
       <div class="tab" :class="{ active: activeTab === 'popular' }" @click="activeTab = 'popular'">
         인기 채팅방
       </div>
-      <!-- <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
-                전시
-            </div> -->
+      <div class="tab" :class="{ active: activeTab === 'performances' }" @click="activeTab = 'performances'">
+        공연
+      </div>
+      <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
+                전시/클래식
+            </div>
       <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="handleMyChatClick">
         내 채팅
       </div>
@@ -205,8 +210,10 @@ watch(searchQuery, (newQuery) => {
         <div class="chat-room-info">
           <h3 class="chat-room-title">{{ room.roomName }}</h3>
           <div class="chat-room-details">
-            <span class="chat-room-date">{{ room.eventStartDate.slice(0, 10) }} ~ {{ room.eventEndDate.slice(0, 10)
-              }}</span>
+            <span class="chat-room-date">
+  {{ room.eventStartDate ? room.eventStartDate.slice(0, 10) : '시작일 미정' }} ~
+  {{ room.eventEndDate ? room.eventEndDate.slice(0, 10) : '종료일 미정' }}
+</span>
             <span class="chat-room-participants">{{ room.participantCount }}명 참여중</span>
           </div>
           <p class="chat-room-preview">{{ room.eventDescription }}</p>

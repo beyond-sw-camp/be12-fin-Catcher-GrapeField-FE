@@ -14,8 +14,8 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
   const API_ENDPOINTS = {
     all: '/api/chat/list/all',
     popular: '/api/chat/list/popular',
-    // performances: '/api/chat/list/performance',
-    // exhibitions: '/api/chat/list/exhibition',
+    performances: '/api/chat/list/performance',
+    exhibitions: '/api/chat/list/exhibition',
     myPageRooms: '/api/chat/list/my-page',
     myRooms: '/api/chat/list/my-rooms'
   }
@@ -30,7 +30,7 @@ export const useChatRoomListStore = defineStore('chatRoomList', () => {
     rooms.value = []
   
     try {
-      const res = await axios.get(`${API_ENDPOINTS[type]}?page=0&size=20`, { withCredentials: true })
+      const res = await axios.get(`${API_ENDPOINTS[type]}?page=0&size=20`, )
       rooms.value = res.data.content
       isLast.value = res.data.last
     } catch (err) {

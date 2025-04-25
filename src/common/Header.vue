@@ -4,7 +4,7 @@
       <div class="logo">
         <router-link to="/">
           <div class="logo-image">
-            <img src="/logo.png" alt="Logo" />
+            <img alt="Logo" src="/logo.png"/>
           </div>
         </router-link>
       </div>
@@ -12,32 +12,35 @@
       <nav class="main-nav">
         <ul class="nav-list px-1.5">
           <li class="nav-item">
-            <router-link to="/" :class="{ 'router-link-active': isActive('/') }" class="truncate">홈</router-link>
+            <router-link :class="{ 'router-link-active': isActive('/') }" class="truncate" to="/">홈</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/events" :class="{ 'router-link-active': isActive('/events') }"
-              class="truncate">공연/전시</router-link>
+            <router-link :class="{ 'router-link-active': isActive('/events') }" class="truncate"
+                         to="/events">공연/전시
+            </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/community" :class="{ 'router-link-active': isActive('/community') }"
-              class="truncate">커뮤니티</router-link>
+            <router-link :class="{ 'router-link-active': isActive('/community') }" class="truncate"
+                         to="/community">커뮤니티
+            </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/calendar_detail" :class="{ 'router-link-active': isActive('/calendar_detail') }"
-              class="truncate">캘린더</router-link>
+            <router-link :class="{ 'router-link-active': isActive('/calendar_detail') }" class="truncate"
+                         to="/calendar_detail">캘린더
+            </router-link>
           </li>
         </ul>
       </nav>
       <!-- search-box-->
       <div class="search-box px-1.5 flex items-center gap-2">
-        <input type="text" placeholder="꽃의 비밀 🔍" v-model="keyword" @keyup.enter="SearchKeyword(keyword)"
-          class="border px-2 py-1 rounded" />
+        <input v-model="keyword" class="border px-2 py-1 rounded" placeholder="꽃의 비밀 🔍" type="text"
+               @keyup.enter="SearchKeyword(keyword)"/>
         <button class="search-button" @click="SearchKeyword(keyword)">
           <div class="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
             </svg>
           </div>
         </button>
@@ -48,11 +51,11 @@
         <!-- ✅ 비로그인 -->
         <template v-if="!isLogin">
           <router-link :to="{ path: '/login', query: { redirect: $route.fullPath } }"
-            class="text-sm text-gray-700 hover:underline truncate">
+                       class="text-sm text-gray-700 hover:underline truncate">
             로그인
           </router-link>
           <span class="text-gray-400">/</span>
-          <router-link to="/signup" class="text-sm text-gray-700 hover:underline truncate">
+          <router-link class="text-sm text-gray-700 hover:underline truncate" to="/signup">
             회원가입
           </router-link>
         </template>
@@ -67,11 +70,11 @@
           <!-- 알림 버튼 -->
           <div class="relative" @click="toggleDropdown">
             <button
-              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
+                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200">
               🔔
             </button>
             <span v-if="unreadCount > 0"
-              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
               {{ unreadCount }}
             </span>
 
@@ -80,35 +83,38 @@
               <div v-if="notifications.length === 0" class="p-4 text-sm text-gray-500 text-center">알림이 없습니다</div>
               <ul v-else class="max-h-80 overflow-y-auto"> <!-- 스크롤 가능하도록 최대 높이 설정 -->
                 <li v-for="noti in notifications" :key="noti.idx"
-                  class="p-3 border-b hover:bg-gray-50 cursor-pointer relative group">
+                    class="p-3 border-b hover:bg-gray-50 cursor-pointer relative group">
                   <!-- 읽지 않은 알림 표시 -->
                   <div v-if="!noti.isRead"
-                    class="absolute left-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
+                       class="absolute left-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
 
                   <!-- 휴지통 아이콘 (호버 시 표시) -->
-                  <button @click.stop="removeNotification(noti.idx)"
-                    class="absolute right-2 pr-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <button
+                      class="absolute right-2 pr-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      @click.stop="removeNotification(noti.idx)">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                      <path
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2"/>
                     </svg>
                   </button>
 
                   <!-- 알림 내용 (클릭 영역) -->
-                  <div @click.stop="markAsRead(noti)" class="cursor-pointer">
-                    <div class="text-sm font-semibold" :class="{ 'pl-4': !noti.isRead }">{{ noti.title }}</div>
-                    <div class="text-sm text-gray-700" :class="{ 'pl-4': !noti.isRead }">{{ noti.message }}</div>
-                    <div class="text-xs text-gray-500 mt-1" :class="{ 'pl-4': !noti.isRead }">{{ noti.formattedTime }}
+                  <div class="cursor-pointer" @click.stop="markAsRead(noti)">
+                    <div :class="{ 'pl-4': !noti.isRead }" class="text-sm font-semibold">{{ noti.title }}</div>
+                    <div :class="{ 'pl-4': !noti.isRead }" class="text-sm text-gray-700">{{ noti.message }}</div>
+                    <div :class="{ 'pl-4': !noti.isRead }" class="text-xs text-gray-500 mt-1">{{ noti.formattedTime }}
                     </div>
                   </div>
                 </li>
               </ul>
               <div v-if="notifications.length !== 0" class="p-2 border-t flex items-center justify-between">
-                <button @click.stop="markAllAsRead" class="text-xs text-purple-600 hover:text-purple-800 ml-2">
+                <button class="text-xs text-purple-600 hover:text-purple-800 ml-2" @click.stop="markAllAsRead">
                   모두 읽음으로 표시
                 </button>
-                <button @click.stop="removeAllNotifications" class="text-xs text-red-400 hover:text-red-600 mr-2">
+                <button class="text-xs text-red-400 hover:text-red-600 mr-2" @click.stop="removeAllNotifications">
                   (전체 삭제)
                 </button>
               </div>
@@ -118,16 +124,16 @@
           <!-- 점 세 개 메뉴 버튼 -->
           <div class="relative">
             <button
-              class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
-              @click="toggleMenu">
+                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200"
+                @click="toggleMenu">
               ⋯
             </button>
 
             <!-- 드롭다운 메뉴 -->
             <div v-if="showMenu"
-              class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
-              <router-link to="/mypage" class="text-gray-700 hover:underline whitespace-nowrap">설정</router-link>
-              <button @click="logout" class="text-red-500 hover:underline whitespace-nowrap">로그아웃</button>
+                 class="flex flex-col gap-2 absolute left-1/2 mt-2 transform -translate-x-1/2 bg-white border rounded shadow px-3 py-2 text-sm z-10 w-max">
+              <router-link class="text-gray-700 hover:underline whitespace-nowrap" to="/mypage">설정</router-link>
+              <button class="text-red-500 hover:underline whitespace-nowrap" @click="logout">로그아웃</button>
             </div>
           </div>
         </template>
@@ -137,18 +143,20 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed, onBeforeUnmount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../stores/useUserStore'
-import { useSearchStore } from '@/stores/useSearchStore'
-import { disconnect, connect, subscribeToNotifications } from '@/utils/webSocketClient_notify'
-import { useNotificationStore } from '@/stores/useNotificationStore';
+import {ref, watch, onMounted, computed, onBeforeUnmount} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {useUserStore} from '../stores/useUserStore'
+import {useSearchStore} from '@/stores/useSearchStore'
+import {disconnect, connect, subscribeToNotifications} from '@/utils/webSocketClient_notify'
+import {useNotificationStore} from '@/stores/useNotificationStore';
+import {useChatStore} from "@/stores/useChatStore.js";
 
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const searchStore = useSearchStore()
 const notificationStore = useNotificationStore()
+const chatStore = useChatStore() // 이거 추가!
 
 const currentPath = ref('')
 // 로그인 상태 확인
@@ -168,27 +176,31 @@ const logout = () => {
 }
 
 watch(isLogin, (loggedIn, prev) => {
-  if (loggedIn) {
-    // 로그인 시 알림 웹소켓 연결
-    const username = getCurrentUsername();
-    if (username) {
-      connect(() => {
-        notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
-        fetchNotifications();
-      });
-    } else {
-      console.error('사용자 이름을 찾을 수 없습니다.');
+      if (loggedIn) {
+        // 로그인 시 알림 웹소켓 연결
+        const username = getCurrentUsername();
+        if (username) {
+          connect(() => {
+            notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
+            fetchNotifications();
+          });
+        } else {
+          console.error('사용자 이름을 찾을 수 없습니다.');
+        }
+        chatStore.preloadJoinedRooms() // 이거 추가!
+      } else {
+        if (notificationSubscription.value) {
+          notificationSubscription.value.unsubscribe();
+        }
+        // 로그아웃 시 웹소켓 연결 해제
+        disconnect();
+        chatStore.joinedRoomIds = [] // 이거 추가! x
+      }
+    },
+    {
+      immediate: false
     }
-  } else {
-      if (notificationSubscription.value) {
-        notificationSubscription.value.unsubscribe();
-       }
-      // 로그아웃 시 웹소켓 연결 해제
-       disconnect();
-  }},
-  {
-  immediate: false
-})
+)
 
 
 // 초기 경로 설정, 알림 웹소켓 연결
@@ -224,10 +236,10 @@ const isActive = (path) => {
 const keyword = ref('')
 const SearchKeyword = (keyword) => {
   if (!keyword || keyword.trim() === '') {
-    router.push({ path: '/community' }) //검색어가 없으면 커뮤니티 페이지로 이동
+    router.push({path: '/community'}) //검색어가 없으면 커뮤니티 페이지로 이동
   } else {
     searchStore.setTab("통합 검색")
-    router.push({ path: '/search', query: { keyword } })
+    router.push({path: '/search', query: {keyword}})
   }
 }
 

@@ -1,5 +1,6 @@
 <script setup>
-import {ref, reactive, computed, onMounted, nextTick, watch} from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
+import axios from 'axios'
 import {useRoute, useRouter} from 'vue-router'
 import {useUserStore} from '../stores/useUserStore'
 import {useChatRoomListStore} from '@/stores/useChatRoomListStore'
@@ -59,6 +60,8 @@ const getPanelTitle = computed(() => {
   }
 })
 
+const calendarInfo = ref({});
+
 // 내가 참여한 채팅방
 const favoriteChatRooms = computed(() => {
   return chatListStore.myRooms.slice(0, 5)
@@ -96,9 +99,6 @@ async function showChatRoom(room) {
   await chatRoomStore.connectWebSocket(room.roomIdx);
   await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody.value);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
-  // connect((client) => {
-  //   subscription = client.subscribe(`/topic/chat.room.${room.roomIdx}`, handleIncomingMessage)
-  // }/*, token*/)
   await nextTick(() => {
     chatRoomStore.initialScroll(chatBody.value)
   }); // 패널 채팅방 스크롤을 맨 아래로 이동
@@ -146,6 +146,52 @@ function viewAllChatRoomsNewWindow() {
   window.open(routeUrl, '_blank')
 }
 
+const loadPlan = async () => {
+  const today = new Date();
+
+  // 이번 달의 마지막 날 구하기
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  // 포맷팅 - 시간 부분 제외
+  const year = lastDayOfMonth.getFullYear();
+  const month = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0');
+  const day = String(lastDayOfMonth.getDate()).padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}T00:00:00`;
+
+  console.log(formattedDate);
+
+  try {
+    const res = await axios.get(
+      `/api/calendar/list`,
+      {
+        params: { date: formattedDate },
+      }
+    );
+    console.log('응답 데이터:', res.data);
+
+    // 오늘 이후의 일정만 필터링
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0); // 오늘 날짜의 시작(자정)으로 설정
+
+    if (res.data && res.data.personal) {
+      // personal 데이터가 배열인 경우
+      if (Array.isArray(res.data.personal)) {
+        calendarInfo.value = res.data.personal.filter(event => {
+          const eventDate = new Date(event.startDate);
+          return eventDate >= todayDate;
+        });
+      } else {
+        // personal 데이터가 객체인 경우 (그대로 유지)
+        calendarInfo.value = res.data.personal;
+      }
+    }
+  } catch (e) {
+    console.error('게시글 로딩 실패:', e);
+  }
+};
+
+
 // 로그아웃 처리
 const logout = () => {
   userStore.user = null
@@ -171,6 +217,7 @@ function formatDateRange(start, end) {
 
 
 onMounted(() => {
+  loadPlan();
   // 내가 참여 중인 채팅방 리스트 (로그인 상태에서만 호출)
   if (userStore.isLogin && chatListStore.myRooms.length === 0) {
     chatListStore.fetchMyRooms()
@@ -186,14 +233,14 @@ onMounted(() => {
   <!-- 사이드 패널-->
   <transition name="slide">
     <div v-if="state.activePanel"
-         class="hidden md:flex fixed top-[20%] right-[4%] h-2/3 w-80 bg-white shadow-lg z-40 rounded-l-xl flex flex-col overflow-hidden">
+      class="hidden md:flex fixed top-[20%] right-[4%] h-2/3 w-80 bg-white shadow-lg z-40 rounded-l-xl flex flex-col overflow-hidden">
       <!-- 로그인 상태일 때 -->
       <div v-if="isLogin" class="flex flex-col h-full">
         <!-- 헤더 영역 -->
         <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200">
           <h3 class="text-lg font-semibold text-purple-700 truncate">{{ getPanelTitle }}</h3>
           <button class="text-2xl text-gray-600 hover:text-purple-700 w-6 h-6 flex items-center justify-center"
-                  @click="closePanel">×
+            @click="closePanel">×
           </button>
         </div>
         <!-- 본문 - 콘텐츠 영역 -->
@@ -202,30 +249,31 @@ onMounted(() => {
           <div v-if="state.activePanel==='profile'" class="flex flex-col items-center">
             <!-- 프로필 사진-->
             <div
-                class="w-16 h-16 rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-6 flex items-center justify-center">
-              <img :src="profileImgUrl" alt="프로필" class="w-full h-full object-contain"/>
+              class="w-16 h-16 rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-6 flex items-center justify-center">
+              <img :src="profileImgUrl" alt="프로필" class="w-full h-full object-contain" />
             </div>
             <div class="text-lg font-semibold text-gray-800 mb-2">{{ userStore.username }}</div>
             <div class="text-sm text-gray-600 mb-6">{{ userStore.email }}</div>
             <div class="flex flex-col gap-2 w-full">
               <!-- 프로필 (내정보) 메뉴 -->
               <router-link class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm"
-                           to="/mypage">내 정보 수정
+                to="/mypage">내 정보 수정
               </router-link>
               <router-link :to="{ path: '/mypage', query: { menu: 'contents' } }"
-                           class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
                 게시글 관리
               </router-link>
               <router-link :to="{ path: '/mypage', query: { menu: 'calender' } }"
-                           class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
                 캘린더
               </router-link>
               <router-link :to="{ path: '/mypage', query: { menu: 'favorite' } }"
-                           class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
+                class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded text-sm">
                 즐겨찾기
               </router-link>
-              <button class="border border-purple-700 text-purple-700 px-4 py-2 rounded text-sm hover:bg-purple-100 mt-4"
-                      @click="logout">
+              <button
+                class="border border-purple-700 text-purple-700 px-4 py-2 rounded text-sm hover:bg-purple-100 mt-4"
+                @click="logout">
                 로그아웃
               </button>
             </div>
@@ -237,16 +285,17 @@ onMounted(() => {
               <!-- 채팅방 목록 -->
               <div class="text-sm font-semibold text-gray-800 mb-3 border-l-4 border-purple-700 pl-2">내 관심 채팅방</div>
               <div class="flex-1 overflow-y-auto space-y-2 mb-4">
-                <div v-if="!favoriteChatRooms.length" class="text-center text-gray-500 text-sm">관심 등록된 채팅방이 없습니다.<br/>채팅
+                <div v-if="!favoriteChatRooms.length" class="text-center text-gray-500 text-sm">관심 등록된 채팅방이
+                  없습니다.<br />채팅
                   목록에서 관심 등록해보세요!
                 </div>
                 <!-- 채팅방 카드 -->
-                <div v-for="room in chatListStore.myRooms" :key="room.roomIdx" class="p-3 bg-purple-100 rounded hover:shadow cursor-pointer"
-                     @click="showChatRoom(room)">
+                <div v-for="room in chatListStore.myRooms" :key="room.roomIdx"
+                  class="p-3 bg-purple-100 rounded hover:shadow cursor-pointer" @click="showChatRoom(room)">
                   <div class="flex justify-between items-center mb-1">
                     <span class="font-semibold text-gray-800 truncate w-2/3">{{ room.roomName }}</span>
                     <span :class="isLive(room.eventStartDate,room.eventEndDate)?'bg-red-500':'bg-gray-400'"
-                          class="text-xs text-white px-2 py-0.5 rounded-full">
+                      class="text-xs text-white px-2 py-0.5 rounded-full">
                       {{ isLive(room.eventStartDate, room.eventEndDate) ? 'LIVE' : '대기' }}
                     </span>
                   </div>
@@ -270,7 +319,7 @@ onMounted(() => {
                 <button class="text-purple-700 hover:bg-purple-100 px-2 py-1 rounded" @click="backToChatList">←</button>
                 <!-- 채팅방 제목 -->
                 <div class="flex-1 text-sm font-semibold text-gray-800 text-center truncate">{{
-                    chatRoomStore.roomTitle
+                  chatRoomStore.roomTitle
                   }}
                 </div>
                 <!-- 전체화면 버튼 (큰화면 링크) -->
@@ -283,13 +332,13 @@ onMounted(() => {
               <div ref="chatBody" class="flex-1 overflow-y-auto space-y-3 mb-3">
                 <transition-group>
                   <div v-for="(msg,index) in chatRoomStore.formattedMessages" :key="msg.id"
-                       :class="['flex', msg.isMe?'justify-end':'justify-start']">
+                    :class="['flex', msg.isMe?'justify-end':'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
-                      <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover"/>
+                      <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col max-w-[70%]">
                       <div :class="msg.isMe? 'bg-purple-700 text-white':'bg-purple-100 text-gray-800'"
-                           class="px-3 py-2 rounded-lg text-sm break-words">{{ msg.content }}
+                        class="px-3 py-2 rounded-lg text-sm break-words">{{ msg.content }}
                       </div>
                       <div :class="msg.isMe?'text-left':'text-right'" class="text-xs text-gray-400 mt-1">
                         {{ formatTime(msg.timestamp) }}
@@ -300,10 +349,11 @@ onMounted(() => {
               </div>
               <!-- 메시지 입력 영역-->
               <div class="flex gap-2">
-                <input v-model="chatRoomStore.newMessage" class="flex-1 border border-gray-300 rounded-full px-3 py-2 text-sm focus:outline-none focus:border-purple-700" placeholder="메시지 입력..." type="text"
-                       @keyup.enter="sendMessage"/>
+                <input v-model="chatRoomStore.newMessage"
+                  class="flex-1 border border-gray-300 rounded-full px-3 py-2 text-sm focus:outline-none focus:border-purple-700"
+                  placeholder="메시지 입력..." type="text" @keyup.enter="sendMessage" />
                 <button class="bg-purple-700 text-white px-4 py-2 rounded-full text-sm hover:bg-purple-800"
-                        @click="sendMessage">전송
+                  @click="sendMessage">전송
                 </button>
               </div>
             </div>
@@ -311,13 +361,16 @@ onMounted(() => {
           <!-- 캘린더 패널 -->
           <div v-else-if="state.activePanel==='calendar'" class="flex flex-col gap-2">
             <!-- 예시 일정 -->
-            <div class="bg-purple-100 px-3 py-2 rounded text-sm">
-              <div class="font-semibold text-purple-700">4월 15일</div>
-              <div class="text-gray-800">뮤지컬 '햄릿' 예매 오픈</div>
-            </div>
+            <router-link :to="{ path: '/mypage', query: { menu: 'calender' } }">
+              <div v-for="i in calendarInfo" :key="i.idx" class="bg-purple-100 px-3 py-2 rounded text-sm">
+                <div class="font-semibold text-purple-700">{{ (i.startDate) }}</div>
+                <div class="text-gray-800">{{ i.title }}</div>
+                <div class="text-gray-600">{{ i.description }}</div>
+              </div>
+            </router-link>
             <!-- 전체 일정 보기 버튼 -->
-            <button class="mt-2 bg-purple-700 text-white py-2 rounded text-sm hover:bg-purple-800"
-                    @click="viewAllChatRoomsNewWindow">전체 일정 보기
+            <button class="mt-2 bg-purple-700 text-white py-2 rounded text-sm hover:bg-purple-800"><router-link
+                :to="{ path: '/mypage', query: { menu: 'calender' } }">전체 일정 보기</router-link>
             </button>
           </div>
           <!-- 관심(즐겨찾기) 패널 -->
@@ -348,7 +401,7 @@ onMounted(() => {
       <div v-else class="flex flex-col justify-center items-center h-full px-4 text-center">
         <p class="text-sm">로그인 후 사용해주세요.</p>
         <router-link :to="{ path:'/login', query:{ redirect:$route.fullPath }}"
-                     class="mt-4 border border-purple-700 text-purple-700 px-4 py-2 rounded hover:bg-purple-100 text-sm">
+          class="mt-4 border border-purple-700 text-purple-700 px-4 py-2 rounded hover:bg-purple-100 text-sm">
           로그인
         </router-link>
       </div>
@@ -366,9 +419,9 @@ onMounted(() => {
     <div class="w-16 min-w-[55px] bg-purple-100 flex flex-col rounded-l-xl shadow-md">
       <div class="flex flex-col gap-6 py-4 flex-1">
         <button v-for="panel in ['profile','chat','calendar','interest','history']" :key="panel"
-                :class="['flex justify-center items-center h-16 w-full', state.activePanel===panel?'bg-purple-700 text-white':'hover:bg-purple-200 text-gray-600']"
-                @click="togglePanel(panel)">
-          <img :alt="panel" :src="getIconUrl(panel)" class="w-10 h-10"/>
+          :class="['flex justify-center items-center h-16 w-full', state.activePanel===panel?'bg-purple-700 text-white':'hover:bg-purple-200 text-gray-600']"
+          @click="togglePanel(panel)">
+          <img :alt="panel" :src="getIconUrl(panel)" class="w-10 h-10" />
         </button>
       </div>
       <div class="h-px bg-gray-200 mx-2 my-2"></div>
