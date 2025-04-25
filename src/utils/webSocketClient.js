@@ -6,7 +6,8 @@ let stompClient = null;
 
 // baseUrl: 환경변수가 없으면 상대경로 사용
 const baseUrl = import.meta.env.VITE_BASE_URL || '';  // 예: '' 또는 'http://localhost:8080'
-const socketUrl = `${baseUrl}/ws`; // 상대경로도 가능하게 설정
+// const socketUrl = `${baseUrl}/ws`; // 상대경로도 가능하게 설정
+const socketUrl = '/ws'; 
 
 export function connect(onConnectCallback /*, token */) {
     const socket = new SockJS(socketUrl, null, {

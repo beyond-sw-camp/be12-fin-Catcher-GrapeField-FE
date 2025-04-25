@@ -5,9 +5,15 @@ import { Client } from '@stomp/stompjs';
 let stompClient = null;
 const subscriptions = []; // 구독 관리 배열
 
-export function connectSocket({ endpoint = '/ws', headers ={}}={}) {
+export function connectSocket({ endpoint = '/ws', headers = {} } = {}) {
     if (stompClient && stompClient.connected) return Promise.resolve(stompClient);
-    const socket = new SockJS(endpoint);
+    
+    // 상대 경로 사용
+    const socket = new SockJS(endpoint, null, {
+        transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+        withCredentials: true // 쿠키 전송 활성화
+    });
+    
     stompClient = new Client({
         webSocketFactory: () => socket,
         connectHeaders: headers,
@@ -15,13 +21,32 @@ export function connectSocket({ endpoint = '/ws', headers ={}}={}) {
         onConnect: () => {
             console.log('WebSocket 연결 성공');
         }
-    })
-    stompClient.activate()
+    });
+    
+    stompClient.activate();
     return new Promise((resolve, reject) => {
-        stompClient.onConnect = () => resolve(stompClient)
-        stompClient.onStompError = err => reject(err)
-    })
+        stompClient.onConnect = () => resolve(stompClient);
+        stompClient.onStompError = err => reject(err);
+    });
 }
+
+// export function connectSocket({ endpoint = '/ws', headers ={}}={}) {
+//     if (stompClient && stompClient.connected) return Promise.resolve(stompClient);
+//     const socket = new SockJS(endpoint);
+//     stompClient = new Client({
+//         webSocketFactory: () => socket,
+//         connectHeaders: headers,
+//         reconnectDelay: 5000,
+//         onConnect: () => {
+//             console.log('WebSocket 연결 성공');
+//         }
+//     })
+//     stompClient.activate()
+//     return new Promise((resolve, reject) => {
+//         stompClient.onConnect = () => resolve(stompClient)
+//         stompClient.onStompError = err => reject(err)
+//     })
+// }
 
 export function disconnectSocket() {
     if (stompClient) {

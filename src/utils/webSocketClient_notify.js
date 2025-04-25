@@ -10,7 +10,8 @@ let loadingStore = null; // 로딩 스토어 참조
 
 // baseUrl: 환경변수가 없으면 상대경로 사용
 const baseUrl = import.meta.env.VITE_BASE_URL || '';
-const socketUrl = `${baseUrl}/ws`;
+// const socketUrl = `${baseUrl}/ws`;
+const socketUrl = '/ws'; 
 
 // 초기화 함수를 통해 스토어 주입받기
 export function initNotificationClient(store) {
