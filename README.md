@@ -1,29 +1,27 @@
-# 🍇 오프라인 오프라인 문화 콘텐츠 플랫폼 Grapefield 🧑🏻‍🌾
+# "GrapeField" 공연/전시 정보 통합 제공 및 커뮤니티 플랫폼
+<p align="middle" style="margin: 0; padding: 0;">
+  <img width="360px" src="https://github.com/user-attachments/assets/dc348de4-aecb-4ce0-816e-08062ab7ed74">
+</p>
 
-### 📌 프로젝트 소개
-> 공연, 전시, 행사 등 오프라인 문화 콘텐츠를 **한 곳에서 탐색하고**,  
-**후기와 채팅으로 소통**할 수 있는 통합 커뮤니티 플랫폼입니다.  
-**GrapeFiled** 서비스는 단순한 정보 제공이나 일정 안내를 넘어, 이용자들이 오프라인 공연, 전시회 등에 대하여 실시간으로 소통하고 후기를 공유할 수 있는 커뮤니티 기능을 강화한 오프라인 문화 콘텐츠 플랫폼입니다.
+<p align="middle">
+[플레이 데이터] 한화시스템 BEYOND SW캠프 12기
+<br>🧑🏻‍🌾 CATCHER 파수꾼 팀 🍇
+</p>
 
----
-
-## 👥 팀원 소개
-
+## 😃 팀원 소개
 <figure>
     <table>
       <tr>
-        <td align="center"><img src="./assets/img/샌드위치.png" width="180px"/></td>
-        <td align="center"><img src="./assets/img/식빵.png" width="180px"/></td>
-        <td align="center"><img src="./assets/img/반죽.png" width="180px"/></td>
-    <td align="center"><img src="./assets/img/밀가루.png" width="180px"/></td>
-        <td align="center"><img src="./assets/img/밀.png" width="180px"/></td>
+        <td align="center"><img src="" width="180px"/></td>
+        <td align="center"><img src="" width="180px"/></td>
+        <td align="center"><img src="" width="180px"/></td>
+	    <td align="center"><img src="" width="180px"/></td>
       </tr>
       <tr>
         <td align="center">팀장: <a href="https://github.com/bdt6246">김혜정</a></td>
         <td align="center">팀원: <a href="https://github.com/daydeiday">곽효림</a></td>
-        <td align="center">팀원: <a href="https://github.com/J0a0J" >김지원</a></td>
-        <td align="center">팀원: <a href="https://github.com/s00ya">정지수</a></td>
-    <td align="center">
+        <td align="center">팀원: <a href="https://github.com/s00ya" >정지수</a></td>
+        <td align="center">: <a href="https://github.com/J0a0J">김지원</a></a></td>
       </tr>
     </table>
 </figure>
