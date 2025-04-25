@@ -36,10 +36,10 @@ const state = reactive({
 // const getIconUrl = (name) => {
 //   return new URL(`/assets/icons/${name}.png`, import.meta.url).href
 // }
-const getIconUrl = (name) => `/assets/icons/${name}.png`
+const getIconUrl = (name) => `@/assets/icons/${name}.png`
 
 //프로필 아이콘
-const profileImgUrl = new URL('/assets/icons/profile.png', import.meta.url).href
+const profileImgUrl = new URL('@/assets/icons/profile.png', import.meta.url).href
 
 
 // 패널 제목 계산
@@ -325,7 +325,7 @@ onMounted(() => {
                 <!-- 전체화면 버튼 (큰화면 링크) -->
                 <button class="px-2 py-1 hover:bg-purple-100 rounded"
                         @click="openChatRoomNewWindow(state.activeChatRoom.roomIdx)">
-                  <img alt="전체화면" class="w-5 h-5 opacity-70" src="/assets/icons/expand.png"/>
+                  <img alt="전체화면" class="w-5 h-5 opacity-70" src="@/assets/icons/expand.png"/>
                 </button>
               </div>
               <!-- 채팅 메세지 목록 -->
@@ -412,7 +412,7 @@ onMounted(() => {
   <div v-if="state.isSidebarCollapsed"
        class="hidden md:flex fixed top-[45%] right-0 w-16 h-20 bg-purple-100 rounded-l-xl flex justify-center items-center cursor-pointer shadow-md hover:bg-purple-200 z-50"
        @click="toggleSidebar">
-    <img alt="열기" class="w-12 h-12" src="/assets/icons/open.png"/>
+    <img alt="열기" class="w-12 h-12" src="@/assets/icons/open.png"/>
   </div>
   <!-- 사이드바 (세로 버튼메뉴 모음) -->
   <div v-show="!state.isSidebarCollapsed" class="hidden md:flex fixed top-[20%] right-0 z-40 h-2/3">
@@ -427,7 +427,7 @@ onMounted(() => {
       <div class="h-px bg-gray-200 mx-2 my-2"></div>
       <button class="flex justify-center items-center h-16 w-full hover:bg-purple-200 text-gray-600"
               @click="toggleSidebar">
-        <img alt="닫기" class="w-10 h-10" src="/assets/icons/close.png"/>
+        <img alt="닫기" class="w-10 h-10" src="@/assets/icons/close.png"/>
       </button>
     </div>
   </div>
