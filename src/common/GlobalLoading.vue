@@ -10,6 +10,6 @@ import { useLoadingStore } from '@/stores/useLoadingStore'
 const loadingStore = useLoadingStore()
 
 watch(() => loadingStore.isLoading, (newVal) => {
-    console.log('💡 loading 상태 변경:', newVal)
+    //console.log('💡 loading 상태 변경:', newVal)
 })
 </script>

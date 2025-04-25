@@ -39,7 +39,6 @@ function goToPage(page) {
 }
 
 function goToPost(eventIdx, idx) {
-    console.log("hey")
     eventsStore.setTab('게시판')
     router.push(`/events/${eventIdx}/post/${idx}`)
 }

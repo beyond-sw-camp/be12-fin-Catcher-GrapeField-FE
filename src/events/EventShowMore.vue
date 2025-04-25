@@ -29,7 +29,6 @@ import Category from '../main/Category.vue'
 import EventShowMoreList from './EventShowMoreList.vue'
 import Array from './Array.vue'
 import TypeEventList from './TypeEventList.vue'
-import cardData from '../assets/data/card.json'
 
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
@@ -51,11 +50,4 @@ onMounted(() => {
     array.value = q
   }
 })
-
-// 추천 카드 데이터
-const combinedCards = [
-  ...cardData.recommendedCards,
-  ...cardData.popularCards,
-  ...cardData.newCards,
-]
 </script>

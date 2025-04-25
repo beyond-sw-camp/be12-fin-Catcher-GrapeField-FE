@@ -40,13 +40,13 @@ export const useChatRoomStore = defineStore('chatRoom', {
     actions: {
         getSubscriptionCount() {
             if(this._stompSubscription) {
-                console.log("[Store] _stompSubscription 존재:");
+                //console.log("[Store] _stompSubscription 존재:");
             }
             if(this._likeSubscription) {
-                console.log("[Store] _likeSubscription 존재:");
+                //console.log("[Store] _likeSubscription 존재:");
             }
             if(this._highlightSubscription) {
-                console.log("[Store] _highlightSubscription 존재:");
+                //console.log("[Store] _highlightSubscription 존재:");
             }
             return [
                 this._stompSubscription,
@@ -93,7 +93,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
 
         },
         addHighlightRealtime(highlightResp) {
-            console.log('🟡 실시간 하이라이트 수신:', highlightResp)
+            //('🟡 실시간 하이라이트 수신:', highlightResp)
             this.highlightedTimes.push({
                 id: highlightResp.idx,
                 messageIdx: highlightResp.messageIdx,
@@ -112,7 +112,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
         // 채팅방 하트 로직
         sendHeart(roomId) {
-            console.log('🧪 stompClient 상태 확인:', this.stompClient)
+            //console.log('🧪 stompClient 상태 확인:', this.stompClient)
 
             if (!this.stompClient || !this.stompClient.connected) {
                 console.warn('❗ stompClient 연결 안 됨');
@@ -128,46 +128,46 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
 
         connectWebSocket(roomId) {
-            console.log(this.getSubscriptionCount())
+            //console.log(this.getSubscriptionCount())
             if (this._stompSubscription) {
                 this._stompSubscription.unsubscribe()
                 this._stompSubscription = null
-                console.log('[Store] stompSubscription 기존 구독 해제 완료')
+                //console.log('[Store] stompSubscription 기존 구독 해제 완료')
             }
             if (this._likeSubscription) {
                 this._likeSubscription.unsubscribe()
                 this._likeSubscription = null
-                console.log('[Store] likeSubscription 기존 구독 해제 완료')
+                //console.log('[Store] likeSubscription 기존 구독 해제 완료')
             }
             if (this._highlightSubscription) {
                 this._highlightSubscription.unsubscribe()
                 this._highlightSubscription = null
-                console.log('[Store] highlightSubscription 기존 구독 해제 완료')
+                //console.log('[Store] highlightSubscription 기존 구독 해제 완료')
             }
             if (this.stompClient) {
                 this.stompClient.deactivate?.()
                 this.stompClient = null
-                console.log('[Store] stompClient deactivate 완료')
+                //console.log('[Store] stompClient deactivate 완료')
             }
 
             createWebSocketConnection(client => {
-                console.log('[Store] onConnect 콜백, client.connected:', client.connected);
+                //console.log('[Store] onConnect 콜백, client.connected:', client.connected);
                 this.stompClient = client;
                 // 채팅 메시지 수신
                 this._stompSubscription = client.subscribe(
                     `/topic/chat.room.${roomId}`,
                     frame => {
-                        console.log('[Store] 🔔 message arrived');
+                        //console.log('[Store] 🔔 message arrived');
                         this.handleIncomingMessage(frame)
                         // this.scrollToBottom(this.chatBodyElement) // 스크롤을 아래로 내리는 함수 호출
                     })
-                console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
+                //console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
                 // 하트 실시간 구독
                 this._likeSubscription = client.subscribe(
                     `/topic/chat.room.likes.${roomId}`,
                     (frame) => {
                         const heart = JSON.parse(frame.body)
-                        console.log("❤️ 하트 수신!", heart)
+                        //console.log("❤️ 하트 수신!", heart)
 
                         // 하트 수 증가
                         if (this.roomData) {
@@ -179,17 +179,17 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     }
                 )
 
-                console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`);
+                //console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`);
                 // ✅ 하이라이트 실시간 구독
                 this._highlightSubscription = client.subscribe(
                     `/topic/chat.room.highlight.${roomId}`,
                     (frame) => {
                         const highlight = JSON.parse(frame.body);
-                        console.log("📡 하이라이트 수신!", highlight);
+                        //console.log("📡 하이라이트 수신!", highlight);
                         this.addHighlightRealtime(highlight);
                     }
                 );
-                console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
+                //console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
             }/*, token*/)
         },
 
@@ -209,7 +209,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
 
         sendMessage(roomId) {
-            console.log('[Store] sendMessage 진입:', this.newMessage, this.stompClient);
+            //console.log('[Store] sendMessage 진입:', this.newMessage, this.stompClient);
             if (!this.newMessage.trim() || !this.stompClient?.connected) {
                 console.warn('[Store] 메시지 전송 조건 불충족', {
                     empty: !this.newMessage.trim(),
@@ -241,8 +241,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
 
         handleIncomingMessage(frame) {
-            console.log('[Store] 현재 구독 개수:', this.getSubscriptionCount());
-            console.log('chatBodyElement:', this.chatBodyElement)
+            //console.log('[Store] 현재 구독 개수:', this.getSubscriptionCount());
+            //console.log('chatBodyElement:', this.chatBodyElement)
             const msg = JSON.parse(frame.body)
             const newMsg = {
                 id: msg.messageIdx,
@@ -255,7 +255,9 @@ export const useChatRoomStore = defineStore('chatRoom', {
             }
             this.messages.push(newMsg)
             nextTick(() => {
-                if(!this.chatBodyElement) {console.log("chatBodyElement 없음"); return}
+                if(!this.chatBodyElement) {
+                    //console.log("chatBodyElement 없음");
+                    return}
                 this.scrollToBottom(this.chatBodyElement)
             })
         },
@@ -294,7 +296,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
 
         triggerHearts() {
-            console.log('useChatRoomStore.js triggerHearts() ❤️ 하트 애니메이션 시작');
+            //('useChatRoomStore.js triggerHearts() ❤️ 하트 애니메이션 시작');
             for (let i = 0; i < 5; i++) {
                 const id = Date.now() + Math.random()
                 setTimeout(() => {

@@ -17,7 +17,7 @@ export const useChatStore = defineStore('chat', {
       const chatRoomListStore = useChatRoomListStore()
       const alreadyJoined = chatRoomListStore.myRooms.some(room => room.roomIdx === roomId)
       if (alreadyJoined) {
-        console.log(`✅ 이미 참여중 (roomId: ${roomId}) → 백엔드 요청 생략`)
+        //console.log(`✅ 이미 참여중 (roomId: ${roomId}) → 백엔드 요청 생략`)
         return
       }
 
@@ -25,7 +25,7 @@ export const useChatStore = defineStore('chat', {
         await axios.post(`/api/chatroom/join/${roomId}`, null, {
           withCredentials: true
         })
-        console.log(`🚪 입장 요청 완료 (roomId: ${roomId})`)
+        //console.log(`🚪 입장 요청 완료 (roomId: ${roomId})`)
         await chatRoomListStore.fetchMyRooms()
         await chatRoomListStore.fetchMyPageRooms()
       } catch (err) {

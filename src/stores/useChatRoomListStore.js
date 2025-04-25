@@ -80,7 +80,7 @@ const loadMoreRooms = async (type = 'all') => {
   const fetchMyPageRooms = async () => {
     try {
       const res = await axios.get(API_ENDPOINTS.myPageRooms, { withCredentials: true })
-      console.log('📦 [내 채팅 응답]', res.data)
+      // console.log('📦 [내 채팅 응답]', res.data)
       myPageRooms.value = res.data.content
     } catch (err) {
       console.error('❌ myPageRooms 불러오기 실패:', err)

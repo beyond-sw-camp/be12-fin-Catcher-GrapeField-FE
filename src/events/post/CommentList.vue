@@ -123,7 +123,7 @@ const loadCommentList = async () => {
 // TODO : 댓글 수정 메서드
 const editComment = (comment) => {
     // 댓글 수정 로직 구현 (예: 모달 오픈 또는 인라인 수정)
-    console.log('Edit comment:', comment)
+    //console.log('Edit comment:', comment)
 }
 
 // TODO : 댓글 삭제 메서드

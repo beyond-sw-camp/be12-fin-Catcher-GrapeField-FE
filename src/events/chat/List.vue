@@ -33,7 +33,7 @@ const handleMyChatClick = () => {
 
 // 💡 필터 탭 변경 감지 → API 호출
 watch(activeTab, async (newTab) => {
-  console.log('🧭 watch(activeTab) 실행됨', newTab)
+  //console.log('🧭 watch(activeTab) 실행됨', newTab)
   chatListStore.page = 0
   chatListStore.rooms = []
   chatListStore.isLast = false
@@ -81,20 +81,20 @@ const openChatRoom = async (roomId) => {
 // 채팅방 목록 무한스크롤
 onMounted(() => {
   nextTick(() => {
-    console.log('🌀 nextTick 진입')
+    //console.log('🌀 nextTick 진입')
     if (scrollTrigger.value) {
-      console.log('📍 scrollTrigger.value 존재 → observer 등록 시작')
+      //console.log('📍 scrollTrigger.value 존재 → observer 등록 시작')
 
       const observer = new IntersectionObserver(
         async ([entry]) => {
-          console.log('👀 intersection observed', entry.isIntersecting)
+          //console.log('👀 intersection observed', entry.isIntersecting)
           if (
             entry.isIntersecting &&
             !chatListStore.loading &&
             !chatListStore.isLast &&
             activeTab.value !== 'myPageRooms'
           ) {
-            console.log('📦 loadMoreRooms 실행: page', chatListStore.page + 1)
+            //console.log('📦 loadMoreRooms 실행: page', chatListStore.page + 1)
             await chatListStore.loadMoreRooms(activeTab.value)
           }
         },
@@ -102,7 +102,7 @@ onMounted(() => {
       )
 
       observer.observe(scrollTrigger.value)
-      console.log('📌 observer.observe 실행 완료')
+      //console.log('📌 observer.observe 실행 완료')
     }
   })
 })

@@ -35,7 +35,7 @@ function onNewMessageClick() {
 
 
 function scrollToHighlight(hStartMessageIdx, highlight) {
-  console.log(hStartMessageIdx);
+  //console.log(hStartMessageIdx);
   const element = chatBody.value;
   const targetElement = element.children[0].children[hStartMessageIdx];
   if (!element || !targetElement) {
@@ -69,7 +69,7 @@ function goBack() {
 }
 
 function sendMessage() {
-  console.log("Deatil Componenet 에서 sendMessage 실행", chatRoomStore.newMessage, chatRoomStore.stompClient);
+  //console.log("Deatil Componenet 에서 sendMessage 실행", chatRoomStore.newMessage, chatRoomStore.stompClient);
   chatRoomStore.sendMessage(roomId.value)
   nextTick(()=>{chatRoomStore.scrollToBottom(chatBody.value)})
 }

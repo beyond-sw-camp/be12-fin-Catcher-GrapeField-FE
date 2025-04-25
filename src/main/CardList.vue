@@ -62,7 +62,6 @@ const props = defineProps({
 
 // title에 따라 type 값을 매핑
 const type = computed(() => props.title.includes('오픈') ? 'openings' : 'closures');
-console.log('heyyyy!!! '+type.value)  
 
 // 더보기 클릭 시 라우팅
 const goToMore = () => {

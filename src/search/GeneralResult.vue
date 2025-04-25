@@ -24,7 +24,6 @@ const loadSearch = async () => {
     events.value = response.events || [];
     posts.value = response.posts || [];
     reviews.value = response.reviews || [];
-    console.log("통합 검색: ", response)
   } catch (error) {
     console.error("검색 결과 로드 실패:", error);
   }

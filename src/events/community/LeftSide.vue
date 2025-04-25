@@ -139,7 +139,6 @@ const formatDate = (dateString) => {
 };
 
 function goToPost(eventIdx, postIdx) {
-    console.log("hey")
     eventsStore.setTab('게시판')
     router.push(`/events/${eventIdx}/post/${postIdx}`)
 }

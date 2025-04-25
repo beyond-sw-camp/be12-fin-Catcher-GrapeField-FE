@@ -3,7 +3,7 @@ import { ref } from 'vue'
 const keyword = ref('')
 
 const SearchItems = (text) => {
-    console.log('검색어:', text)
+    //console.log('검색어:', text)
 }
 </script>
 

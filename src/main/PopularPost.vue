@@ -3,14 +3,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import axios from 'axios'
 import { useEventsStore } from '../stores/useEventsStore'
-import postData from '../assets/data/popular-post.json'
 
 const router = useRouter();
 const eventsStore = useEventsStore();
 const posts = ref([])
 
 function goToPost(eventIdx, idx) {
-    console.log("hey")
     eventsStore.setTab('게시판')
     router.push(`/events/${eventIdx}/post/${idx}`)
 }
@@ -25,8 +23,6 @@ onMounted(async () => {
     });
 
     posts.value = res.data.instances;
-    console.log(posts.value)
-    console.log(res.data.instances)
 })
 </script>
 
