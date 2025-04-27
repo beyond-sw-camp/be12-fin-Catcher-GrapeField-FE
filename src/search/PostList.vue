@@ -11,6 +11,7 @@ const eventsStore = useEventsStore()
 
 function goToPost(boardIdx, postIdx) {
   eventsStore.setTab('게시판')
+  eventsStore.setViewCnt(postIdx)
   router.push(`/events/${boardIdx}/post/${postIdx}`)
 }
 

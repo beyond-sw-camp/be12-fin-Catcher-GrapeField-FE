@@ -111,5 +111,13 @@ export const useEventsStore = defineStore('events', {
                 return false;
             }
         },
+
+        async setViewCnt(postIdx){
+            try{
+                await axios.get("/api/post/view", {params:{postIdx:postIdx}})
+            }catch(err){
+                console.error("조회수 증가 에러",err);
+            }
+        }
     }
 })
