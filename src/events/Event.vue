@@ -55,6 +55,12 @@ const selectedTab = ref(eventStore.selectedTab);
 watch(selectedTab, (newVal) => {
   eventStore.setTab(newVal);
 });
+
+// 라우트 파라미터 변경 감지
+watch(() => route.params.eventIdx, () => {
+  loadEventDetail();
+});
+
 // 초기 데이터 로드
 onMounted(() => {
   loadEventDetail()
@@ -70,7 +76,9 @@ const loadEventDetail = async () => {
   try {
     loadingStore.startLoading()
     error.value = null
-    const response = await eventStore.getEventDetail(eventIdx)
+    // 매번 최신 라우트 파라미터에서 eventIdx 계산
+    const currentEventIdx = Number(route.params.eventIdx);
+    const response = await eventStore.getEventDetail(currentEventIdx)
     event.value = response
   } catch (err) {
     console.error('상세 페이지 불러오기 실패', err)

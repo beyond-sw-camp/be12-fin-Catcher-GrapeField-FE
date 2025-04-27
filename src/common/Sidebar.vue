@@ -6,12 +6,14 @@ import { useUserStore } from '../stores/useUserStore'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import { useCalendarStore } from '@/stores/useCalendarStore'
+import { useEventsStore } from '@/stores/useEventsStore'
 // import {connect, stompClient} from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
 const userStore = useUserStore()
 const chatListStore = useChatRoomListStore()
 const chatRoomStore = useChatRoomStore()
 const calendarStore = useCalendarStore();
+const eventsStore = useEventsStore();
 
 const route = useRoute()
 const router = useRouter()
@@ -147,6 +149,7 @@ function viewAllChatRoomsNewWindow() {
   window.open(routeUrl, '_blank')
 }
 
+//캘린더 목록
 const calendarInfo = ref();
 const loadPlan = async () => {
   const today = new Date();
@@ -162,6 +165,31 @@ const loadPlan = async () => {
     console.error("캘린더 데이터 로딩 오류:", error)
   }
 };
+
+//방문기록
+const eventVisits = computed(() => eventsStore.eventVisits);
+// 개별 항목 삭제
+function removeEventVisit(eventIdx) {
+  eventsStore.removeEventVisit(eventIdx);
+}
+
+// 모든 항목 삭제
+function clearEventVisits() {
+  if (confirm('모든 방문 기록을 삭제하시겠습니까?')) {
+    eventsStore.clearEventVisits();
+  }
+}
+
+function formatDate(timestamp) {
+  if (!timestamp) return '';
+
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}.${month}.${day}`;
+}
 
 // 로그아웃 처리
 const logout = () => {
@@ -190,6 +218,7 @@ function formatDateRange(start, end) {
 onMounted(() => {
   if (userStore.isLogin === true) {
     loadPlan();
+    eventsStore.loadEventVisits();
   }
   // 내가 참여 중인 채팅방 리스트 (로그인 상태에서만 호출)
   if (userStore.isLogin && chatListStore.myRooms.length === 0) {
@@ -204,6 +233,7 @@ onMounted(() => {
 watch(() => userStore.isLogin, (newValue) => {
   if (newValue === true) { // 로그인 상태가 true로 변경되었을 때
     loadPlan();
+    eventsStore.loadEventVisits();
 
     if (chatListStore.myRooms.length === 0) {
       chatListStore.fetchMyRooms();
@@ -390,11 +420,36 @@ watch(() => userStore.isLogin, (newValue) => {
           </div>
           <!-- History Panel -->
           <div v-else-if="state.activePanel === 'history'" class="flex flex-col gap-2">
-            <!-- 이력 항목 예시 -->
-            <div class="bg-purple-100 px-3 py-2 rounded text-sm">
-              <div class="font-semibold text-gray-800">전시 '현대미술전'</div>
-              <div class="text-gray-600">방문일: 2025.03.15</div>
+            <!-- 방문 기록이 있는 경우 -->
+            <div v-if="eventVisits.length > 0">
+              <div v-for="visit in eventVisits" :key="visit.idx"
+                class="bg-purple-100 px-3 py-2 rounded text-sm mb-2 flex justify-between items-start">
+                <div>
+                  <router-link :to="`/events/${visit.idx}`" :key="visit.idx"
+                    class="font-semibold text-gray-800 hover:text-purple-700">
+                    {{ visit.title }}
+                  </router-link>
+                  <div class="text-gray-600">방문일: {{ formatDate(visit.timestamp) }}</div>
+                </div>
+
+                <!-- 개별 삭제 버튼 -->
+                <button @click.prevent="removeEventVisit(visit.idx)" class="text-gray-500 hover:text-red-500 p-1"
+                  title="방문 기록 삭제">
+                  <span class="text-sm">×</span>
+                </button>
+              </div>
             </div>
+
+            <!-- 방문 기록이 없는 경우 -->
+            <div v-else class="text-gray-500 text-center py-4">
+              방문 기록이 없습니다.
+            </div>
+
+            <!-- 방문 기록 모두 지우기 버튼 -->
+            <button v-if="eventVisits.length > 0" @click="clearEventVisits"
+              class="mt-2 bg-gray-200 text-gray-700 py-1 px-3 rounded text-sm hover:bg-gray-300">
+              모든 방문 기록 지우기
+            </button>
           </div>
         </div>
       </div>

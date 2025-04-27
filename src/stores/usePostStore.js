@@ -55,5 +55,14 @@ export const usePostStore = defineStore('post', {
                 throw error;
             }
         },
+
+        //게시글 조회수 증가
+        async setViewCnt(postIdx){
+            try{
+                await axios.get("/api/post/view", {params:{postIdx:postIdx}})
+            }catch(err){
+                console.error("조회수 증가 에러",err);
+            }
+        },
     }
 })
