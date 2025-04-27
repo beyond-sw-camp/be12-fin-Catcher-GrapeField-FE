@@ -1,15 +1,18 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import axios from 'axios'
-import {useRoute, useRouter} from 'vue-router'
-import {useUserStore} from '../stores/useUserStore'
-import {useChatRoomListStore} from '@/stores/useChatRoomListStore'
-import {useChatRoomStore} from '@/stores/useChatRoomStore'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '../stores/useUserStore'
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
+import { useChatRoomStore } from '@/stores/useChatRoomStore'
+import { useCalendarStore } from '@/stores/useCalendarStore'
 // import {connect, stompClient} from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
 const userStore = useUserStore()
 const chatListStore = useChatRoomListStore()
 const chatRoomStore = useChatRoomStore()
+const calendarStore = useCalendarStore();
+
 const route = useRoute()
 const router = useRouter()
 const chatBody = ref(null)
@@ -59,8 +62,6 @@ const getPanelTitle = computed(() => {
       return ''
   }
 })
-
-const calendarInfo = ref({});
 
 // 내가 참여한 채팅방
 const favoriteChatRooms = computed(() => {
@@ -146,51 +147,21 @@ function viewAllChatRoomsNewWindow() {
   window.open(routeUrl, '_blank')
 }
 
+const calendarInfo = ref();
 const loadPlan = async () => {
   const today = new Date();
-
-  // 이번 달의 마지막 날 구하기
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-  // 포맷팅 - 시간 부분 제외
-  const year = lastDayOfMonth.getFullYear();
-  const month = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0');
-  const day = String(lastDayOfMonth.getDate()).padStart(2, '0');
-
-  const formattedDate = `${year}-${month}-${day}T00:00:00`;
-
-  console.log(formattedDate);
+  const year = ref(today.getFullYear())
+  const month = ref(today.getMonth() + 1)
+  const targetDate = new Date(year.value, month.value, 1)
+  const isoDateString = targetDate.toISOString().slice(0, 19)
 
   try {
-    const res = await axios.get(
-      `/api/calendar/list`,
-      {
-        params: { date: formattedDate },
-      }
-    );
-    console.log('응답 데이터:', res.data);
-
-    // 오늘 이후의 일정만 필터링
-    const todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0); // 오늘 날짜의 시작(자정)으로 설정
-
-    if (res.data && res.data.personal) {
-      // personal 데이터가 배열인 경우
-      if (Array.isArray(res.data.personal)) {
-        calendarInfo.value = res.data.personal.filter(event => {
-          const eventDate = new Date(event.startDate);
-          return eventDate >= todayDate;
-        });
-      } else {
-        // personal 데이터가 객체인 경우 (그대로 유지)
-        calendarInfo.value = res.data.personal;
-      }
-    }
-  } catch (e) {
-    console.error('게시글 로딩 실패:', e);
+    const result = await calendarStore.getAllSchedule(isoDateString)
+    calendarInfo.value = result;
+  } catch (error) {
+    console.error("캘린더 데이터 로딩 오류:", error)
   }
 };
-
 
 // 로그아웃 처리
 const logout = () => {
@@ -217,7 +188,9 @@ function formatDateRange(start, end) {
 
 
 onMounted(() => {
-  loadPlan();
+  if (userStore.isLogin === true) {
+    loadPlan();
+  }
   // 내가 참여 중인 채팅방 리스트 (로그인 상태에서만 호출)
   if (userStore.isLogin && chatListStore.myRooms.length === 0) {
     chatListStore.fetchMyRooms()
@@ -227,6 +200,22 @@ onMounted(() => {
     userStore.fetchUserDetail()
   }
 })
+
+watch(() => userStore.isLogin, (newValue) => {
+  if (newValue === true) { // 로그인 상태가 true로 변경되었을 때
+    loadPlan();
+
+    if (chatListStore.myRooms.length === 0) {
+      chatListStore.fetchMyRooms();
+    }
+
+    if (!userStore.userDetail) {
+      userStore.fetchUserDetail();
+    }
+  }
+})
+
+
 </script>
 
 <template>
@@ -246,7 +235,7 @@ onMounted(() => {
         <!-- 본문 - 콘텐츠 영역 -->
         <div class="flex-1 px-4 py-3 overflow-y-auto">
           <!-- 프로필(내정보) 패널 -->
-          <div v-if="state.activePanel==='profile'" class="flex flex-col items-center">
+          <div v-if="state.activePanel === 'profile'" class="flex flex-col items-center">
             <!-- 프로필 사진-->
             <div
               class="w-16 h-16 rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-6 flex items-center justify-center">
@@ -279,7 +268,7 @@ onMounted(() => {
             </div>
           </div>
           <!-- 채팅 패널 -->
-          <div v-else-if="state.activePanel==='chat'" class="flex flex-col h-full">
+          <div v-else-if="state.activePanel === 'chat'" class="flex flex-col h-full">
             <!-- 채팅방 목록 보기 -->
             <div v-if="!state.activeChatRoom" class="flex flex-col h-full">
               <!-- 채팅방 목록 -->
@@ -294,7 +283,7 @@ onMounted(() => {
                   class="p-3 bg-purple-100 rounded hover:shadow cursor-pointer" @click="showChatRoom(room)">
                   <div class="flex justify-between items-center mb-1">
                     <span class="font-semibold text-gray-800 truncate w-2/3">{{ room.roomName }}</span>
-                    <span :class="isLive(room.eventStartDate,room.eventEndDate)?'bg-red-500':'bg-gray-400'"
+                    <span :class="isLive(room.eventStartDate, room.eventEndDate) ? 'bg-red-500' : 'bg-gray-400'"
                       class="text-xs text-white px-2 py-0.5 rounded-full">
                       {{ isLive(room.eventStartDate, room.eventEndDate) ? 'LIVE' : '대기' }}
                     </span>
@@ -320,27 +309,27 @@ onMounted(() => {
                 <!-- 채팅방 제목 -->
                 <div class="flex-1 text-sm font-semibold text-gray-800 text-center truncate">{{
                   chatRoomStore.roomTitle
-                  }}
+                }}
                 </div>
                 <!-- 전체화면 버튼 (큰화면 링크) -->
                 <button class="px-2 py-1 hover:bg-purple-100 rounded"
-                        @click="openChatRoomNewWindow(state.activeChatRoom.roomIdx)">
-                  <img alt="전체화면" class="w-5 h-5 opacity-70" src="/assets/icons/expand.png"/>
+                  @click="openChatRoomNewWindow(state.activeChatRoom.roomIdx)">
+                  <img alt="전체화면" class="w-5 h-5 opacity-70" src="/assets/icons/expand.png" />
                 </button>
               </div>
               <!-- 채팅 메세지 목록 -->
               <div ref="chatBody" class="flex-1 overflow-y-auto space-y-3 mb-3">
                 <transition-group>
-                  <div v-for="(msg,index) in chatRoomStore.formattedMessages" :key="msg.id"
-                    :class="['flex', msg.isMe?'justify-end':'justify-start']">
+                  <div v-for="(msg, index) in chatRoomStore.formattedMessages" :key="msg.id"
+                    :class="['flex', msg.isMe ? 'justify-end' : 'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
                       <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col max-w-[70%]">
-                      <div :class="msg.isMe? 'bg-purple-700 text-white':'bg-purple-100 text-gray-800'"
+                      <div :class="msg.isMe ? 'bg-purple-700 text-white' : 'bg-purple-100 text-gray-800'"
                         class="px-3 py-2 rounded-lg text-sm break-words">{{ msg.content }}
                       </div>
-                      <div :class="msg.isMe?'text-left':'text-right'" class="text-xs text-gray-400 mt-1">
+                      <div :class="msg.isMe ? 'text-left' : 'text-right'" class="text-xs text-gray-400 mt-1">
                         {{ formatTime(msg.timestamp) }}
                       </div>
                     </div>
@@ -359,22 +348,33 @@ onMounted(() => {
             </div>
           </div>
           <!-- 캘린더 패널 -->
-          <div v-else-if="state.activePanel==='calendar'" class="flex flex-col gap-2">
-            <!-- 예시 일정 -->
+          <div v-else-if="state.activePanel === 'calendar'" class="flex flex-col gap-2">
+            <!-- 일정 목록 -->
             <router-link :to="{ path: '/mypage', query: { menu: 'calender' } }">
-              <div v-for="i in calendarInfo" :key="i.idx" class="bg-purple-100 px-3 py-2 rounded text-sm">
-                <div class="font-semibold text-purple-700">{{ (i.startDate) }}</div>
-                <div class="text-gray-800">{{ i.title }}</div>
-                <div class="text-gray-600">{{ i.description }}</div>
+              <div v-if="calendarInfo">
+                <!-- 이벤트 일정 -->
+                <div v-for="item in calendarInfo.event" :key="'event-' + item.idx"
+                  class="bg-purple-100 px-3 py-2 rounded text-sm mb-2">
+                  <div class="font-semibold text-purple-700">{{ item.startDate }}</div>
+                  <div class="text-gray-800">{{ item.title }}</div>
+                </div>
+
+                <!-- 개인 일정 -->
+                <div v-for="item in calendarInfo.personal" :key="'personal-' + item.idx"
+                  class="bg-blue-100 px-3 py-2 rounded text-sm mb-2">
+                  <div class="font-semibold text-blue-700">{{ item.startDate }}</div>
+                  <div class="text-gray-800">{{ item.title }}</div>
+                  <div class="text-gray-600">{{ item.description }}</div>
+                </div>
               </div>
             </router-link>
             <!-- 전체 일정 보기 버튼 -->
-            <button class="mt-2 bg-purple-700 text-white py-2 rounded text-sm hover:bg-purple-800"><router-link
-                :to="{ path: '/mypage', query: { menu: 'calender' } }">전체 일정 보기</router-link>
+            <button class="mt-2 bg-purple-700 text-white py-2 rounded text-sm hover:bg-purple-800">
+              <router-link :to="{ path: '/mypage', query: { menu: 'calender' } }">전체 일정 보기</router-link>
             </button>
           </div>
           <!-- 관심(즐겨찾기) 패널 -->
-          <div v-else-if="state.activePanel==='interest'" class="flex flex-col gap-2">
+          <div v-else-if="state.activePanel === 'interest'" class="flex flex-col gap-2">
             <div class="flex gap-2">
               <button class="bg-purple-700 text-white px-3 py-2 rounded text-sm">공연</button>
               <button class="bg-gray-100 text-gray-800 px-3 py-2 rounded text-sm">전시</button>
@@ -389,7 +389,7 @@ onMounted(() => {
             </div>
           </div>
           <!-- History Panel -->
-          <div v-else-if="state.activePanel==='history'" class="flex flex-col gap-2">
+          <div v-else-if="state.activePanel === 'history'" class="flex flex-col gap-2">
             <!-- 이력 항목 예시 -->
             <div class="bg-purple-100 px-3 py-2 rounded text-sm">
               <div class="font-semibold text-gray-800">전시 '현대미술전'</div>
@@ -400,7 +400,7 @@ onMounted(() => {
       </div>
       <div v-else class="flex flex-col justify-center items-center h-full px-4 text-center">
         <p class="text-sm">로그인 후 사용해주세요.</p>
-        <router-link :to="{ path:'/login', query:{ redirect:$route.fullPath }}"
+        <router-link :to="{ path: '/login', query: { redirect: $route.fullPath } }"
           class="mt-4 border border-purple-700 text-purple-700 px-4 py-2 rounded hover:bg-purple-100 text-sm">
           로그인
         </router-link>
@@ -410,24 +410,24 @@ onMounted(() => {
 
   <!-- 사이드바 접힘 버튼 -->
   <div v-if="state.isSidebarCollapsed"
-       class="hidden md:flex fixed top-[45%] right-0 w-16 h-20 bg-purple-100 rounded-l-xl flex justify-center items-center cursor-pointer shadow-md hover:bg-purple-200 z-50"
-       @click="toggleSidebar">
-    <img alt="열기" class="w-12 h-12" src="/assets/icons/open.png"/>
+    class="hidden md:flex fixed top-[45%] right-0 w-16 h-20 bg-purple-100 rounded-l-xl flex justify-center items-center cursor-pointer shadow-md hover:bg-purple-200 z-50"
+    @click="toggleSidebar">
+    <img alt="열기" class="w-12 h-12" src="/assets/icons/open.png" />
   </div>
   <!-- 사이드바 (세로 버튼메뉴 모음) -->
   <div v-show="!state.isSidebarCollapsed" class="hidden md:flex fixed top-[20%] right-0 z-40 h-2/3">
     <div class="w-16 min-w-[55px] bg-purple-100 flex flex-col rounded-l-xl shadow-md">
       <div class="flex flex-col gap-6 py-4 flex-1">
-        <button v-for="panel in ['profile','chat','calendar','interest','history']" :key="panel"
-          :class="['flex justify-center items-center h-16 w-full', state.activePanel===panel?'bg-purple-700 text-white':'hover:bg-purple-200 text-gray-600']"
+        <button v-for="panel in ['profile', 'chat', 'calendar', 'interest', 'history']" :key="panel"
+          :class="['flex justify-center items-center h-16 w-full', state.activePanel === panel ? 'bg-purple-700 text-white' : 'hover:bg-purple-200 text-gray-600']"
           @click="togglePanel(panel)">
           <img :alt="panel" :src="getIconUrl(panel)" class="w-10 h-10" />
         </button>
       </div>
       <div class="h-px bg-gray-200 mx-2 my-2"></div>
       <button class="flex justify-center items-center h-16 w-full hover:bg-purple-200 text-gray-600"
-              @click="toggleSidebar">
-        <img alt="닫기" class="w-10 h-10" src="/assets/icons/close.png"/>
+        @click="toggleSidebar">
+        <img alt="닫기" class="w-10 h-10" src="/assets/icons/close.png" />
       </button>
     </div>
   </div>
