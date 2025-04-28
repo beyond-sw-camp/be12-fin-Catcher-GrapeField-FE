@@ -4,18 +4,12 @@ import { Client } from '@stomp/stompjs';
 
 let stompClient = null;
 
-// baseUrl: 환경변수 값을 사용하거나 기본값은 빈 문자열
-const baseUrl = import.meta.env.VITE_BASE_URL || '';
-
-// SockJS는 http:// 또는 https:// 프로토콜을 사용해야 함
-// 배포 환경: 환경변수가 "/api"로 설정된 경우 -> "/api/ws" 사용 (상대 경로)
-// 개발 환경: 환경변수가 없거나 다른 값인 경우 -> "http://localhost:8080/ws" 사용
-const socketUrl = baseUrl === '/api' 
-  ? `${baseUrl}/ws`  // 배포 환경: "/api/ws" (상대 경로)
-  : 'http://localhost:8080/ws';  // 개발 환경: http 프로토콜로 변경
-
-console.log('현재 환경:', baseUrl ? '배포 환경' : '개발 환경');
-console.log('Socket URL:', socketUrl);
+// baseUrl: 환경변수가 없으면 상대경로 사용
+const baseUrl = import.meta.env.VITE_BASE_URL || '';  // 예: '' 또는 'http://localhost:8080'
+//개발 환경용 웹소켓
+const socketUrl = `${baseUrl}/ws`; // 상대경로도 가능하게 설정
+//배포 환경용 웹소켓
+// const socketUrl = '/ws'; 
 
 export function connect(onConnectCallback /*, token */) {
     const socket = new SockJS(socketUrl, null, {
