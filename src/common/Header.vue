@@ -206,20 +206,22 @@ watch(isLogin, (loggedIn, prev) => {
 // 초기 경로 설정, 알림 웹소켓 연결
 onMounted(() => {
   currentPath.value = route.path;
-  const username = getCurrentUsername();
-  if (username) {
-    // 사용자 이름이 존재할 때만 웹소켓 연결
-    connect(() => {
-      // 알림 구독
-      notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
-      // 기존 알림 목록 조회
-      fetchNotifications();
-    });
-  } else {
-    console.error('사용자 이름을 찾을 수 없습니다.');
+  // 로그인 상태인 경우에만 웹소켓 연결 시도
+  if (userStore.isLogin) {
+    const username = getCurrentUsername();
+    if (username) {
+      // 사용자 이름이 존재할 때만 웹소켓 연결
+      connect(() => {
+        // 알림 구독
+        notificationSubscription.value = subscribeToNotifications(username, onNotificationReceived);
+        // 기존 알림 목록 조회
+        fetchNotifications();
+      });
+    } else {
+      console.error('사용자 이름을 찾을 수 없습니다.');
+    }
   }
 })
-
 // 라우트 변경 감지
 watch(() => route.path, (newPath) => {
   currentPath.value = newPath
