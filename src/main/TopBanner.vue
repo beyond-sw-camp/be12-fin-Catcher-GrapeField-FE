@@ -12,86 +12,88 @@ const searchQuery = ref('');
 const isPaused = ref(false);
 
 onBeforeMount(() => {
-  slides.value = bannerData.slides.map(slide => {
-    let link = null;
+    slides.value = bannerData.slides.map(slide => {
+        let link;
+        
+        if (slide.link) {
+            link = `${slide.link}`;
+        } else if (slide.events_id !== "null") {
+            link = `/events/${slide.events_id}`;
+            console.log('idx is ' + slide.events_id);
+        } else {
+            link = '/events';
+        }
 
-    if (slide.events_id !== "null") {
-      link = `/events/${slide.events_id}`;
-    }
-    else {
-      link = '/events';
-    }
-
-    return {
-      ...slide,
-      link
-    };
-  });
+        return {
+            ...slide,
+            link
+        };
+    });
 });
 
 onMounted(() => {
-  startSlideTimer();
+    startSlideTimer();
 });
 
 onBeforeUnmount(() => {
-  stopSlideTimer();
+    stopSlideTimer();
 });
 
 function startSlideTimer() {
-  if (!isPaused.value) {
-    timer.value = setInterval(() => {
-      nextSlide();
-    }, 3000);
-  }
+    if (!isPaused.value) {
+        timer.value = setInterval(() => {
+            nextSlide();
+        }, 3000);
+    }
 }
 
 function stopSlideTimer() {
-  clearInterval(timer.value);
-  timer.value = null;
+    clearInterval(timer.value);
+    timer.value = null;
 }
 
 function pauseSlider() {
-  isPaused.value = true;
-  stopSlideTimer();
+    isPaused.value = true;
+    stopSlideTimer();
 }
 
 function resumeSlider() {
-  isPaused.value = false;
-  startSlideTimer();
+    isPaused.value = false;
+    startSlideTimer();
 }
 
 function nextSlide() {
-  currentIndex.value = (currentIndex.value + 1) % slides.value.length;
+    currentIndex.value = (currentIndex.value + 1) % slides.value.length;
 }
 
 function goToSlide(index) {
-  currentIndex.value = index;
-  stopSlideTimer();
-  startSlideTimer();
+    currentIndex.value = index;
+    stopSlideTimer();
+    startSlideTimer();
 }
 
 function goToSearch() {
-  if (searchQuery.value.trim()) {
-    router.push({
-      path: '/search',
-      query: { q: searchQuery.value }
-    });
-  }
+    if (searchQuery.value.trim()) {
+        router.push({
+            path: '/search',
+            query: { keyword: searchQuery.value }
+        });
+    }
 }
 function getBackgroundStyle(slide) {
-  if (slide.imgSrc) {
-    return {
-      backgroundImage: `url(${slide.imgSrc})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundColor: '#f8f5ff' // 이미지 위에 약간 기본색 느낌 유지
-    };
-  } else {
-    return {
-      backgroundColor: '#f8f5ff'
-    };
-  }
+    if (slide.imgSrc) {
+        return {
+            backgroundImage: `url(${slide.imgSrc})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: '#f8f5ff' // 이미지 위에 약간 기본색 느낌 유지
+        };
+    } else {
+        return {
+            backgroundColor: '#f8f5ff'
+        };
+    }
 }
 
 </script>
@@ -99,11 +101,9 @@ function getBackgroundStyle(slide) {
 <template>
     <div class="banner-wrapper">
         <div class="banner-container">
-            <div class="banner-content" v-for="(slide, index) in slides" :key="index"
-                 v-show="currentIndex === index"
-                :class="{ 'clickable': slide.link}"
-                :style="getBackgroundStyle(slide)">
-              <div class="overlay"></div>
+            <div class="banner-content" v-for="(slide, index) in slides" :key="index" v-show="currentIndex === index"
+                :class="{ 'clickable': slide.link }" :style="getBackgroundStyle(slide)">
+                <div class="overlay"></div>
                 <router-link v-if="slide.link" :to="slide.link" class="banner-link">
                     <div class="banner-text">
                         <h1 class="banner-title">{{ slide.title }}</h1>
@@ -147,13 +147,14 @@ function getBackgroundStyle(slide) {
 
 <style scoped>
 .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.4); /* 어두운 반투명 */
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    /* 어두운 반투명 */
+    z-index: 1;
 }
 
 /* 기존 스타일 그대로 유지 */
