@@ -22,7 +22,6 @@ pipeline {
         stage('Node.js Build') {
             agent {
                 docker { 
-                    label 'build'
                     image 'node:18' 
                     args '-u root'
                 }
