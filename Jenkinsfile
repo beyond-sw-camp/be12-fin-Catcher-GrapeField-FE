@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Git clone') {
             agent {
-                label 'slave1'
+                label 'build'
             }
             steps {
                 echo "Cloning Repository"
@@ -21,7 +21,7 @@ pipeline {
         stage('Node.js Build') {
             agent {
                 docker { 
-                    label 'slave1'
+                    label 'build'
                     image 'node:18' 
                     args '-u root'
                 }
@@ -36,7 +36,7 @@ pipeline {
 
         stage('Docker Build') {
             agent {
-                label 'slave1'
+                label 'build'
             }
             steps {
                 script {
@@ -50,7 +50,7 @@ pipeline {
 
         stage('Docker Push') {
             agent {
-                label 'slave1'
+                label 'build'
             }
             steps {
                 script {
@@ -66,7 +66,7 @@ pipeline {
 
         stage('K8s Deploy') {
             agent {
-                label 'master'
+                label 'deploy'
             }
             steps {
                 script {
