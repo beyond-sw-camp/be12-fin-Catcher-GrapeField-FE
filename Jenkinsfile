@@ -63,7 +63,6 @@ pipeline {
                 }
             }
         }
-
         stage('K8s Deploy') {
             agent {
                 label 'deploy'
@@ -72,13 +71,28 @@ pipeline {
                 script {
                     withEnv(['KUBECONFIG=/home/test/.kube/config']) {
                         sh """
+                            # 이미지 태그 업데이트
                             sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
-                            kubectl apply -f k8s/frontend-deployment.yml -n first --validate=false
+                            
+                            # 수정된 파일 내용 확인 (디버깅용)
+                            echo "배포할 YAML 파일 내용:"
+                            cat k8s/frontend-deployment.yml
+                            
+                            # Kubernetes에 배포
+                            kubectl apply -f k8s/frontend-deployment.yml -n first
                             kubectl rollout status deployment/nginx -n first
                         """
                     }
                 }
             }
+        }
+    }
+    post {
+        success {
+            echo "배포 성공: ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+        }
+        failure {
+            echo "배포 실패: 오류를 확인하세요."
         }
     }
 }
