@@ -29,7 +29,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo 'VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}' > .env
+                    export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
                     npm install
                     npm run build
                 '''
