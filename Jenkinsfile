@@ -21,15 +21,14 @@ pipeline {
                 label 'build'
             }
             steps {
-                script {  // script 블록 추가
-                    docker.image('node:18').inside('-u root') {
-                        sh '''
-                            export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
-                            npm install
-                            npm run build
-                        '''
-                    }
-                }
+                sh """
+                    # Node 컨테이너 실행 및 빌드
+                    docker run --rm -v \$(pwd):/app -w /app -e VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL} node:18 /bin/bash -c '
+                        echo "VITE_BASE_IMAGE_URL=\$VITE_BASE_IMAGE_URL" > .env
+                        npm install
+                        npm run build
+                    '
+                """
             }
         }
         stage('Docker Build') {
@@ -37,12 +36,10 @@ pipeline {
                 label 'build'
             }
             steps {
-                script {
-                    def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "Building Docker image: ${fullImageName}"
-                    
-                    docker.build(fullImageName)
-                }
+                sh """
+                    # Docker 이미지 빌드
+                    docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG} .
+                """
             }
         }
         stage('Docker Push') {
@@ -50,12 +47,11 @@ pipeline {
                 label 'build'
             }
             steps {
-                script {
-                    def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "Pushing Docker image: ${fullImageName}"
-                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKER_HUB') {
-                        docker.image(fullImageName).push()
-                    }
+                withCredentials([string(credentialsId: 'DOCKER_HUB', variable: 'DOCKER_PASSWORD')]) {
+                    sh """
+                        echo \${DOCKER_PASSWORD} | docker login -u ${DOCKER_USER} --password-stdin
+                        docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
                 }
             }
         }
@@ -64,22 +60,20 @@ pipeline {
                 label 'deploy'
             }
             steps {
-                script {
-                    withEnv(['KUBECONFIG=/home/test/.kube/config']) {
-                        sh """
-                            # 이미지 태그 업데이트
-                            sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
-                            
-                            # 수정된 파일 내용 확인 (디버깅용)
-                            echo "배포할 YAML 파일 내용:"
-                            cat k8s/frontend-deployment.yml
-                            
-                            # Kubernetes에 배포
-                            kubectl apply -f k8s/frontend-deployment.yml -n first
-                            kubectl rollout status deployment/nginx -n first
-                        """
-                    }
-                }
+                sh """
+                    export KUBECONFIG=/home/test/.kube/config
+                    
+                    # 이미지 태그 업데이트
+                    sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
+                    
+                    # 수정된 파일 내용 확인 (디버깅용)
+                    echo "배포할 YAML 파일 내용:"
+                    cat k8s/frontend-deployment.yml
+                    
+                    # Kubernetes에 배포
+                    kubectl apply -f k8s/frontend-deployment.yml -n first
+                    kubectl rollout status deployment/nginx -n first
+                """
             }
         }
     }
