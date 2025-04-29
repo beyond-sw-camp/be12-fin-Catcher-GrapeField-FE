@@ -1,0 +1,489 @@
+{
+  "chatRooms": [
+    {
+      "id": 1,
+      "title": "뮤지컬 \"라이온 킹\" 채팅방",
+      "date": "2025.04.04 - 2025.04.30",
+      "participants": 257,
+      "preview": "오늘 공연 주인공의 고음이 정말 인상적이었어요!",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/21/21011619_p.gif",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 1001,
+          "sender": "관람객1",
+          "content": "오늘 공연 정말 좋았어요!",
+          "timestamp": "2025-04-04T19:25:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 1002,
+          "sender": "관람객2",
+          "content": "주인공 배우의 고음이 정말 인상적이었습니다.",
+          "timestamp": "2025-04-04T19:27:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 1003,
+          "sender": "관람객3",
+          "content": "맞아요! 2막에서 특히 감동적이었죠.",
+          "timestamp": "2025-04-04T19:30:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 1004,
+          "sender": "나",
+          "content": "주차장은 아직 자리가 남아있나요?",
+          "timestamp": "2025-04-04T19:35:00",
+          "isMe": true
+        },
+        {
+          "id": 1005,
+          "sender": "관람객4",
+          "content": "지금 주차장 거의 만석입니다. 근처 부설 주차장 이용하시는 게 좋을 것 같아요.",
+          "timestamp": "2025-04-04T19:36:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T20:12:00",
+          "duration": 10
+        },
+        {
+          "id": "highlight-2",
+          "time": "2025-04-04T21:05:00",
+          "duration": 8
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "현대미술전 \"공간의 탐색\" 채팅방",
+      "date": "2025.03.20 - 2025.05.15",
+      "participants": 124,
+      "preview": "전시장 왼쪽 작품이 정말 인상적입니다. 꼭 봐보세요!",
+      "imageUrl": "https://mblogthumb-phinf.pstatic.net/MjAyMzAxMzFfMTQg/MDAxNjc1MTQ1ODA5MzI1.IZh5fntfSP-gllkXe3GRuNud20V8_XQmIZ-U6AZNa_og.34lZXlk7NrGHmxUPqrQXwVv6O5zTQVk6jk7GY2p9Gk8g.JPEG.jffactory/%EC%83%88%ED%95%B4%EC%B2%AB%EC%A0%84%EC%8B%9C.jpg",
+      "category": "exhibitions",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 2001,
+          "sender": "관람객1",
+          "content": "전시장 입구부터 너무 멋있어요!",
+          "timestamp": "2025-04-04T14:10:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 2002,
+          "sender": "관람객2",
+          "content": "2층 오른쪽 끝에 있는 작품이 특히 인상적이네요",
+          "timestamp": "2025-04-04T14:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 2003,
+          "sender": "나",
+          "content": "지금 전시장 인원이 많나요?",
+          "timestamp": "2025-04-04T14:20:00",
+          "isMe": true
+        },
+        {
+          "id": 2004,
+          "sender": "관람객3",
+          "content": "적당히 있어요. 붐비지는 않아서 작품 감상하기 좋습니다.",
+          "timestamp": "2025-04-04T14:22:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T15:30:00",
+          "duration": 12
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "콘서트 \"봄의 하모니\" 채팅방",
+      "date": "2025.04.10 - 2025.04.11",
+      "participants": 189,
+      "preview": "주차장 거의 만석입니다. 대중교통 이용 추천해요.",
+      "imageUrl": "https://image.bugsm.co.kr/album/images/original/203591/20359132.jpg?version=undefined",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 3001,
+          "sender": "관람객1",
+          "content": "콘서트 시작 전인데 이미 분위기가 뜨겁네요!",
+          "timestamp": "2025-04-04T18:30:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 3002,
+          "sender": "관람객2",
+          "content": "앞자리 몇 줄은 이미 다 찼어요",
+          "timestamp": "2025-04-04T18:35:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 3003,
+          "sender": "나",
+          "content": "주차장 상황은 어떤가요?",
+          "timestamp": "2025-04-04T18:40:00",
+          "isMe": true
+        },
+        {
+          "id": 3004,
+          "sender": "관람객3",
+          "content": "주차장 거의 만석입니다. 대중교통 이용 추천해요.",
+          "timestamp": "2025-04-04T18:42:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T19:45:00",
+          "duration": 15
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "사진전 \"바다의 기억\" 채팅방",
+      "date": "2025.03.15 - 2025.04.20",
+      "participants": 78,
+      "preview": "오늘 작가와의 대화 시간 18시에 있습니다!",
+      "imageUrl": "https://www.jungle.co.kr/image/9773fb39ad4b9ba4",
+      "category": "exhibitions",
+      "isActive": false,
+      "messages": [
+        {
+          "id": 4001,
+          "sender": "관람객1",
+          "content": "오늘 작가와의 대화 시간 18시에 있습니다!",
+          "timestamp": "2025-04-04T13:10:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 4002,
+          "sender": "관람객2",
+          "content": "해안가 풍경 사진들이 정말 아름답네요",
+          "timestamp": "2025-04-04T13:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 4003,
+          "sender": "나",
+          "content": "작가와의 대화는 어디서 진행되나요?",
+          "timestamp": "2025-04-04T13:20:00",
+          "isMe": true
+        },
+        {
+          "id": 4004,
+          "sender": "관람객1",
+          "content": "전시장 내 세미나실에서 진행됩니다.",
+          "timestamp": "2025-04-04T13:22:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T18:00:00",
+          "duration": 20
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "연극 \"햄릿\" 채팅방",
+      "date": "2025.04.05 - 2025.05.01",
+      "participants": 142,
+      "preview": "배우들의 연기가 압권이에요. 특히 2막에서...",
+      "imageUrl": "https://image.yes24.com/images/chyes24/5/c/a/0/5ca01c9e24e44ceb9d64253ac5fbc70d.JPG",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 5001,
+          "sender": "관람객1",
+          "content": "햄릿 역할의 배우 연기가 정말 압권이네요!",
+          "timestamp": "2025-04-04T19:10:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 5002,
+          "sender": "관람객2",
+          "content": "특히 2막에서 독백 장면이 감동적이었어요",
+          "timestamp": "2025-04-04T19:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 5003,
+          "sender": "나",
+          "content": "중간에 쉬는 시간이 있나요?",
+          "timestamp": "2025-04-04T19:20:00",
+          "isMe": true
+        },
+        {
+          "id": 5004,
+          "sender": "관람객3",
+          "content": "네, 2막과 3막 사이에 15분 인터미션이 있습니다.",
+          "timestamp": "2025-04-04T19:21:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T20:05:00",
+          "duration": 10
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "뮤지컬 \"오페라의 유령\" 채팅방",
+      "date": "2025.04.15 - 2025.06.20",
+      "participants": 312,
+      "preview": "팬텀의 마스크 디자인이 새롭게 바뀌었네요!",
+      "imageUrl": "https://img.gqkorea.co.kr/gq/2018/07/style_5b3c79d91b213-814x1100.jpg",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 6001,
+          "sender": "관람객1",
+          "content": "이번 공연에서 크리스틴 역할을 맡은 배우의 목소리가 정말 천상의 목소리네요",
+          "timestamp": "2025-04-04T20:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 6002,
+          "sender": "관람객2",
+          "content": "샹들리에 떨어지는 장면에서 놀라서 소리 질렀어요 ㅋㅋ",
+          "timestamp": "2025-04-04T20:10:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T20:45:00",
+          "duration": 15
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "팝업 전시 \"빛의 파동\" 채팅방",
+      "date": "2025.04.01 - 2025.04.15",
+      "participants": 95,
+      "preview": "인터랙티브 요소가 있어서 아이들과 함께 가기 좋아요!",
+      "imageUrl": "https://t1.daumcdn.net/cfile/tistory/996A66445F7C1E0628",
+      "category": "exhibitions",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 7001,
+          "sender": "관람객1",
+          "content": "빛과 소리가 반응하는 전시물이 너무 신기해요",
+          "timestamp": "2025-04-04T15:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 7002,
+          "sender": "관람객2",
+          "content": "3관에 있는 프로젝션 매핑 작품이 압권이에요!",
+          "timestamp": "2025-04-04T15:12:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T15:30:00",
+          "duration": 12
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "재즈 페스티벌 \"블루노트\" 채팅방",
+      "date": "2025.04.20 - 2025.04.22",
+      "participants": 178,
+      "preview": "오늘 헤드라이너는 9시부터 공연합니다!",
+      "imageUrl": "https://image.yes24.com/goods/119219759/XL",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 8001,
+          "sender": "관람객1",
+          "content": "2관 재즈트리오 공연이 정말 훌륭해요",
+          "timestamp": "2025-04-04T16:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 8002,
+          "sender": "관람객2",
+          "content": "메인 스테이지는 너무 붐비네요. 좀 일찍 자리잡아야 할 것 같아요",
+          "timestamp": "2025-04-04T16:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": []
+    },
+    {
+      "id": 9,
+      "title": "디자인 박람회 \"모던 라이프\" 채팅방",
+      "date": "2025.05.01 - 2025.05.10",
+      "participants": 145,
+      "preview": "북유럽 가구 전시관이 인기가 많아요",
+      "imageUrl": "https://www.jungle.co.kr/image/48efe7b3c9ba28cd",
+      "category": "exhibitions",
+      "isActive": false,
+      "messages": [
+        {
+          "id": 9001,
+          "sender": "관람객1",
+          "content": "스칸디나비안 디자인관 정말 멋져요!",
+          "timestamp": "2025-04-04T11:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 9002,
+          "sender": "관람객2",
+          "content": "가구 구매 시 현장 할인도 적용된대요",
+          "timestamp": "2025-04-04T11:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": []
+    },
+    {
+      "id": 10,
+      "title": "오케스트라 \"베토벤 시리즈\" 채팅방",
+      "date": "2025.04.25 - 2025.04.26",
+      "participants": 203,
+      "preview": "오늘은 교향곡 5번 '운명'과 7번 공연입니다",
+      "imageUrl": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAzMDFfNjYg%2FMDAxNjc3NjU3MTMxNjM2._d02-Hc-HbfWTn1nHHE-dT_69jCTSGQCLsEXZuGN5Xcg.4cCk4_nNPFWRV7Zk-oFzVs3J2nT0GbCdHLRuZ4D7iXQg.JPEG.sangrokdang%2FIMG_6594.jpg&type=sc960_832",
+      "category": "performances",
+      "isActive": true,
+      "messages": [
+        {
+          "id": 10001,
+          "sender": "관람객1",
+          "content": "지휘자의 해석이 정말 독특하고 신선해요",
+          "timestamp": "2025-04-04T19:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 10002,
+          "sender": "관람객2",
+          "content": "프로그램북에 악보 해설이 자세히 나와있어 좋네요",
+          "timestamp": "2025-04-04T19:12:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": [
+        {
+          "id": "highlight-1",
+          "time": "2025-04-04T19:45:00",
+          "duration": 10
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "발레 \"백조의 호수\" 채팅방",
+      "date": "2025.05.05 - 2025.05.20",
+      "participants": 167,
+      "preview": "오데트/오딜 역의 발레리나가 32회 푸에테를 성공했어요!",
+      "imageUrl": "https://post-phinf.pstatic.net/MjAyMjAzMDdfMjMx/MDAxNjQ2NjM0ODYyMDAy.tXYmmJVIJqsKnGl5YMjsKFbBk7pN9FKCvRKpROm8Ys8g.FHYEH4TVdAJwCkMz-J1_TIzR5LYaJqGAKK8QkzCIMUQg.JPEG/swan-4910586_1920.jpg?type=w800_q75",
+      "category": "performances",
+      "isActive": false,
+      "messages": [
+        {
+          "id": 11001,
+          "sender": "관람객1",
+          "content": "주역 발레리나의 기교가 정말 환상적이에요",
+          "timestamp": "2025-04-04T20:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 11002,
+          "sender": "관람객2",
+          "content": "오케스트라 연주도 완벽해요",
+          "timestamp": "2025-04-04T20:10:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": []
+    },
+    {
+      "id": 12,
+      "title": "아트페어 \"현대미술의 조망\" 채팅방",
+      "date": "2025.05.15 - 2025.05.30",
+      "participants": 134,
+      "preview": "8관의 신진작가 전시가 특히 인상적입니다",
+      "imageUrl": "https://www.jungle.co.kr/image/9b61d15d99abaa43",
+      "category": "exhibitions",
+      "isActive": false,
+      "messages": [
+        {
+          "id": 12001,
+          "sender": "관람객1",
+          "content": "국내외 갤러리들이 다양하게 참여했네요",
+          "timestamp": "2025-04-04T13:05:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        },
+        {
+          "id": 12002,
+          "sender": "관람객2",
+          "content": "작품 가격이 생각보다 합리적인 것도 있어요",
+          "timestamp": "2025-04-04T13:15:00",
+          "avatar": "/src/assets/icons/participant.png",
+          "isMe": false
+        }
+      ],
+      "highlights": []
+    }
+  ],
+  "userFavorites": [2, 4, 6, 10]
+}

@@ -1,0 +1,50 @@
+
+{
+  "chatRooms": [
+    {
+      "name": "연극 꽃의 비밀",
+      "location": "세종문화회관",
+      "time": "오후 2시 공연",
+      "comments": 5439,
+      "likes": "13.3K",
+      "color": "pink",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24018192_p.gif"
+    },
+    {
+      "name": "뮤지컬 원스",
+      "location": "세종문화회관",
+      "time": "오후 2시 공연",
+      "comments": 5422,
+      "likes": "9.3K",
+      "color": "purple-light",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24018006_p.gif"
+    },
+    {
+      "name": "뮤지컬 지킬앤하이드",
+      "location": "세종문화회관",
+      "time": "오후 2시 공연",
+      "comments": 3212,
+      "likes": "7.3K",
+      "color": "violet",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/24/24013928_p.gif"
+    },
+    {
+      "name": "2025 정승환 팬콘서트 〈University of Seung Hwan〉",
+      "location": "세종문화회관",
+      "time": "오후 2시 공연",
+      "comments": 2943,
+      "likes": "2.3K",
+      "color": "fuchsia",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25004069_p.gif"
+    },
+    {
+      "name": "2025 N.Flying LIVE ‘＆CON4 : FULL CIRCLE’",
+      "location": "올림픽 공원",
+      "time": "오후 7시 공연",
+      "comments": 2734,
+      "likes": "2.3K",
+      "color": "purple-dark",
+      "imageUrl": "https://ticketimage.interpark.com/Play/image/large/25/25004056_p.gif"
+    }
+  ]
+}

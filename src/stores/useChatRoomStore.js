@@ -1,0 +1,316 @@
+//useChatRoomStore.js
+import {defineStore, acceptHMRUpdate} from 'pinia'
+import axios from 'axios'
+import {connect as createWebSocketConnection, stompClient} from '@/utils/webSocketClient'
+import {nextTick} from "vue";
+
+const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
+const currentUserIdx = loginUser?.userIdx
+
+
+export const useChatRoomStore = defineStore('chatRoom', {
+    state: () => ({
+        roomData: null,
+        messages: [],
+        stompClient: null,
+        currentUserIdx: loginUser?.userIdx,
+        highlightedTimes: [],
+        showHighlightEffect: false,
+        participantCount: 0,
+        roomTitle: '',
+        loading: false,
+        error: null,
+        showNewMessageButton: false,
+        hearts: [],
+        newMessage: '',
+        chatBodyElement: null,
+    }),
+
+    getters: {
+        formattedMessages: (state) => state.messages.map(msg => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+        })),
+        highlightList: (state) => state.highlightedTimes.map(h => ({
+            id: h.id,
+            time: new Date(h.time)
+        }))
+    },
+
+    actions: {
+        getSubscriptionCount() {
+            if(this._stompSubscription) {
+                //console.log("[Store] _stompSubscription 존재:");
+            }
+            if(this._likeSubscription) {
+                //console.log("[Store] _likeSubscription 존재:");
+            }
+            if(this._highlightSubscription) {
+                //console.log("[Store] _highlightSubscription 존재:");
+            }
+            return [
+                this._stompSubscription,
+                this._likeSubscription,
+                this._highlightSubscription
+            ].filter(sub => !!sub).length
+        }
+        ,
+        async fetchChatRoom(roomIdx, chatBodyElement) {
+            this.loading = true
+            this.error = null
+            this.chatBodyElement = chatBodyElement
+            try {
+                const {data} = await axios.get(`/api/chat/${roomIdx}`, {
+                    withCredentials: true,
+                    headers: {}
+                })
+                this.roomData = data
+                this.roomTitle = data.roomName
+                this.participantCount = data.memberList.length
+                this.messages = data.messageList.map(msg => ({
+                    id: msg.messageIdx,
+                    sender: msg.username,
+                    avatar: msg.profileImageUrl,
+                    content: msg.content,
+                    timestamp: new Date(msg.createdAt),
+                    isMe: msg.userIdx === currentUserIdx,
+                    isHighlighted: msg.isHighlighted
+                }))
+                this.highlightedTimes = data.highlightList.map(h => ({
+                    id: h.idx,
+                    messageIdx: h.messageIdx,
+                    summary: h.description,
+                    time1: new Date(h.startTime),
+                    time2: new Date(h.endTime)
+                }))
+                return data
+            } catch (err) {
+                this.error = err
+                throw err
+            } finally {
+                this.loading = false
+            }
+
+        },
+        addHighlightRealtime(highlightResp) {
+            //('🟡 실시간 하이라이트 수신:', highlightResp)
+            this.highlightedTimes.push({
+                id: highlightResp.idx,
+                messageIdx: highlightResp.messageIdx,
+                summary: highlightResp.description,
+                time1: new Date(highlightResp.startTime),
+                time2: new Date(highlightResp.endTime)
+            })
+            this.triggerHighlightPopup()
+        },
+
+        triggerHighlightPopup() {
+            this.showHighlightEffect = true
+            setTimeout(() => {
+                this.showHighlightEffect = false
+            }, 2000)
+        },
+        // 채팅방 하트 로직
+        sendHeart(roomId) {
+            //console.log('🧪 stompClient 상태 확인:', this.stompClient)
+
+            if (!this.stompClient || !this.stompClient.connected) {
+                console.warn('❗ stompClient 연결 안 됨');
+                return
+            }
+
+            this.stompClient.publish({
+                destination: `/app/chat.like.${roomId}`,
+                body: JSON.stringify({
+                    roomIdx: roomId
+                })
+            })
+        },
+
+        connectWebSocket(roomId) {
+            //console.log(this.getSubscriptionCount())
+            if (this._stompSubscription) {
+                this._stompSubscription.unsubscribe()
+                this._stompSubscription = null
+                //console.log('[Store] stompSubscription 기존 구독 해제 완료')
+            }
+            if (this._likeSubscription) {
+                this._likeSubscription.unsubscribe()
+                this._likeSubscription = null
+                //console.log('[Store] likeSubscription 기존 구독 해제 완료')
+            }
+            if (this._highlightSubscription) {
+                this._highlightSubscription.unsubscribe()
+                this._highlightSubscription = null
+                //console.log('[Store] highlightSubscription 기존 구독 해제 완료')
+            }
+            if (this.stompClient) {
+                this.stompClient.deactivate?.()
+                this.stompClient = null
+                //console.log('[Store] stompClient deactivate 완료')
+            }
+
+            createWebSocketConnection(client => {
+                //console.log('[Store] onConnect 콜백, client.connected:', client.connected);
+                this.stompClient = client;
+                // 채팅 메시지 수신
+                this._stompSubscription = client.subscribe(
+                    `/topic/chat.room.${roomId}`,
+                    frame => {
+                        //console.log('[Store] 🔔 message arrived');
+                        this.handleIncomingMessage(frame)
+                        // this.scrollToBottom(this.chatBodyElement) // 스크롤을 아래로 내리는 함수 호출
+                    })
+                //console.log(`[STOMP] 구독 완료 → /topic/chat.room.${roomId}`);
+                // 하트 실시간 구독
+                this._likeSubscription = client.subscribe(
+                    `/topic/chat.room.likes.${roomId}`,
+                    (frame) => {
+                        const heart = JSON.parse(frame.body)
+                        //console.log("❤️ 하트 수신!", heart)
+
+                        // 하트 수 증가
+                        if (this.roomData) {
+                            this.roomData.heartCnt += 1
+                        }
+
+                        // 하트 애니메이션
+                        this.triggerHearts()
+                    }
+                )
+
+                //console.log(`[STOMP] 하트 구독 완료 → /topic/chat.room.likes.${roomId}`);
+                // ✅ 하이라이트 실시간 구독
+                this._highlightSubscription = client.subscribe(
+                    `/topic/chat.room.highlight.${roomId}`,
+                    (frame) => {
+                        const highlight = JSON.parse(frame.body);
+                        //console.log("📡 하이라이트 수신!", highlight);
+                        this.addHighlightRealtime(highlight);
+                    }
+                );
+                //console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
+            }/*, token*/)
+        },
+
+        disconnectWebSocket() {
+            if (this._stompSubscription) {
+                this._stompSubscription.unsubscribe()
+                this._stompSubscription = null
+            }
+            if (this._likeSubscription) {
+                this._likeSubscription.unsubscribe()
+                this._likeSubscription = null
+            }
+            if (this._highlightSubscription) {
+                this._highlightSubscription.unsubscribe();
+                this._highlightSubscription = null;
+            }
+        },
+
+        sendMessage(roomId) {
+            //console.log('[Store] sendMessage 진입:', this.newMessage, this.stompClient);
+            if (!this.newMessage.trim() || !this.stompClient?.connected) {
+                console.warn('[Store] 메시지 전송 조건 불충족', {
+                    empty: !this.newMessage.trim(),
+                    connected: this.stompClient?.connected
+                });
+                return;
+            }
+
+            const messagePayload = {
+                roomIdx: roomId,
+                content: this.newMessage
+            }
+
+            if (this.stompClient.publish) {
+                this.stompClient.publish({
+                    destination: `/app/chat.send.${roomId}`,
+                    body: JSON.stringify(messagePayload)
+                })
+            } else {
+                this.stompClient.send(
+                    `/app/chat.send.${roomId}`,
+                    {},
+                    JSON.stringify(messagePayload)
+                )
+            }
+
+            // 로컬 메시지 초기화
+            this.newMessage = ''
+        },
+
+        handleIncomingMessage(frame) {
+            //console.log('[Store] 현재 구독 개수:', this.getSubscriptionCount());
+            //console.log('chatBodyElement:', this.chatBodyElement)
+            const msg = JSON.parse(frame.body)
+            const newMsg = {
+                id: msg.messageIdx,
+                sender: msg.username,
+                avatar: msg.profileImageUrl,
+                content: msg.content,
+                timestamp: msg.createdAt,
+                isMe: msg.userIdx === this.currentUserIdx,
+                isHighlighted: msg.isHighlighted
+            }
+            this.messages.push(newMsg)
+            nextTick(() => {
+                if(!this.chatBodyElement) {
+                    //console.log("chatBodyElement 없음");
+                    return}
+                this.scrollToBottom(this.chatBodyElement)
+            })
+        },
+        onNewMessageClick() {
+            this.showNewMessageButton = false
+        },
+
+        initialScroll(chatBodyElement) {
+            if (chatBodyElement) {
+                chatBodyElement.scrollTop = chatBodyElement.scrollHeight
+            }
+        },
+
+
+        scrollToBottom(chatBodyElement) {
+            if (!chatBodyElement) return
+            const element = chatBodyElement
+            const start = element.scrollTop
+            const end = element.scrollHeight - element.clientHeight
+            const duration = 600
+            const startTime = performance.now()
+
+            const easeInOutQuad = t =>
+                t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+            const animateScroll = currentTime => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                element.scrollTop = start + (end - start) * easeInOutQuad(progress)
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll)
+                }
+            }
+
+            requestAnimationFrame(animateScroll)
+        },
+
+        triggerHearts() {
+            //('useChatRoomStore.js triggerHearts() ❤️ 하트 애니메이션 시작');
+            for (let i = 0; i < 5; i++) {
+                const id = Date.now() + Math.random()
+                setTimeout(() => {
+                    this.hearts.push({id, x: 10 + Math.random() * 20, y: 0})
+                    setTimeout(() => {
+                        this.hearts = this.hearts.filter(h => h.id !== id)
+                    }, 10000)
+                }, i * 150)
+            }
+        }
+    }
+})
+
+// HMR for Vite
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useChatRoomStore, import.meta.hot))
+}
