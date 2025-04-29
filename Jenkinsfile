@@ -70,7 +70,7 @@ pipeline {
             }
             steps {
                 script {
-                    withEnv(['KUBECONFIG=/var/lib/jenkins/.kube/config']) {
+                    withEnv(['KUBECONFIG=/home/test/.kube/config']) {
                         sh """
                             sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
                             kubectl apply -f k8s/frontend-deployment.yml -n first --validate=false
