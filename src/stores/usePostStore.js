@@ -64,5 +64,15 @@ export const usePostStore = defineStore('post', {
                 console.error("조회수 증가 에러",err);
             }
         },
+
+        async deletePost(postIdx){
+            try{
+                const response = await axios.patch(`/api/post/delete/${postIdx}`)
+                return response.data;
+            }catch(err){
+                console.error("게시글 삭제 에러", err);
+            }
+        },
+
     }
 })

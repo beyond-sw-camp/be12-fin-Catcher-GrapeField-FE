@@ -192,7 +192,12 @@ const deletePost = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-        await postStore.deletePost(post.value.postIdx);
+        const response = await postStore.deletePost(props.postIdx);
+        
+        console.log(response);
+        if(response === false){
+            alert('게시글 삭제 중 오류가 발생했습니다.'); return;
+        }
         alert('게시글이 삭제되었습니다.');
         backToList();
     } catch (err) {
