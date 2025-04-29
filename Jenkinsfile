@@ -5,6 +5,7 @@ pipeline {
         DOCKER_USER = 'rekvv'
         IMAGE_NAME = 'grapefield_front'
         IMAGE_TAG = "${env.GIT_COMMIT[0..7]}-${BUILD_NUMBER}"
+        VITE_BASE_IMAGE_URL = 'https://grapefield-image.s3.ap-northeast-2.amazonaws.com/'
     }
 
     stages {
@@ -28,6 +29,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo 'VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}' > .env
                     npm install
                     npm run build
                 '''
@@ -43,7 +45,7 @@ pipeline {
                     def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
                     echo "Building Docker image: ${fullImageName}"
 
-                    docker.build(fullImageName)
+                    docker build -t ${fullImageName} .
                 }
             }
         }
