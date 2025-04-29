@@ -5,9 +5,11 @@ import { Client } from '@stomp/stompjs';
 let stompClient = null;
 
 // baseUrl: 환경변수가 없으면 상대경로 사용
-const baseUrl = import.meta.env.VITE_BASE_URL || '';  // 예: '' 또는 'http://localhost:8080'
+const baseUrl = import.meta.env.VITE_BASE_URL || '';
 // const socketUrl = `${baseUrl}/ws`; // 상대경로도 가능하게 설정
-const socketUrl = '/ws'; 
+const socketUrl = '/ws';
+const isProd = import.meta.env.PROD; // true이면 프로덕션, false이면 개발 환경
+console.log(`현재 환경: ${isProd ? '배포 환경' : '개발 환경'}`);
 
 export function connect(onConnectCallback /*, token */) {
     const socket = new SockJS(socketUrl, null, {

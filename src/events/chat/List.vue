@@ -9,7 +9,7 @@ import { useSearchStore } from '@/stores/useSearchStore'
 const chatListStore = useChatRoomListStore()
 const chatStore = useChatStore()
 const searchQuery = ref('')
-const activeTab = ref('all')
+const activeTab = ref('musical')
 const router = useRouter()
 const scrollTrigger = ref(null)
 
@@ -184,17 +184,23 @@ watch(searchQuery, (newQuery) => {
     </div>
 
     <div class="tabs">
-      <div class="tab" :class="{ active: activeTab === 'all' }" @click="activeTab = 'all'">
-        전체
-      </div>
-      <div class="tab" :class="{ active: activeTab === 'popular' }" @click="activeTab = 'popular'">
+      <!-- <div class="tab" :class="{ active: activeTab === 'popular' }" @click="activeTab = 'popular'">
         인기 채팅방
+      </div> -->
+      <div class="tab" :class="{ active: activeTab === 'musical' }" @click="activeTab = 'musical'">
+        뮤지컬
       </div>
-      <div class="tab" :class="{ active: activeTab === 'performances' }" @click="activeTab = 'performances'">
-        공연
+      <div class="tab" :class="{ active: activeTab === 'concert' }" @click="activeTab = 'concert'">
+        콘서트
+      </div>
+      <div class="tab" :class="{ active: activeTab === 'play' }" @click="activeTab = 'play'">
+        연극
       </div>
       <div class="tab" :class="{ active: activeTab === 'exhibitions' }" @click="activeTab = 'exhibitions'">
-                전시/클래식
+                전시회
+            </div>
+      <div class="tab" :class="{ active: activeTab === 'classic' }" @click="activeTab = 'classic'">
+                클래식
             </div>
       <div class="tab" :class="{ active: activeTab === 'myPageRooms' }" @click="handleMyChatClick">
         내 채팅
