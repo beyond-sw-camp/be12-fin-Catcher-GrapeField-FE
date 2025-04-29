@@ -8,19 +8,19 @@ spec:
   selector:
     matchLabels:
       app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
   template:
     metadata:
       labels:
         app: nginx
-    spec:
-      strategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 25%
-          maxSurge: 25%
+    spec:     
       containers:
         - name: nginx
-          image: rekvv/grapefield_front:latest
+          image: rekvv/grapefield_front:9af8effa-21
           ports:
             - containerPort: 80
             - containerPort: 443
