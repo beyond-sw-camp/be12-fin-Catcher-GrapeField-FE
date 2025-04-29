@@ -44,8 +44,7 @@ pipeline {
                 script {
                     def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
                     echo "Building Docker image: ${fullImageName}"
-
-                    docker build -t ${fullImageName} .
+                    sh "docker build -t ${fullImageName} ."
                 }
             }
         }
