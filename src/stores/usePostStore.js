@@ -100,7 +100,17 @@ export const usePostStore = defineStore('post', {
                 throw error;
             }
         },
-        
+
+        //게시글 스크랩
+        async setPostScrap(postIdx){
+            try{
+                const response = await axios.patch("/api/post/scrap", null, { params: { idx: postIdx}})
+                return response.data;
+            }catch (error) {
+                console.error('게시글 스크랩 오류:', error);
+                throw error;
+            }
+        },
 
     }
 })

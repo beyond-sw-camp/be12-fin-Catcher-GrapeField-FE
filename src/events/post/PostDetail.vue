@@ -52,7 +52,7 @@
                 수정
             </button>
             <button v-if="post.editable" @click="deletePost"
-                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-red-600 hover:text-white">
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                 삭제
             </button>
         </div>
@@ -231,11 +231,11 @@ const scrapPost = async (postIdx) => {
     if (!userStore.isLogin) {
         return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center", });
     }
-    
     const result = await postStore.setPostScrap(postIdx);
-    if(result === false){
-        alert("게시글 스크랩 실패");
-        return;
+    if(result === true){
+        toast("스크랩 완료", { type: "success", autoClose: 1500, position: "bottom-center", });
+    }else{
+        toast("스크랩 해제 완료", { type: "success", autoClose: 1500, position: "bottom-center", });
     }
 }
 
