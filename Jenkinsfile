@@ -21,12 +21,10 @@ pipeline {
 
         stage('Node.js Build') {
             agent {
-                docker { 
-                    image 'node:18' 
-                    args '-u root'
-                }
+                label 'build'
             }
             steps {
+                docker.image('node:18').inside('-u root') {
                 sh '''
                     echo 'VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}' > .env
                     npm install
@@ -34,6 +32,7 @@ pipeline {
                 '''
             }
         }
+    }
 
         stage('Docker Build') {
             agent {
