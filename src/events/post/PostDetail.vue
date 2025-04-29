@@ -18,7 +18,7 @@
                 <div class="flex space-x-6">
                     <div>
                         <span class="text-gray-500">작성자: </span>
-                        <span class="font-medium">{{ post.username }}</span>
+                        <span class="font-medium">{{ post.writer }}</span>
                     </div>
                     <div>
                         <span class="text-gray-500">작성일: </span>
@@ -147,6 +147,7 @@ const fetchPost = async () => {
     try {
         loading.value = true;
         const data = await postStore.getPostDetail(props.postIdx);
+        console.log(data);
         if (data) {
             post.value = data;
         }
