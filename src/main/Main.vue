@@ -91,7 +91,7 @@ watch(() => selectedCategory.value, async (newCategory) => {
         <Calendar />
 
         <!-- 데이터와 카테고리를 props로 직접 전달 -->
-        <CardList title="오픈" index="1" :events="openEvents" :category="selectedCategory" />
-        <CardList title="종료" index="6" :events="closeEvents" :category="selectedCategory" />
+        <CardList title="오픈 예정" index="1" :events="openEvents" :category="selectedCategory" />
+        <CardList title="종료 예정" index="6" :events="closeEvents" :category="selectedCategory" />
     </div>
 </template>
