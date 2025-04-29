@@ -6,64 +6,64 @@
       "subtitle": "하루를 더 특별하게",
       "searchPlaceholder": "찾고 싶은 공연이나 전시를 검색하세요",
       "imgSrc": "null",
-      "events_id": "null"
+      "events_id": "null",
+      "link": null
     },
     {
       "id": 2,
       "title": "뮤지컬 〈알라딘〉 한국 초연",
       "subtitle": "The Hit Broadway Musical",
       "imgSrc": "https://ticketimage.interpark.com/TCMS3.0//MProd/ProdBridge/2502/3dfe8148-e324-4ca4-9a6e-c3336c0058ac.png",
-      "events_id": 7
+      "events_id": 312,
+      "link": null
     },
     {
       "id": 3,
       "title": "뮤지컬 지킬앤하이드 (Jekyll＆Hyde) - 20주년",
       "subtitle": "지금 이 순간 끝나지 않는 신화",
       "imgSrc": "https://img.sbs.co.kr/newimg/news/20240923/201987801.jpg",
-      "events_id": 8
+      "events_id": 313,
+      "link": null
     },
     {
       "id": 4,
       "title": "꽃의 비밀",
       "subtitle": "셰익스피어 재해석, 인간 내면의 욕망과 사랑",
       "imgSrc": "https://ticketimage.interpark.com/playdb/media/040011/25/01/0400112501_83119_M.wmv.jpg",
-      "events_id": 1
+      "events_id": 409,
+      "link": null
     },
     {
       "id": 5,
-      "title": "인상파, 모네에서 미국으로: 빛, 바다를 건너다",
-      "subtitle": "미술사의 가장 위대하고 찬란한 인상파의 대향연",
-      "imgSrc": "https://i.ytimg.com/vi/KU3hVQ3-Kp0/maxresdefault.jpg",
-      "events_id": 10
+      "title": "정태춘＆박은옥 콘서트 - 부산",
+      "subtitle": "새 앨범. 콘서트. 노래 시집, 붓집",
+      "imgSrc": "https://ticketimage.interpark.com/Play/image/large/24/24015059_p.gif",
+      "events_id": 183,
+      "link": null
     },
     {
       "id": 6,
       "title": "트래비스 스캇 첫 단독 내한공연",
       "subtitle": "CIRCUS MAXIMUS in Korea",
       "imgSrc": "https://d3lzcn6mbbadaf.cloudfront.net/media/details/ANI-20250325054926.jpg",
-      "events_id": 9
+      "events_id": 4,
+      "link": null
     },
     {
       "id": 7,
-      "title": "2025 상반기 경복궁 생과방",
-      "subtitle": "조선시대 왕실의 별식을 맛보다",
-      "imgSrc": "https://news.kbs.co.kr/data/news/2025/03/25/20250325_8CLxCU.jpg",
-      "events_id": "11"
+      "title": "2025 〈갈매기〉 앵콜공연",
+      "subtitle": "미쳤다. 이 연극!! 이게 연극이지",
+      "imgSrc": "https://ticketimage.interpark.com/Play/image/large/25/25005535_p.gif",
+      "events_id": 519,
+      "link": null
     },
     {
       "id": 8,
-      "title": "신규 회원 혜택",
-      "subtitle": "GrapeField 회원이 되어 다양한 혜택을 누려보세요",
-      "imgSrc": "https://plus.unsplash.com/premium_photo-1687203673190-d39c3719123a?q=80&w=3028&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "events_id": "null"
-    },
-
-    {
-      "id": 9,
       "title": "커뮤니티 인기글",
       "subtitle": "다른 사용자들과 함께 정보를 공유해보세요",
       "imgSrc": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "events_id": "null"
+      "events_id":"null",
+      "link": "/community"
     }
   ]
 }
