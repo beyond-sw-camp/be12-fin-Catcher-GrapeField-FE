@@ -8,11 +8,23 @@ const subscriptions = []; // 구독 관리 배열
 export function connectSocket({ endpoint = '/ws', headers = {} } = {}) {
     if (stompClient && stompClient.connected) return Promise.resolve(stompClient);
     
-    // 상대 경로 사용
-    const socket = new SockJS(endpoint, null, {
-        transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
-        withCredentials: true // 쿠키 전송 활성화
-    });
+    // 현재 모드 확인 (개발 환경 vs 배포 환경)
+    const isProd = import.meta.env.PROD; // true이면 프로덕션, false이면 개발 환경
+    
+    console.log(`현재 환경: ${isProd ? '배포 환경' : '개발 환경'}`);
+    
+    let socket;
+    
+    if (isProd) {
+        // 배포 환경용 코드
+        socket = new SockJS(endpoint, null, {
+            transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+            withCredentials: true // 쿠키 전송 활성화
+        });
+    } else {
+        // 개발 환경용 코드
+        socket = new SockJS(endpoint);
+    }
     
     stompClient = new Client({
         webSocketFactory: () => socket,
@@ -30,6 +42,33 @@ export function connectSocket({ endpoint = '/ws', headers = {} } = {}) {
     });
 }
 
+//배포 환경용
+// export function connectSocket({ endpoint = '/ws', headers = {} } = {}) {
+//     if (stompClient && stompClient.connected) return Promise.resolve(stompClient);
+    
+//     // 상대 경로 사용
+//     const socket = new SockJS(endpoint, null, {
+//         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+//         withCredentials: true // 쿠키 전송 활성화
+//     });
+    
+//     stompClient = new Client({
+//         webSocketFactory: () => socket,
+//         connectHeaders: headers,
+//         reconnectDelay: 5000,
+//         onConnect: () => {
+//             console.log('WebSocket 연결 성공');
+//         }
+//     });
+    
+//     stompClient.activate();
+//     return new Promise((resolve, reject) => {
+//         stompClient.onConnect = () => resolve(stompClient);
+//         stompClient.onStompError = err => reject(err);
+//     });
+// }
+
+// 개발 환경용
 // export function connectSocket({ endpoint = '/ws', headers ={}}={}) {
 //     if (stompClient && stompClient.connected) return Promise.resolve(stompClient);
 //     const socket = new SockJS(endpoint);
