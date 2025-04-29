@@ -70,11 +70,13 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
-                        sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
-                        kubectl apply -f k8s/frontend-deployment.yml -n first
-                        kubectl rollout status deployment/nginx -n first
-                    """
+                    withEnv(['KUBECONFIG=/home/jenkins/.kube/config']) {
+                        sh """
+                            sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
+                            kubectl apply -f k8s/frontend-deployment.yml -n first --validate=false
+                            kubectl rollout status deployment/nginx -n first
+                        """
+                    }
                 }
             }
         }
