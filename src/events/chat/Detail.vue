@@ -8,12 +8,12 @@ import {useChatStore} from "@/stores/useChatStore.js";
 
 // reactive 변수
 const chatBody = ref(null)
-
 const router = useRouter()
 const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 const chatStore = useChatStore()
+const isHighlightCollapsed = ref(false)
 
 // 시간 포맷 함수
 function formatTime(date) {
@@ -22,19 +22,15 @@ function formatTime(date) {
   return `${hours}:${minutes}`
 }
 
-// 하이라이트 시간 포맷 (시작에 10분 더하기)
-function formatHighlightTime(date) {
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${hours}:${(parseInt(minutes) + 10).toString().padStart(2, '0')}`
-}
-
 function onNewMessageClick() {
   // scrollToBottom()
   chatRoomStore.scrollToBottom(chatBody.value)
   chatRoomStore.onNewMessageClick()
 }
 
+function toggleHighlight() {
+  isHighlightCollapsed.value = !isHighlightCollapsed.value;
+}
 
 function scrollToHighlight(hStartMessageIdx, highlight) {
   //console.log(hStartMessageIdx);
@@ -75,6 +71,7 @@ function goBack() {
 function sendMessage() {
   chatRoomStore.sendMessage(roomId.value)
 }
+
 function scrollToBottom() {
   if (!chatBody.value) return
   const element = chatBody.value
@@ -175,18 +172,32 @@ onBeforeUnmount(() => {
 
     <!-- highlight section -->
     <div v-if="chatRoomStore.highlightedTimes.length"
-         class="bg-purple-50 p-4 sm:p-6 rounded-lg mt-2 sm:mt-4">
-      <h3 class="text-purple-700 text-lg sm:text-xl font-semibold mb-2">🔥 하이라이트 시간대</h3>
-      <div class="flex flex-wrap gap-2 sm:gap-4">
-        <div v-for="(highlight, index) in chatRoomStore.highlightedTimes" :key="highlight.id"
-             class="cursor-pointer bg-white text-purple-700 px-3 py-1 sm:px-4 sm:py-2
+    class="relative" >
+      <button class="absolute top-5 right-5 z-10 flex items-center gap-2 px-3 py-1 bg-white border rounded-full shadow hover:bg-purple-700 hover:text-white transition"
+              @click="toggleHighlight">
+        <span v-if="isHighlightCollapsed">🔻 하이라이트 보기</span>
+        <span v-else>🔺 하이라이트 감추기</span>
+      </button>
+
+      <transition name="fade">
+        <div v-if="!isHighlightCollapsed"
+             class="bg-purple-50 p-4 sm:p-6 rounded-lg">
+          <h3 class="text-purple-700 text-lg sm:text-xl font-semibold mb-2">🔥 하이라이트 시간대</h3>
+          <div class="flex flex-wrap gap-2 sm:gap-4">
+            <div v-for="(highlight, index) in chatRoomStore.highlightedTimes" :key="highlight.id"
+                 class="cursor-pointer bg-white text-purple-700 px-3 py-1 sm:px-4 sm:py-2
                     rounded-full text-sm sm:text-base shadow hover:bg-purple-700 hover:text-white
                     transition"
-             @click="scrollToHighlight(highlight.messageIdx, highlight)">
-          <div>{{ formatHighlightTime(highlight.time1) }}~{{ formatHighlightTime(highlight.time2) }}</div>
-          <div>{{ highlight.summary }}</div>
+                 @click="scrollToHighlight(highlight.messageIdx, highlight)">
+              <div>{{ formatTime(highlight.time1) }}~{{ formatTime(highlight.time2) }}</div>
+              <div>{{ highlight.summary }}</div>
+            </div>
+          </div>
         </div>
-      </div>
+
+      </transition>
+
+
     </div>
 
     <!-- new message button -->
@@ -244,13 +255,13 @@ onBeforeUnmount(() => {
             :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
             class="heart-pop">
           <svg
-            height="16"
-            viewBox="0 0 24 24"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg">
+              height="16"
+              viewBox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg">
             <path
-              :fill="getRandomColor()"
-        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                :fill="getRandomColor()"
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
          2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81
          4.5 2.09C13.09 3.81 14.76 3 16.5 3
          19.58 3 22 5.42 22 8.5c0 3.78-3.4
