@@ -185,7 +185,7 @@ function backToList() {
 
 // 게시글 수정
 const editPost = () => {
-    router.push(`/post/edit/${props.postIdx}`);
+    router.push(`/events/${props.eventIdx}/post/edit/${props.postIdx}`);
 };
 
 // 게시글 삭제

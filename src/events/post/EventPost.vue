@@ -15,7 +15,7 @@
         <input type="text" placeholder="제목, 내용, 작성자 검색" class="border px-4 py-2 rounded w-full" />
         <button class="bg-purple-600 text-white px-4 py-2 rounded whitespace-nowrap">검색</button>
       </div>
-      <button v-if="isLogin" class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister()">글쓰기</button>
+      <button v-if="isLogin" class="bg-purple-600 text-white px-4 py-2 rounded" @click="goPostRegister(eventIdx)">글쓰기</button>
     </div>
 
     <!-- 데스크탑용 헤더 -->
@@ -194,7 +194,13 @@ function formatDate(dateString) {
 }
 
 function goToPost(boardIdx, postIdx) {
+  postStore.setViewCnt(postIdx)
   router.push(`/events/${boardIdx}/post/${postIdx}`)
+}
+
+function goPostRegister(boardIdx) {
+  postStore.setCurrentBoardIdx(boardIdx);
+  router.push(`/events/${boardIdx}/post/register`);
 }
 
 function goToPage(page) {
@@ -203,10 +209,7 @@ function goToPage(page) {
   }
 }
 
-function goPostRegister() {
-  postStore.setCurrentBoardIdx(eventIdx);
-  router.push({ name: 'PostRegister' });
-}
+
 </script>
 <style scoped>
 th,
