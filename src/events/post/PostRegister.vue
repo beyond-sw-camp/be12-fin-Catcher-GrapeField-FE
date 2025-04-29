@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">게시글 작성</h1>
+    <h1 class="text-2xl font-bold mb-6">{{ isEditMode ? '게시글 수정' : '게시글 작성' }}</h1>
 
     <!-- 게시글 작성 폼 -->
-    <form @submit.prevent="submitPost">
+    <form @submit.prevent="isEditMode ? updatePost() : submitPost()">
       <!-- 분류 선택 -->
       <div class="mb-6">
         <label class="block text-sm font-medium text-gray-700 mb-1">분류 <span
@@ -68,31 +68,58 @@
         <!-- 이미지 첨부용 숨겨진 input -->
         <input ref="fileInput" type="file" @change="handleFileChange" class="hidden" multiple accept="image/*">
 
-        <!-- 이미지 미리보기 영역 -->
-        <div v-if="hasImages" class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div v-for="(file, index) in imageFiles" :key="index" class="relative">
-            <div class="bg-purple-100 rounded p-2">
-              <div class="text-center text-purple-600 mb-1 text-xs truncate">
-                {{ file.name }}
+        <!-- 새로 추가한 이미지 미리보기 영역 -->
+        <div v-if="attachedFiles.length > 0" class="mt-4">
+          <p class="text-sm font-medium text-gray-700 mb-2">추가할 이미지</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div v-for="(file, index) in attachedFiles" :key="index" class="relative">
+              <div class="bg-purple-100 rounded p-2">
+                <div class="text-center text-purple-600 mb-1 text-xs truncate">
+                  {{ file.name }}
+                </div>
+                <div class="aspect-w-4 aspect-h-3 bg-gray-100 flex items-center justify-center">
+                  <img :src="getImagePreview(file)" alt="이미지 미리보기" class="max-h-32 max-w-full object-contain" />
+                </div>
               </div>
-              <div class="aspect-w-4 aspect-h-3 bg-gray-100 flex items-center justify-center">
-                <img :src="getImagePreview(file)" alt="이미지 미리보기" class="max-h-32 max-w-full object-contain" />
-              </div>
+              <button @click="removeFile(index)"
+                class="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <button @click="removeFile(getFileIndex(file))"
-              class="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+          </div>
+        </div>
+
+        <!-- 기존 이미지 미리보기 영역 (수정 모드일 때) -->
+        <div v-if="isEditMode && existingImages.length > 0" class="mt-4">
+          <p class="text-sm font-medium text-gray-700 mb-2">기존 이미지</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div v-for="(image, index) in existingImages" :key="index" class="relative">
+              <div class="bg-purple-100 rounded p-2">
+                <div class="text-center text-purple-600 mb-1 text-xs truncate">
+                  {{ getImageName(image) }}
+                </div>
+                <div class="aspect-w-4 aspect-h-3 bg-gray-100 flex items-center justify-center">
+                  <img :src="getImageUrl(image)" alt="기존 이미지" class="max-h-32 max-w-full object-contain" />
+                </div>
+              </div>
+              <button @click="removeExistingImage(index)"
+                class="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 첨부파일 영역 -->
+      <!-- 이미지 첨부 영역 -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">첨부파일</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">이미지 첨부</label>
         <div @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop"
           class="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center cursor-pointer hover:bg-gray-50">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24"
@@ -100,25 +127,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
-          <p class="text-sm text-gray-600">클릭하여 파일 선택 또는 파일을 여기에 끌어다 놓으세요</p>
-          <p class="text-xs text-gray-500 mt-1">최대 10MB 이하의 파일 업로드 가능</p>
-        </div>
-
-        <!-- 선택된 파일 목록 -->
-        <div v-if="attachedFiles.length > 0" class="mt-3">
-          <p class="text-sm font-medium text-gray-700 mb-2">첨부된 파일 ({{ attachedFiles.length }})</p>
-          <ul class="space-y-2">
-            <li v-for="(file, index) in attachedFiles" :key="index"
-              class="flex items-center justify-between p-2 bg-gray-50 rounded">
-              <span class="text-sm truncate">{{ file.name }}</span>
-              <button @click="removeFile(index)" type="button" class="text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </li>
-          </ul>
+          <p class="text-sm text-gray-600">클릭하여 이미지 선택 또는 이미지를 여기에 끌어다 놓으세요</p>
+          <p class="text-xs text-gray-500 mt-1">최대 10MB 이하의 이미지 파일만 업로드 가능</p>
         </div>
       </div>
 
@@ -129,7 +139,7 @@
           취소
         </button>
         <button type="submit" class="px-4 py-2 bg-purple-600 rounded text-white hover:bg-purple-700">
-          등록하기
+          {{ isEditMode ? '수정하기' : '등록하기' }}
         </button>
       </div>
     </form>
@@ -137,19 +147,51 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePostStore } from '@/stores/usePostStore'
 import { useUserStore } from '@/stores/useUserStore'
 import { useEventsStore } from '@/stores/useEventsStore';
 
-const route = useRoute()
+const route = useRoute();
 const router = useRouter();
 const postStore = usePostStore();
 const userStore = useUserStore();
 const eventStore = useEventsStore();
 
-const boardIdx = postStore.currentBoardIdx;
+const props = defineProps({
+    eventIdx: Number,
+    postIdx: Number
+});
+// API 기본 URL (이미지 URL 생성에 사용)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+// 게시판 인덱스
+const boardIdx = computed(() => {
+  if (props.boardIdx) {
+    const parsedId = Number(props.boardIdx);
+    return isNaN(parsedId) ? null : parsedId;
+  }
+
+  if (route.params.eventIdx) {
+    const parsedId = Number(route.params.eventIdx);
+    return isNaN(parsedId) ? null : parsedId;
+  }
+  
+  return postStore.currentBoardIdx;
+});
+
+// 게시글 인덱스 (수정 모드일 때만 존재)
+const postIdx = computed(() => {
+  if (props.postIdx) return props.postIdx;
+  if (route.params.postIdx) return Number(route.params.postIdx);
+  return null;
+});
+
+// 수정 모드 여부 확인
+const isEditMode = computed(() => {
+  return !!postIdx.value;
+});
 
 const isAdmin = computed(() => {
   return userStore?.role === 'ROLE_ADMIN';
@@ -186,25 +228,80 @@ const postData = reactive({
 // 첨부 파일 관련
 const fileInput = ref(null);
 const attachedFiles = ref([]);
+const existingImages = ref([]); // 기존 이미지 (수정 모드)
+const removedImagePaths = ref([]); // 삭제할 이미지 경로 목록 (수정 모드)
 
-// 이미지 파일만 필터링
-const imageFiles = computed(() => {
-  return attachedFiles.value.filter(file => file.type.startsWith('image/'));
+// 사용자 ID 정보
+const userId = computed(() => userStore.userId || userStore.id);
+
+// 게시글 작성자 ID
+const authorId = ref(null);
+
+// 수정 권한 확인
+const hasEditPermission = computed(() => {
+  // 관리자는 모든 게시글 수정 가능
+  if (isAdmin.value) return true;
+  
+  // 자신의 게시글만 수정 가능
+  return authorId.value && userId.value && authorId.value === userId.value;
 });
 
-// 이미지가 있는지 확인
-const hasImages = computed(() => {
-  return imageFiles.value.length > 0;
+// 컴포넌트 마운트 시 초기화
+onMounted(async () => {
+  if (isEditMode.value) {
+    try {
+      console.log('현재 boardIdx:', boardIdx.value);
+
+      // 게시글 데이터 불러오기
+      const post = await postStore.getPostDetail(postIdx.value);
+      
+      // 작성자 ID 저장
+      authorId.value = post.user_idx;
+      
+      // 폼 데이터 설정
+      postData.postType = post.postType;
+      postData.title = post.title;
+      postData.content = post.content;
+      
+      // 기존 이미지 설정
+      if (post.images && post.images.length > 0) {
+        post.images.forEach(imagePath => {
+          existingImages.value.push(imagePath);
+        });
+      }
+    } catch (error) {
+      console.error('게시글 데이터 불러오기 오류:', error);
+      alert('게시글 데이터를 불러오는데 실패했습니다.');
+      router.back();
+    }
+  }
 });
+
+// 이미지 이름 추출 함수
+const getImageName = (imagePath) => {
+  if (typeof imagePath !== 'string') return '이미지';
+  
+  // 파일 경로에서 파일명만 추출
+  const parts = imagePath.split('/');
+  return parts[parts.length - 1] || '이미지';
+};
+
+// 이미지 URL 생성 함수
+const getImageUrl = (imagePath) => {
+  if (typeof imagePath !== 'string') return '';
+  
+  // 이미 절대 경로인 경우
+  if (imagePath.startsWith('http')) {
+    return imagePath;
+  }
+  
+  // 상대 경로인 경우 API_BASE_URL과 결합
+  return `${API_BASE_URL}/${imagePath}`;
+};
 
 // 이미지 미리보기 URL 생성
 const getImagePreview = (file) => {
   return URL.createObjectURL(file);
-};
-
-// 파일 인덱스 찾기
-const getFileIndex = (file) => {
-  return attachedFiles.value.findIndex(f => f === file);
 };
 
 // 파일 선택 다이얼로그 열기
@@ -216,6 +313,12 @@ const triggerFileInput = () => {
 const handleFileChange = (event) => {
   const files = Array.from(event.target.files);
   for (const file of files) {
+    // 이미지 파일인지 확인
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      continue;
+    }
+    
     if (file.size > 10 * 1024 * 1024) {
       alert('파일 크기는 10MB를 초과할 수 없습니다.');
       continue;
@@ -231,6 +334,12 @@ const handleFileChange = (event) => {
 const handleFileDrop = (event) => {
   const files = Array.from(event.dataTransfer.files);
   for (const file of files) {
+    // 이미지 파일인지 확인
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      continue;
+    }
+    
     if (file.size > 10 * 1024 * 1024) {
       alert('파일 크기는 10MB를 초과할 수 없습니다.');
       continue;
@@ -240,10 +349,20 @@ const handleFileDrop = (event) => {
   }
 };
 
-// 파일 제거
+// 새 파일 제거
 const removeFile = (index) => {
   if (index >= 0 && index < attachedFiles.value.length) {
     attachedFiles.value.splice(index, 1);
+  }
+};
+
+// 기존 이미지 제거
+const removeExistingImage = (index) => {
+  if (index >= 0 && index < existingImages.value.length) {
+    // 삭제할 이미지 경로 추가
+    removedImagePaths.value.push(existingImages.value[index]);
+    // 배열에서 제거
+    existingImages.value.splice(index, 1);
   }
 };
 
@@ -265,22 +384,29 @@ const applyFormat = (formatType) => {
   }
 };
 
-// 게시글 등록
-const submitPost = async () => {
+// 입력 검증
+const validateInput = () => {
   // 필수 필드 검증
   if (!postData.title.trim()) {
     alert('제목을 입력해주세요.');
-    return;
+    return false;
   }
   if (!postData.content.trim()) {
     alert('내용을 입력해주세요.');
-    return;
+    return false;
   }
   // 권한 검증
   if (postData.postType === 'NOTICE' && !isAdmin.value) {
     alert('공지사항은 관리자만 작성할 수 있습니다.');
-    return;
+    return false;
   }
+  return true;
+};
+
+// 게시글 등록
+const submitPost = async () => {
+  if (!validateInput()) return;
+
   try {
     // FormData 생성
     const formData = new FormData();
@@ -288,26 +414,64 @@ const submitPost = async () => {
       postType: postData.postType,
       title: postData.title,
       content: postData.content,
-      boardIdx: boardIdx
+      boardIdx: boardIdx.value
     };
     const requestBlob = new Blob([JSON.stringify(requestData)], {
       type: 'application/json'
     });
     formData.append('request', requestBlob);
 
-    // 첨부 파일 추가 - 이름을 'images'로 변경
+    // 첨부 파일 추가
     attachedFiles.value.forEach(file => {
       formData.append('images', file);
     });
+    
     // API 호출
     const response = await postStore.setPost(formData);
-    const postIdx = response;
+    const newPostIdx = response;
     alert('게시글이 등록되었습니다.');
     eventStore.setTab('게시판');
-    router.push(`/events/${boardIdx}/post/${postIdx}`);
+    router.push(`/events/${boardIdx.value}/post/${newPostIdx}`);
   } catch (error) {
     console.error('게시글 등록 오류:', error);
     const errorMsg = error.response?.data?.message || '게시글 등록 중 오류가 발생했습니다.';
+    alert(errorMsg);
+  }
+};
+
+// 게시글 수정
+const updatePost = async () => {
+  if (!validateInput()) return;
+
+  try {
+    // FormData 생성
+    const formData = new FormData();
+    const requestData = {
+      postType: postData.postType,
+      title: postData.title,
+      content: postData.content,
+      boardIdx: boardIdx.value,
+      removedImagePaths: removedImagePaths.value // 삭제할 이미지 경로 목록
+    };
+    console.log('수정 요청 데이터:', requestData);
+
+    const requestBlob = new Blob([JSON.stringify(requestData)], {
+      type: 'application/json'
+    });
+    formData.append('request', requestBlob);
+
+    // 첨부 파일 추가
+    attachedFiles.value.forEach(file => {
+      formData.append('images', file);
+    });
+    
+    // API 호출
+    await postStore.updatePost(postIdx.value, formData);
+    alert('게시글이 수정되었습니다.');
+    router.push(`/events/${Number(boardIdx.value)}/post/${Number(postIdx.value)}`);
+  } catch (error) {
+    console.error('게시글 수정 오류:', error);
+    const errorMsg = error.response?.data?.message || '게시글 수정 중 오류가 발생했습니다.';
     alert(errorMsg);
   }
 };
