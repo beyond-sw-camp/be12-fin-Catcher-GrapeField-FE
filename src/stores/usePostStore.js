@@ -90,5 +90,17 @@ export const usePostStore = defineStore('post', {
             }
         },
 
+        //게시글 추천
+        async setPostRecommend(postIdx){
+            try{
+                const response = await axios.patch("/api/post/recommend", null, { params: { idx: postIdx }})
+                return response.data;
+            }catch (error) {
+                console.error('게시글 추천 오류:', error);
+                throw error;
+            }
+        },
+        
+
     }
 })

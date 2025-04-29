@@ -160,8 +160,8 @@ const userStore = useUserStore();
 const eventStore = useEventsStore();
 
 const props = defineProps({
-  boardIdx: { type: [Number, String], },
-  postIdx: { type: [Number, String], }
+    eventIdx: Number,
+    postIdx: Number
 });
 // API 기본 URL (이미지 URL 생성에 사용)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
