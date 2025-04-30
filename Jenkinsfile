@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'NodeJS'  // Jenkins에 설정된 Node.js 도구 이름
-    }
     environment {
         DOCKER_USER = 'rekvv'
         IMAGE_NAME = 'grapefield_front'
@@ -25,6 +22,17 @@ pipeline {
             }
             steps {
                 sh '''
+                # 노드가 설치되어 있는지 확인
+                    if ! command -v node &> /dev/null; then
+                        echo "Node.js를 설치합니다..."
+                        # NVM 설치 (Node Version Manager)
+                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+                        # NVM 환경 설정 로드
+                        export NVM_DIR="$HOME/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                        # Node.js LTS 버전 설치
+                        nvm install --lts
+                    fi
                     set -x
                     echo "Node.js 버전: $(node -v || echo 'not installed')"
                     echo "NPM 버전: $(npm -v || echo 'not installed')"
