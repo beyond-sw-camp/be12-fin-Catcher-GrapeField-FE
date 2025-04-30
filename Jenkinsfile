@@ -1,13 +1,11 @@
 pipeline {
     agent any
-
     environment {
         DOCKER_USER = 'rekvv'
         IMAGE_NAME = 'grapefield_front'
         IMAGE_TAG = "${env.GIT_COMMIT[0..7]}-${BUILD_NUMBER}"
         VITE_BASE_IMAGE_URL = 'https://grapefield-image.s3.ap-northeast-2.amazonaws.com/'
     }
-
     stages {
         stage('Git clone') {
             agent {
@@ -18,14 +16,9 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE.git'
             }
         }
-
         stage('Node.js Build') {
             agent {
-                docker { 
-                    label 'build'
-                    image 'node:18' 
-                    args '-u root'
-                }
+                label 'build'
             }
             steps {
                 sh '''
@@ -35,33 +28,27 @@ pipeline {
                 '''
             }
         }
-
         stage('Docker Build') {
             agent {
                 label 'build'
             }
             steps {
-                script {
-                    def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "Building Docker image: ${fullImageName}"
-                    
-                    docker.build(fullImageName)
-                }
+                sh """
+                    # Docker 이미지 빌드
+                    docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG} .
+                """
             }
         }
-
         stage('Docker Push') {
             agent {
                 label 'build'
             }
             steps {
-                script {
-                    def fullImageName = "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "Pushing Docker image: ${fullImageName}"
-
-                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKER_HUB') {
-                        docker.image(fullImageName).push()
-                    }
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh """
+                        echo \${DOCKER_PASSWORD} | docker login -u \${DOCKER_USERNAME} --password-stdin
+                        docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
                 }
             }
         }
@@ -74,9 +61,9 @@ pipeline {
                     withEnv(['KUBECONFIG=/home/test/.kube/config']) {
                         sh """
                             # 이미지 태그 업데이트
-                            sed -i 's/latest/${IMAGE_TAG}/g' k8s/frontend-deployment.yml
+                            sed -i 's|${DOCKER_USER}/${IMAGE_NAME}:.*|${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/frontend-deployment.yml
                             
-                            # 수정된 파일 내용 확인 (디버깅용)
+                            # 수정된 파일 내용 확인
                             echo "배포할 YAML 파일 내용:"
                             cat k8s/frontend-deployment.yml
                             
