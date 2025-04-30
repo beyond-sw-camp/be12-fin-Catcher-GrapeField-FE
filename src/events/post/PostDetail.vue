@@ -18,7 +18,7 @@
                 <div class="flex space-x-6">
                     <div>
                         <span class="text-gray-500">작성자: </span>
-                        <span class="font-medium">{{ post.username }}</span>
+                        <span class="font-medium">{{ post.writer }}</span>
                     </div>
                     <div>
                         <span class="text-gray-500">작성일: </span>
@@ -39,12 +39,20 @@
         </div>
         <!-- 버튼 영역 -->
         <div class="flex justify-end mt-6 mb-4 space-x-2">
+            <button @click="scrapPost(post.idx)"
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-blue-600 hover:text-white">
+                스크랩
+            </button>
+            <button @click="reportPost(post.idx)"
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-red-600 hover:text-white">
+                신고
+            </button>
             <button v-if="post.editable" @click="editPost"
                 class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                 수정
             </button>
             <button v-if="post.editable" @click="deletePost"
-                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-red-600 hover:text-white">
+                class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                 삭제
             </button>
         </div>
@@ -56,16 +64,26 @@
 
             <!-- 이미지 렌더링 (이미지 서버 baseURL + 상대경로) -->
             <div v-if="post.images && post.images.length > 0" class="my-6">
-                <div v-for="(image, index) in post.images" :key="index"
-                    class="my-4 bg-purple-50 p-4 rounded-lg flex justify-center">
+                <div v-for="(image, index) in post.images" :key="index" class="my-4 p-4 rounded-lg flex justify-center">
                     <img :src="baseImageUrl + image" alt="본문 이미지" class="max-h-96 object-contain" />
                 </div>
             </div>
         </div>
 
+        <div class="flex justify-center items-center space-x-2">
+            <button @click="recommendPost(post.idx)"
+                class="mt-2 px-4 py-1 flex justify-center bg-purple-200 text-purple-900 rounded-md font-bold hover:bg-purple-400 border-2 border-purple-300 hover:border-purple-500"
+                :class="{ 'px-6': post.recommendCnt > 0 }">
+                추천
+            </button>
+            <span v-if="post.recommendCnt > 0" class="mt-2 text-purple-600 font-bold">
+                {{ post.recommendCnt }}
+            </span>
+        </div>
+
         <!-- 구분선 -->
         <hr class="my-6 border-gray-200">
-        <Comment :postIdx="props.postIdx" :eventIdx="props.eventIdx"/>
+        <Comment :postIdx="props.postIdx" :eventIdx="props.eventIdx" />
         <hr class="my-6 border-gray-200">
         <!-- 게시글 목록 섹션 제목 -->
         <div class="flex justify-between items-center mb-4">
@@ -88,6 +106,7 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import EventPost from './EventPost.vue';
 import Comment from './Comment.vue';
+import { toast } from 'vue3-toastify';
 
 const route = useRoute();
 const router = useRouter();
@@ -147,6 +166,7 @@ const fetchPost = async () => {
     try {
         loading.value = true;
         const data = await postStore.getPostDetail(props.postIdx);
+        console.log(data)
         if (data) {
             post.value = data;
         }
@@ -184,7 +204,7 @@ function backToList() {
 
 // 게시글 수정
 const editPost = () => {
-    router.push(`/post/edit/${props.postIdx}`);
+    router.push(`/events/${props.eventIdx}/post/edit/${props.postIdx}`);
 };
 
 // 게시글 삭제
@@ -192,7 +212,12 @@ const deletePost = async () => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-        await postStore.deletePost(post.value.postIdx);
+        const response = await postStore.deletePost(props.postIdx);
+
+        console.log(response);
+        if (response === false) {
+            alert('게시글 삭제 중 오류가 발생했습니다.'); return;
+        }
         alert('게시글이 삭제되었습니다.');
         backToList();
     } catch (err) {
@@ -200,6 +225,35 @@ const deletePost = async () => {
         console.error('게시글 삭제 오류:', err);
     }
 };
+
+//TODO:  게시글 스크랩
+const scrapPost = async (postIdx) => {
+    if (!userStore.isLogin) {
+        return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center", });
+    }
+    const result = await postStore.setPostScrap(postIdx);
+    if(result === true){
+        toast("스크랩 완료", { type: "success", autoClose: 1500, position: "bottom-center", });
+    }else{
+        toast("스크랩 해제 완료", { type: "success", autoClose: 1500, position: "bottom-center", });
+    }
+}
+
+const recommendPost = async (postIdx) => {
+    if (!userStore.isLogin) {
+        return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center", });
+    }
+    const recommendCount = await postStore.setPostRecommend(postIdx);
+    post.value.recommendCnt = recommendCount;
+}
+
+//TODO : 게시글 신고
+const reportPost = async(postIdx)=>{
+    if (!userStore.isLogin) {
+        return toast("로그인을 해주세요.", { type: "warning", autoClose: 1500, position: "bottom-center", });
+    }
+}
+
 </script>
 
 <style scoped>

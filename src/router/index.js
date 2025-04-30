@@ -50,21 +50,39 @@ const routes = [
     //사용자 페이지(공연/전시 신청)
     { path: '/events/request', component: EventsRegister },
     { path: "/events", name: 'EventShowMore', component: EventShowMore},
-    { path: '/events/:eventIdx',
+    { 
+      path: '/events/:eventIdx',
       component: Event,
       children: [
-        { path: '', // 기본 경로 (게시글 목록)
+        { 
+          path: '', // 기본 경로 (게시글 목록)
           name: 'EventPostList',
-          component: () => import('@/events/post/EventPost.vue')},
-        { path: 'post/:postIdx', // 게시글 상세
+          component: () => import('@/events/post/EventPost.vue')
+        },
+        { 
+          path: 'post/:postIdx', // 게시글 상세
           name: 'EventPostDetail',
-          component: () => import('@/events/post/PostDetail.vue'), props: route => ({
-            postIdx: Number(route.params.postIdx),
-            eventIdx: Number(route.params.eventIdx),
-          }),}
+          component: () => import('@/events/post/PostDetail.vue'), 
+          props: true,
+        },
+        {
+          path: 'post/register',
+          name: 'EventPostRegister',
+          component: PostRegister,
+          props: true,
+        },
+        {
+          path: 'post/edit/:postIdx',
+          name: 'EventPostEdit',
+          component: PostRegister,
+          props: true,
+        }
       ]
     },
-    { path: "/post/register", name:'PostRegister', component: PostRegister},
+    // 게시글 등록
+    { path: "/post/register", name: 'PostRegister', component: PostRegister },
+    // 게시글 수정
+    { path: "/post/edit/:postIdx", name: 'PostEdit', component: PostRegister},
     { path: "/chat-list", name: "ChatRoomList", component: ChatRoomList, props: true, meta: { standalone: false } },
     { path: "/chat-room/:id", name: "ChatRoom", component: ChatRoom, props: true, meta: { standalone: true } },
     // { path:"/mypage", component: MyPage},

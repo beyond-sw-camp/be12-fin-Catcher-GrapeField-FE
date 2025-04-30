@@ -21,18 +21,11 @@ pipeline {
                 label 'build'
             }
             steps {
-                sh """
-                    # Docker를 사용하여 Node.js 빌드 실행
-                    docker run --rm -v \$(pwd):/app -w /app -e VITE_BASE_IMAGE_URL="${VITE_BASE_IMAGE_URL}" node:18 /bin/bash -c '
-                        # 컨테이너 내부에서 .env 파일 생성
-                        echo "VITE_BASE_IMAGE_URL=\$VITE_BASE_IMAGE_URL" > .env
-                        cat .env
-                        
-                        # 빌드 실행
-                        npm install
-                        npm run build
-                    '
-                """
+                sh '''
+                    export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
+                    npm install
+                    npm run build
+                '''
             }
         }
         stage('Docker Build') {

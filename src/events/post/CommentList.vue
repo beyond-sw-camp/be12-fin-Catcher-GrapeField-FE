@@ -99,7 +99,6 @@ const resetPagination = () => {
 }
 
 // 댓글 불러오기 메서드
-// CommentList.vue
 const loadCommentList = async () => {
     try {
         const response = await commentStore.getCommentList(props.postIdx, currentPage.value - 1);
@@ -119,6 +118,15 @@ const loadCommentList = async () => {
         resetPagination();
     }
 }
+
+// 새 postIdx에 맞는 댓글 불러오기
+watch(() => props.postIdx, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        resetPagination();
+        loadCommentList();    
+    }
+});
+
 
 // TODO : 댓글 수정 메서드
 const editComment = (comment) => {

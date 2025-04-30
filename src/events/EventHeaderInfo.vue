@@ -33,6 +33,10 @@
           <button @click="toggleNotify" class="text-xl">
             <img :src="isNotify ? '/assets/icons/notification_fill.png' : '/assets/icons/notification_empty.png'"
               alt="알림" class="w-6 h-6" /></button>
+              <button @click="goToChatRoom(event.idx)" class="text-xl"
+              alt="채팅방">
+  💬
+</button>
         </div>
       </div>
 
@@ -98,6 +102,8 @@ import { ref, computed } from 'vue';
 import { useEventsStore } from '@/stores/useEventsStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { toast } from 'vue3-toastify';
+import { useChatStore } from '@/stores/useChatStore'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   event: Object
@@ -106,6 +112,8 @@ const props = defineProps({
 
 const userStore = useUserStore()
 const eventsStore = useEventsStore();
+const chatStore = useChatStore()
+const router = useRouter()
 
 //NOTE: 이미지 링크 임의 설정
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
@@ -132,6 +140,23 @@ const normalTickets = computed(() =>
 
 const isFavorite = ref(props.event.isFavorite)
 const isNotify = ref(props.event.isNotify)
+
+// 채팅방 함수
+const goToChatRoom = async (eventId) => {
+  const roomId = eventId;
+  if (!roomId) { // roomId 기준으로 체크
+    alert('채팅방 정보가 없습니다.');
+    return;
+  }
+
+  try {
+    await chatStore.joinRoom(roomId)
+    await router.push(`/chat-room/${roomId}`)
+  } catch (err) {
+    alert('채팅방 입장 실패! 로그인 상태를 확인하세요.');
+    console.error(err)
+  }
+}
 
 // 하트 토글 함수
 async function toggleFavorite() {
