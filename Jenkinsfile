@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'NodeJS'  // Jenkins에 설정된 Node.js 도구 이름
+    }
     environment {
         DOCKER_USER = 'rekvv'
         IMAGE_NAME = 'grapefield_front'
@@ -22,10 +25,15 @@ pipeline {
             }
             steps {
                 sh '''
+                    set -x
+                    echo "Node.js 버전: $(node -v || echo 'not installed')"
+                    echo "NPM 버전: $(npm -v || echo 'not installed')"
                     export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
                     npm install
                     npm run build
                 '''
+                stash includes: 'dist/**/*', name: 'build-output'
+                stash includes: 'k8s/*.yml', name: 'k8s-files'
             }
         }
         stage('Docker Build') {
@@ -33,6 +41,7 @@ pipeline {
                 label 'build'
             }
             steps {
+                unstash 'build-output'
                 sh """
                     # Docker 이미지 빌드
                     docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG} .
@@ -58,6 +67,7 @@ pipeline {
             }
             steps {
                 script {
+                    unstash 'k8s-files'
                     withEnv(['KUBECONFIG=/home/test/.kube/config']) {
                         sh """
                             # 이미지 태그 업데이트
