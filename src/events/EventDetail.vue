@@ -86,7 +86,7 @@
         <div v-for="actor in participants.performers" :key="actor.name"
           class="w-32 bg-white rounded-lg shadow overflow-hidden">
           <div class="h-40 overflow-hidden">
-            <img :src="actor.imgUrl || 'https://via.placeholder.com/150'" :alt="actor.name"
+            <img :src="BASE_IMAGE_URL + encodeURI(actor.imgUrl) || 'https://via.placeholder.com/150'" :alt="actor.name"
               class="w-full h-full object-cover" />
           </div>
           <div class="p-3">
