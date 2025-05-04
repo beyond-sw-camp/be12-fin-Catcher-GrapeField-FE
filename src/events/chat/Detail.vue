@@ -15,6 +15,17 @@ const roomId = computed(() => Number(route.params.id))
 const chatStore = useChatStore()
 const isHighlightCollapsed = ref(false)
 
+// Tailwind 색상 클래스 - 보라~분홍 계열
+const colorClasses = [
+  'bg-purple-100',
+  'bg-violet-100',
+  'bg-fuchsia-100',
+  'bg-pink-100',
+  'bg-rose-100',
+  'bg-purple-200',
+  'bg-indigo-100'
+];
+
 // 시간 포맷 함수
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -216,9 +227,15 @@ onBeforeUnmount(() => {
              :class="['flex mb-4 gap-3', msg.isMe ? 'flex-row-reverse' : 'flex-row']">
           <div v-if="!msg.isMe"
                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            <img :src="msg.avatar || '@/assets/icons/default-avatar.png'"
-                 alt="프로필" class="w-full h-full object-cover"/>
+            <div v-if="!msg.avatar"
+                 :class="['text-base sm:text-lg text-gray-800 h-full flex items-center justify-center font-semibold',
+                colorClasses[msg.userIdx % colorClasses.length]]">
+              {{ msg.sender.charAt(0).toUpperCase() }}
+            </div>
+            <img v-else :src="msg.avatar || '@/assets/icons/default-avatar.png'"
+                 alt="프로필" class="text-sm w-full h-full object-cover"/>
           </div>
+
           <div class="flex flex-col max-w-2/3">
             <div v-if="!msg.isMe" class="text-sm sm:text-base text-gray-600 mb-1">
               {{ msg.sender }}

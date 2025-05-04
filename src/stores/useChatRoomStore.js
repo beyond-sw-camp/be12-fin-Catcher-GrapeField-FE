@@ -69,6 +69,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this.participantCount = data.memberList.length
                 this.messages = data.messageList.map(msg => ({
                     id: msg.messageIdx,
+                    userIdx: msg.userIdx,
                     sender: msg.username,
                     avatar: msg.profileImageUrl,
                     content: msg.content,
@@ -112,7 +113,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         },
         // 채팅방 하트 로직
         sendHeart(roomId) {
-            //console.log('🧪 stompClient 상태 확인:', this.stompClient)
+            console.log('🧪 stompClient 상태 확인:', this.stompClient)
 
             if (!this.stompClient || !this.stompClient.connected) {
                 console.warn('❗ stompClient 연결 안 됨');
