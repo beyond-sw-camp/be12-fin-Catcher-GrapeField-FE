@@ -240,7 +240,7 @@ onBeforeUnmount(() => {
             <div v-if="!msg.isMe" class="text-sm sm:text-base text-gray-600 mb-1">
               {{ msg.sender }}
             </div>
-            <div :class="['px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow',
+            <div :class="['px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow','whitespace-pre-wrap break-words',
                           msg.isMe ? 'bg-purple-200 text-gray-800' : 'bg-white text-gray-800']"
                  class="text-base sm:text-lg">
               {{ msg.content }}
