@@ -28,8 +28,6 @@ spec:
             - name: nginx-config-volume
               mountPath: /etc/nginx/conf.d
               readOnly: true
-            - name: shared-storage
-              mountPath: /usr/share/nginx/html/uploads
             - name: ssl-secret-volume
               mountPath: /etc/nginx/ssl
               readOnly: true
@@ -40,9 +38,6 @@ spec:
             items:
               - key: default.conf
                 path: default.conf
-        - name: shared-storage
-          persistentVolumeClaim:
-            claimName: shared-image-vol
         - name: ssl-secret-volume
           secret:
             secretName: front-tls-secret
