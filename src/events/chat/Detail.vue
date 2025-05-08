@@ -15,6 +15,17 @@ const roomId = computed(() => Number(route.params.id))
 const chatStore = useChatStore()
 const isHighlightCollapsed = ref(false)
 
+// Tailwind 색상 클래스 - 보라~분홍 계열
+const colorClasses = [
+  'bg-purple-100',
+  'bg-violet-100',
+  'bg-fuchsia-100',
+  'bg-pink-100',
+  'bg-rose-100',
+  'bg-purple-200',
+  'bg-indigo-100'
+];
+
 // 시간 포맷 함수
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -33,16 +44,50 @@ function toggleHighlight() {
 }
 
 function scrollToHighlight(hStartMessageIdx, highlight) {
-  //console.log(hStartMessageIdx);
-  const element = chatBody.value;
-  const targetElement = element.children[0].children[hStartMessageIdx];
-  if (!element || !targetElement) {
-    console.error('Element not found');
+  console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
+  const container = chatBody.value
+  if (!container) { console.error('chatBody ref 미설정'); return;}
+
+  const messageEls = Array.from(
+      container.querySelectorAll('[data-message-idx]')
+  );
+
+
+  console.log('messageEls:', messageEls);
+  console.log('DOM messageEls count:', messageEls.length);
+  messageEls.forEach((el, i) => {
+    console.log(i, el.getAttribute('data-message-idx'));
+  });
+
+  console.log('formattedMessages:', chatRoomStore.formattedMessages);
+  // const targetIndex = chatRoomStore.formattedMessages.findIndex(
+  //     msg => msg.messageIdx === hStartMessageIdx
+  // );
+  const targetIndex = chatRoomStore.formattedMessages.findIndex(
+      msg => {
+        const match = msg.id === hStartMessageIdx;
+        if (!match) {
+          console.log('no match for', msg.id, '!==', hStartMessageIdx);
+        }
+        return match;
+      }
+  );
+  console.log('targetIndex result:', targetIndex);
+
+  if (targetIndex === -1) {
+    console.error('Target message not found:', hStartMessageIdx);
     return;
   }
+
+  const targetElement = messageEls[targetIndex];
+  if (!targetElement) {
+    console.error('스크롤 대상 요소를 찾을 수 없습니다:', targetIndex);
+    return;
+  }
+
   nextTick(() => {
-    const start = element.scrollTop;
-    const end = targetElement.offsetTop - element.clientHeight / 2 + targetElement.clientHeight / 2;
+    const start = container.scrollTop;
+    const end = targetElement.offsetTop - container.clientHeight / 2 + targetElement.clientHeight / 2;
     const duration = 600;
     const startTime = performance.now();
 
@@ -54,7 +99,7 @@ function scrollToHighlight(hStartMessageIdx, highlight) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const ease = easeInOutQuad(progress);
-      element.scrollTop = start + (end - start) * ease;
+      container.scrollTop = start + (end - start) * ease;
       if (progress < 1) {
         requestAnimationFrame(animateScroll);
       }
@@ -213,17 +258,24 @@ onBeforeUnmount(() => {
     <div ref="chatBody" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col">
       <transition-group class="flex-1 mb-4" name="message" tag="div">
         <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="idx"
+             :data-message-idx="msg.id"
              :class="['flex mb-4 gap-3', msg.isMe ? 'flex-row-reverse' : 'flex-row']">
           <div v-if="!msg.isMe"
                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            <img :src="msg.avatar || '@/assets/icons/default-avatar.png'"
-                 alt="프로필" class="w-full h-full object-cover"/>
+            <div v-if="!msg.avatar"
+                 :class="['text-base sm:text-lg text-gray-800 h-full flex items-center justify-center font-semibold',
+                colorClasses[msg.userIdx % colorClasses.length]]">
+              {{ msg.sender.charAt(0).toUpperCase() }}
+            </div>
+            <img v-else :src="msg.avatar || '@/assets/icons/default-avatar.png'"
+                 alt="프로필" class="text-sm w-full h-full object-cover"/>
           </div>
+
           <div class="flex flex-col max-w-2/3">
             <div v-if="!msg.isMe" class="text-sm sm:text-base text-gray-600 mb-1">
               {{ msg.sender }}
             </div>
-            <div :class="['px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow',
+            <div :class="['px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow','whitespace-pre-wrap break-words',
                           msg.isMe ? 'bg-purple-200 text-gray-800' : 'bg-white text-gray-800']"
                  class="text-base sm:text-lg">
               {{ msg.content }}
