@@ -87,7 +87,7 @@ pipeline {
                             cat k8s/frontend-deployment.yml
                             
                             # Kubernetes에 배포
-                            kubectl apply -f k8s/frontend-deployment.yml -n first
+                            kubectl apply -f k8s/frontend-deployment.yml -n first --validate=false
                             kubectl rollout status deployment/nginx -n first
                         """
                     }
