@@ -77,7 +77,7 @@ pipeline {
             steps {
                 script {
                     unstash 'k8s-files'
-                    withEnv(['KUBECONFIG=/home/test/.kube/config']) {
+                    withEnv(['KUBECONFIG=/home/jenkins/.kube/config']) {
                         sh """
                             # 이미지 태그 업데이트
                             sed -i 's|${DOCKER_USER}/${IMAGE_NAME}:.*|${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/frontend-deployment.yml
