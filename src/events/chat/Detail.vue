@@ -44,46 +44,38 @@ function toggleHighlight() {
 }
 
 function scrollToHighlight(hStartMessageIdx, highlight) {
-  console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
+  // console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
   const container = chatBody.value
-  if (!container) { console.error('chatBody ref 미설정'); return;}
+  // if (!container) { console.error('chatBody ref 미설정'); return;}
 
   const messageEls = Array.from(
       container.querySelectorAll('[data-message-idx]')
   );
-
-
-  console.log('messageEls:', messageEls);
-  console.log('DOM messageEls count:', messageEls.length);
-  messageEls.forEach((el, i) => {
-    console.log(i, el.getAttribute('data-message-idx'));
-  });
-
-  console.log('formattedMessages:', chatRoomStore.formattedMessages);
-  // const targetIndex = chatRoomStore.formattedMessages.findIndex(
-  //     msg => msg.messageIdx === hStartMessageIdx
-  // );
+  // console.log('formattedMessages:', chatRoomStore.formattedMessages);
   const targetIndex = chatRoomStore.formattedMessages.findIndex(
-      msg => {
-        const match = msg.id === hStartMessageIdx;
-        if (!match) {
-          console.log('no match for', msg.id, '!==', hStartMessageIdx);
-        }
-        return match;
-      }
+      msg => msg.messageIdx === hStartMessageIdx
   );
+  // const targetIndex = chatRoomStore.formattedMessages.findIndex(
+  //     msg => {
+  //       const match = msg.id === hStartMessageIdx;
+  //       if (!match) {
+  //         console.log('no match for', msg.id, '!==', hStartMessageIdx);
+  //       }
+  //       return match;
+  //     }
+  // );
   console.log('targetIndex result:', targetIndex);
 
-  if (targetIndex === -1) {
-    console.error('Target message not found:', hStartMessageIdx);
-    return;
-  }
+  // if (targetIndex === -1) {
+  //   console.error('Target message not found:', hStartMessageIdx);
+  //   return;
+  // }
 
   const targetElement = messageEls[targetIndex];
-  if (!targetElement) {
-    console.error('스크롤 대상 요소를 찾을 수 없습니다:', targetIndex);
-    return;
-  }
+  // if (!targetElement) {
+  //   console.error('스크롤 대상 요소를 찾을 수 없습니다:', targetIndex);
+  //   return;
+  // }
 
   nextTick(() => {
     const start = container.scrollTop;
