@@ -80,7 +80,7 @@
     </section>
 
     <!-- 출연진 -->
-    <section>
+    <section v-if="actor">
       <h2 class="text-lg font-bold mb-3">출연진</h2>
       <div v-if="participants.performers && participants.performers.length > 0" class="flex flex-wrap gap-4">
         <div v-for="actor in participants.performers" :key="actor.name"
@@ -102,7 +102,7 @@
     </section>
 
     <!--제작, 후원-->
-    <section>
+    <section v-if="company">
       <h2 class="text-lg font-bold mb-3">제작, 후원</h2>
       <div v-if="participants.organizations && participants.organizations.length > 0" class="flex flex-wrap gap-4">
         <div v-for="company in participants.organizations" :key="company.name"
@@ -143,9 +143,9 @@
     </section>
 
     <!-- 관람 안내 -->
-    <section>
+    <section v-if="event.notification">
       <h2 class="text-lg font-bold mb-3">관람 안내</h2>
-      <p v-if="event.notification" class="list-disc list-inside text-gray-700">
+      <p v-if="event.notification" class="list-disc list-inside text-gray-700 notification">
         {{ event.notification }}
       </p>
       <div v-else class="bg-gray-50 p-4 rounded-md">
@@ -327,3 +327,10 @@ onMounted(() => {
   loadParticipantDetail()
 })
 </script>
+
+<style scoped>
+.notification {
+  white-space: pre-line;
+  /* 줄바꿈 유지 */
+}
+</style>
