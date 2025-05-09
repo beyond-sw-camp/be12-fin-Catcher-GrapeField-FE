@@ -3,9 +3,7 @@ import {defineStore, acceptHMRUpdate} from 'pinia'
 import axios from 'axios'
 import {connect as createWebSocketConnection, stompClient} from '@/utils/webSocketClient'
 import {nextTick} from "vue";
-
-const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
-const currentUserIdx = loginUser?.userIdx
+import { useUserStore } from "@/stores/useUserStore";
 
 
 export const useChatRoomStore = defineStore('chatRoom', {
@@ -13,7 +11,6 @@ export const useChatRoomStore = defineStore('chatRoom', {
         roomData: null,
         messages: [],
         stompClient: null,
-        currentUserIdx: loginUser?.userIdx,
         highlightedTimes: [],
         showHighlightEffect: false,
         participantCount: 0,
@@ -27,10 +24,22 @@ export const useChatRoomStore = defineStore('chatRoom', {
     }),
 
     getters: {
-        formattedMessages: (state) => state.messages.map(msg => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp)
-        })),
+        // formattedMessages: (state) =>
+        //     state.messages.map(msg => ({
+        //     ...msg,
+        //     timestamp: new Date(msg.timestamp)
+        // })),
+        formattedMessages: (state) => {
+            const userStore = useUserStore()
+            const myIdx = userStore.userDetail?.userIdx
+            return state.messages.map(msg => ({
+                ...msg,
+                timestamp: msg.timestamp instanceof Date
+                    ? msg.timestamp
+                    : new Date(msg.timestamp),
+                isMe: msg.userIdx === myIdx
+            }))
+        },
         highlightList: (state) => state.highlightedTimes.map(h => ({
             id: h.id,
             time: new Date(h.time)

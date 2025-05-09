@@ -153,20 +153,34 @@ const leaveChatRoom = async () => {
   alert(res.data || '채팅방을 퇴장했습니다.')
   await router.push('/chat-list')
 }
-
 onMounted(async () => {
+  // 1️⃣ 채팅방 데이터 불러오기
   try {
-    await chatRoomStore.fetchChatRoom(roomId.value, chatBody.value);
-    await nextTick(() => {
-      chatRoomStore.connectWebSocket(roomId.value)
-      chatRoomStore.initialScroll(chatBody.value)
-    })
-  } catch (error) {
+    await chatRoomStore.fetchChatRoom(roomId.value, chatBody.value)
+  } catch (fetchError) {
+    console.error('❌ 채팅방 데이터를 가져오는 중 오류 발생:', fetchError)
+    alert('채팅방 정보를 불러오는 데 실패했습니다.')
     router.push('/chat-list')
-    alert('페이지 접근 권한이 없습니다.')
-    console.error(error)
+    return   // 이후 로직 수행 중단
   }
 
+  // 2️⃣ DOM 업데이트(Next Tick) 및 웹소켓 연결
+  try {
+    await nextTick()
+    chatRoomStore.connectWebSocket(roomId.value)
+  } catch (wsError) {
+    console.error('❌ 웹소켓 연결 중 오류 발생:', wsError)
+    alert('실시간 채팅 연결에 실패했습니다.')
+    // 필요하다면 router.push 또는 재시도 로직 추가 가능
+  }
+
+  // 3️⃣ 초기 스크롤 위치로 이동
+  try {
+    chatRoomStore.initialScroll(chatBody.value)
+  } catch (scrollError) {
+    console.error('⚠️ 스크롤 초기화 중 오류 발생:', scrollError)
+    // 스크롤 실패는 치명적이지 않으므로 사용자 알림 생략
+  }
 })
 
 onBeforeUnmount(() => {

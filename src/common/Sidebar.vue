@@ -21,8 +21,7 @@ const chatBody = ref(null)
 // let subscription = null
 
 // 세션 변수 설정
-const loginUser = JSON.parse(sessionStorage.getItem('user'))?.user
-const currentUserIdx = loginUser?.userIdx
+const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // 로그인 상태 확인
 const isLogin = computed(() => userStore.isLogin)
