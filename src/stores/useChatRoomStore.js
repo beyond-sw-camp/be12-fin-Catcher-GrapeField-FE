@@ -5,7 +5,6 @@ import {connect as createWebSocketConnection, stompClient} from '@/utils/webSock
 import {nextTick} from "vue";
 import { useUserStore } from "@/stores/useUserStore";
 
-
 export const useChatRoomStore = defineStore('chatRoom', {
     state: () => ({
         roomData: null,
@@ -24,19 +23,12 @@ export const useChatRoomStore = defineStore('chatRoom', {
     }),
 
     getters: {
-        // formattedMessages: (state) =>
-        //     state.messages.map(msg => ({
-        //     ...msg,
-        //     timestamp: new Date(msg.timestamp)
-        // })),
         formattedMessages: (state) => {
             const userStore = useUserStore()
             const myIdx = userStore.userDetail?.userIdx
             return state.messages.map(msg => ({
                 ...msg,
-                timestamp: msg.timestamp instanceof Date
-                    ? msg.timestamp
-                    : new Date(msg.timestamp),
+                timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp),
                 isMe: msg.userIdx === myIdx
             }))
         },
@@ -48,15 +40,9 @@ export const useChatRoomStore = defineStore('chatRoom', {
 
     actions: {
         getSubscriptionCount() {
-            if(this._stompSubscription) {
-                //console.log("[Store] _stompSubscription 존재:");
-            }
-            if(this._likeSubscription) {
-                //console.log("[Store] _likeSubscription 존재:");
-            }
-            if(this._highlightSubscription) {
-                //console.log("[Store] _highlightSubscription 존재:");
-            }
+            // if(this._stompSubscription) {console.log("[Store] _stompSubscription 존재:");}
+            // if(this._likeSubscription) {console.log("[Store] _likeSubscription 존재:");}
+            // if(this._highlightSubscription) {console.log("[Store] _highlightSubscription 존재:");}
             return [
                 this._stompSubscription,
                 this._likeSubscription,
@@ -69,10 +55,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
             this.error = null
             this.chatBodyElement = chatBodyElement
             try {
-                const {data} = await axios.get(`/api/chat/${roomIdx}`, {
-                    withCredentials: true,
-                    headers: {}
-                })
+                const {data} = await axios.get(`/api/chat/${roomIdx}`, {withCredentials: true, headers: {}})
                 this.roomData = data
                 this.roomTitle = data.roomName
                 this.participantCount = data.memberList.length
@@ -83,7 +66,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     avatar: msg.profileImageUrl,
                     content: msg.content,
                     timestamp: new Date(msg.createdAt),
-                    isMe: msg.userIdx === currentUserIdx,
+                    // isMe: msg.userIdx === this.currentUserIdx,
                     isHighlighted: msg.isHighlighted
                 }))
                 this.highlightedTimes = data.highlightList.map(h => ({
@@ -95,6 +78,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 }))
                 return data
             } catch (err) {
+                console.log('🔴 채팅방 데이터 가져오기 실패:', err)
                 this.error = err
                 throw err
             } finally {
@@ -116,9 +100,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
 
         triggerHighlightPopup() {
             this.showHighlightEffect = true
-            setTimeout(() => {
-                this.showHighlightEffect = false
-            }, 2000)
+            setTimeout(() => {this.showHighlightEffect = false}, 2000)
         },
         // 채팅방 하트 로직
         sendHeart(roomId) {
@@ -260,7 +242,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 avatar: msg.profileImageUrl,
                 content: msg.content,
                 timestamp: msg.createdAt,
-                isMe: msg.userIdx === this.currentUserIdx,
+                // isMe: msg.userIdx === this.currentUserIdx,
                 isHighlighted: msg.isHighlighted
             }
             this.messages.push(newMsg)
