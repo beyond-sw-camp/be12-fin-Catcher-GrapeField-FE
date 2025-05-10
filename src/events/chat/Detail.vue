@@ -4,12 +4,16 @@ import {ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useChatRoomStore} from '@/stores/useChatRoomStore'
 import {useChatStore} from "@/stores/useChatStore.js";
+import {useUserStore} from "@/stores/useUserStore.js";
 
+
+const userStore = useUserStore()
+const chatRoomStore = useChatRoomStore()
+const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // reactive 변수
 const chatBody = ref(null)
 const router = useRouter()
-const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 const chatStore = useChatStore()
@@ -25,6 +29,7 @@ const colorClasses = [
   'bg-purple-200',
   'bg-indigo-100'
 ];
+
 
 // 시간 포맷 함수
 function formatTime(date) {
