@@ -4,12 +4,16 @@ import {ref, onMounted, nextTick, onBeforeUnmount, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useChatRoomStore} from '@/stores/useChatRoomStore'
 import {useChatStore} from "@/stores/useChatStore.js";
+import {useUserStore} from "@/stores/useUserStore.js";
 
+
+const userStore = useUserStore()
+const chatRoomStore = useChatRoomStore()
+const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // reactive 변수
 const chatBody = ref(null)
 const router = useRouter()
-const chatRoomStore = useChatRoomStore()
 const route = useRoute()
 const roomId = computed(() => Number(route.params.id))
 const chatStore = useChatStore()
@@ -25,6 +29,17 @@ const colorClasses = [
   'bg-purple-200',
   'bg-indigo-100'
 ];
+
+function handleScroll() {
+  const container = chatBody.value;
+  if (!container) {
+    console.error("chatBody ref 미설정");
+    return;
+  }
+  if (container.scrollTop <= 10) {
+    chatRoomStore.loadOlderMessagesInPages(roomId.value);
+  }
+}
 
 // 시간 포맷 함수
 function formatTime(date) {
@@ -43,6 +58,7 @@ function toggleHighlight() {
   isHighlightCollapsed.value = !isHighlightCollapsed.value;
 }
 
+/*
 function scrollToHighlight(hStartMessageIdx, highlight) {
   // console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
   const container = chatBody.value
@@ -100,6 +116,67 @@ function scrollToHighlight(hStartMessageIdx, highlight) {
     requestAnimationFrame(animateScroll);
   });
 }
+*/
+
+async function scrollToHighlight(hStartMessageIdx, highlight) {
+  const container = chatBody.value
+  if (!container) {
+    console.error('chatBody ref 미설정')
+    return
+  }
+
+  // 1) 메시지 로드 및 스크롤 시도 재귀 함수
+  async function tryScroll() {
+    await nextTick()  // DOM 업데이트 대기
+
+    // 현재 로드된 메시지 중 타겟 메시지 인덱스 찾기
+    const idx = chatRoomStore.formattedMessages
+        .findIndex(msg => msg.id === hStartMessageIdx)
+
+    // 타겟을 못 찾았고, 더 로드할 페이지가 있으면 재귀 호출
+    if (idx === -1 && chatRoomStore.hasNext) {
+      await chatRoomStore.loadOlderMessagesInPages(roomId.value)
+      return tryScroll()
+    }
+
+    // 더 이상 로드할 메시지가 없으면 경고 후 종료
+    if (idx === -1) {
+      console.warn('하이라이트 메시지를 찾을 수 없습니다:', hStartMessageIdx)
+      return
+    }
+
+    // 2) 메시지 엘리먼트 선택
+    const messageEls = Array.from(
+        container.querySelectorAll('[data-message-idx]')
+    )
+    const targetEl = messageEls[idx]
+    if (!targetEl) {
+      console.error('엘리먼트를 찾을 수 없습니다:', idx)
+      return
+    }
+
+    // 3) 애니메이션 스크롤
+    const start   = container.scrollTop
+    const end     = targetEl.offsetTop - container.clientHeight / 2 + targetEl.clientHeight / 2
+    const duration = 600
+    const startTime = performance.now()
+
+    function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+    }
+
+    function animate(now) {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      container.scrollTop = start + (end - start) * easeInOutQuad(progress)
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }
+
+  // 최초 시도
+  tryScroll()
+}
 
 function goBack() {
   router.push('/chat-list')
@@ -156,7 +233,7 @@ const leaveChatRoom = async () => {
 onMounted(async () => {
   // 1️⃣ 채팅방 데이터 불러오기
   try {
-    await chatRoomStore.fetchChatRoom(roomId.value, chatBody.value)
+    await chatRoomStore.fetchChatRoom(roomId.value, chatBody)
   } catch (fetchError) {
     console.error('❌ 채팅방 데이터를 가져오는 중 오류 발생:', fetchError)
     alert('채팅방 정보를 불러오는 데 실패했습니다.')
@@ -261,7 +338,7 @@ onBeforeUnmount(() => {
       </button>
     </div>
     <!-- chat-body -->
-    <div ref="chatBody" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col">
+    <div ref="chatBody" @scroll="handleScroll" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col">
       <transition-group class="flex-1 mb-4" name="message" tag="div">
         <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="idx"
              :data-message-idx="msg.id"
