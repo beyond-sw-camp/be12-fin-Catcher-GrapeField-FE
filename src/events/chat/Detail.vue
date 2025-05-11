@@ -183,7 +183,9 @@ function goBack() {
 }
 
 function sendMessage() {
-  chatRoomStore.sendMessage(roomId.value)
+  if (chatRoomStore.newMessage.trim()) {
+    chatRoomStore.sendMessage(roomId.value);
+  }
 }
 
 function scrollToBottom() {
@@ -413,6 +415,7 @@ onBeforeUnmount(() => {
              @keyup.enter="sendMessage"/>
       <button class="bg-purple-700 text-white px-6 py-2 rounded-full text-base sm:text-lg
                      hover:bg-purple-800 transition"
+                     :disabled="!chatRoomStore.newMessage.trim()"
               @click="sendMessage">
         전송
       </button>
