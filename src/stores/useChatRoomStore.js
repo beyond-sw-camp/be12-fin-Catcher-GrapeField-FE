@@ -1,19 +1,22 @@
 //useChatRoomStore.js
-import {defineStore, acceptHMRUpdate} from 'pinia'
+import {acceptHMRUpdate, defineStore} from 'pinia'
 import axios from 'axios'
-import {connect as createWebSocketConnection, stompClient} from '@/utils/webSocketClient'
+import {connect as createWebSocketConnection} from '@/utils/webSocketClient'
 import {nextTick} from "vue";
-import { useUserStore } from "@/stores/useUserStore";
+import {useUserStore} from "@/stores/useUserStore";
 
 export const useChatRoomStore = defineStore('chatRoom', {
     state: () => ({
         roomData: null,
-        messages: [],
         stompClient: null,
         highlightedTimes: [],
         showHighlightEffect: false,
         participantCount: 0,
         roomTitle: '',
+        messages: [],
+        page: 0,
+        size: 20,
+        hasNext: true,
         loading: false,
         error: null,
         showNewMessageButton: false,
@@ -50,7 +53,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
             ].filter(sub => !!sub).length
         }
         ,
-        async fetchChatRoom(roomIdx, chatBodyElement) {
+        async fetchChatRoom(roomIdx, chatBody) {
+            const chatBodyElement = chatBody.value
             this.loading = true
             this.error = null
             this.chatBodyElement = chatBodyElement
@@ -59,6 +63,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this.roomData = data
                 this.roomTitle = data.roomName
                 this.participantCount = data.memberList.length
+                /* // 페이지네이션 응답으로 변경하기전 !!
                 this.messages = data.messageList.map(msg => ({
                     id: msg.messageIdx,
                     userIdx: msg.userIdx,
@@ -68,7 +73,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     timestamp: new Date(msg.createdAt),
                     // isMe: msg.userIdx === this.currentUserIdx,
                     isHighlighted: msg.isHighlighted
-                }))
+                })) */ // 페이지네이션 응답으로 변경하기전 !!
                 this.highlightedTimes = data.highlightList.map(h => ({
                     id: h.idx,
                     messageIdx: h.messageIdx,
@@ -76,6 +81,10 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     time1: new Date(h.startTime),
                     time2: new Date(h.endTime)
                 }))
+                this.messages = [];
+                this.page = 0;
+                this.hasNext = true;
+                await this.loadInitialMessagesInPages(roomIdx);
                 return data
             } catch (err) {
                 console.log('🔴 채팅방 데이터 가져오기 실패:', err)
@@ -84,7 +93,75 @@ export const useChatRoomStore = defineStore('chatRoom', {
             } finally {
                 this.loading = false
             }
-
+        },
+        async loadInitialMessagesInPages(roomIdx) {
+            if (!this.hasNext) return;
+            this.loading = true;
+            try {
+                const {data} = await axios.get(`/api/chat/${roomIdx}/messages`, {
+                    params: {
+                        page: this.page,
+                        size: this.size
+                    },
+                    withCredentials: true,
+                    headers: {}
+                });
+                console.log('📜 페이지네이션 메시지 응답:', data);
+                this.messages = data.content.map(msg => ({
+                    id: msg.messageIdx,
+                    userIdx: msg.userIdx,
+                    sender: msg.username,
+                    avatar: msg.profileImageUrl,
+                    content: msg.content,
+                    timestamp: new Date(msg.createdAt),
+                    isHighlighted: msg.isHighlighted
+                })).reverse();
+                this.hasNext = data.hasNext;
+                this.page++;
+            } catch(err){
+                console.error('🔴 메시지 초기페이지 가져오기 실패:', err)
+            } finally {
+                this.loading = false;
+            }
+        },
+        async loadOlderMessagesInPages(roomIdx) {
+            if (this.loading || !this.hasNext) return;
+            this.loading = true;
+            // 1) 스크롤 컨테이너
+            const container = this.chatBodyElement;
+            // 2) prepend 전 높이 저장
+            const prevHeight = container.scrollHeight;
+            try {
+                const {data} = await axios.get(`/api/chat/${roomIdx}/messages`, {
+                    params: {
+                        page: this.page,
+                        size: this.size
+                    },
+                    withCredentials: true,
+                    headers: {}
+                });
+                console.log('📜 loadmore 페이지네이션 메시지 응답:', data);
+                const olderMessages = data.content.map(msg => ({
+                    id: msg.messageIdx,
+                    userIdx: msg.userIdx,
+                    sender: msg.username,
+                    avatar: msg.profileImageUrl,
+                    content: msg.content,
+                    timestamp: new Date(msg.createdAt),
+                    isHighlighted: msg.isHighlighted
+                })).reverse();
+                this.messages = [...olderMessages, ...this.messages];
+                this.hasNext = data.hasNext;
+                this.page++;
+                // DOM 업데이트 후 스크롤 위치 보정
+                await nextTick();
+                const newHeight = container.scrollHeight;
+                container.scrollTop = newHeight - prevHeight;
+            } catch(err){
+                console.error('🔴 메시지 더 많은 페이지 가져오기 실패:', err)
+            } finally {
+                this.loading = false;
+            }
         },
         addHighlightRealtime(highlightResp) {
             //('🟡 실시간 하이라이트 수신:', highlightResp)
