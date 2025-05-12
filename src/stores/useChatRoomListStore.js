@@ -96,11 +96,24 @@ const loadMoreRooms = async (type = 'musical') => {
   
 
   const updateParticipantCount = (roomId, count) => {
-    const all = [...rooms.value, ...myPageRooms.value, ...myRooms.value]
-    for (const room of all) {
-      if (room.roomIdx === roomId) room.participantCount = count
-    }
+    // rooms 배열 업데이트
+  const roomsIndex = rooms.value.findIndex(room => room.roomIdx === roomId)
+  if (roomsIndex !== -1) {
+    rooms.value[roomsIndex].participantCount = count
   }
+  
+  // myRooms 배열 업데이트  
+  const myRoomsIndex = myRooms.value.findIndex(room => room.roomIdx === roomId)
+  if (myRoomsIndex !== -1) {
+    myRooms.value[myRoomsIndex].participantCount = count
+  }
+  
+  // myPageRooms 배열 업데이트
+  const myPageRoomsIndex = myPageRooms.value.findIndex(room => room.roomIdx === roomId)
+  if (myPageRoomsIndex !== -1) {
+    myPageRooms.value[myPageRoomsIndex].participantCount = count
+  }
+}
 
   return {
     rooms,
