@@ -213,6 +213,10 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this._highlightSubscription = null
                 //console.log('[Store] highlightSubscription 기존 구독 해제 완료')
             }
+            if (this._participantSubscription) {
+                this._participantSubscription.unsubscribe()
+                this._participantSubscription = null
+            }
             if (this.stompClient) {
                 this.stompClient.deactivate?.()
                 this.stompClient = null
@@ -258,6 +262,17 @@ export const useChatRoomStore = defineStore('chatRoom', {
                         this.addHighlightRealtime(highlight);
                     }
                 );
+
+                this._participantSubscription = client.subscribe(
+                    `/topic/chat/room/${roomId}/participants`,
+                    (frame) => {
+                        const count = JSON.parse(frame.body)
+                        console.log(`🔄 [참여자 수 업데이트] ${count}명`)
+                        this.participantCount = count
+                    }
+                );
+                
+                console.log(`[STOMP] 참여자 수 구독 완료 → /topic/chat/room/${roomId}/participants`);
                 //console.log(`[STOMP] 하이라이트 구독 완료 → /topic/chat.room.highlight.${roomId}`);
             }/*, token*/)
         },
@@ -274,6 +289,10 @@ export const useChatRoomStore = defineStore('chatRoom', {
             if (this._highlightSubscription) {
                 this._highlightSubscription.unsubscribe();
                 this._highlightSubscription = null;
+            }
+            if (this._participantSubscription) {
+                this._participantSubscription.unsubscribe();
+                this._participantSubscription = null;
             }
         },
 
