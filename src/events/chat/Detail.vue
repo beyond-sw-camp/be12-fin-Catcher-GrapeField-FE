@@ -5,10 +5,12 @@ import {useRoute, useRouter} from 'vue-router'
 import {useChatRoomStore} from '@/stores/useChatRoomStore'
 import {useChatStore} from "@/stores/useChatStore.js";
 import {useUserStore} from "@/stores/useUserStore.js";
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
 
 const userStore = useUserStore()
 const chatRoomStore = useChatRoomStore()
+const chatListStore = useChatRoomListStore()
 const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // reactive 변수
@@ -245,7 +247,10 @@ const leaveChatRoom = async () => {
     // 3. 캐시에서 제거
     chatStore.joinedRoomIds = chatStore.joinedRoomIds.filter(id => id !== Number(roomId.value))
     
-    // 4. 리다이렉트
+    // 4. 사이드바 업데이트
+    await chatListStore.fetchMyRooms()
+
+    // 5. 리다이렉트
     alert(res.data || '채팅방을 퇴장했습니다.')
     await router.push('/chat-list')
   } catch (error) {
