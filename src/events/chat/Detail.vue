@@ -5,10 +5,12 @@ import {useRoute, useRouter} from 'vue-router'
 import {useChatRoomStore} from '@/stores/useChatRoomStore'
 import {useChatStore} from "@/stores/useChatStore.js";
 import {useUserStore} from "@/stores/useUserStore.js";
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
 
 const userStore = useUserStore()
 const chatRoomStore = useChatRoomStore()
+const chatListStore = useChatRoomListStore()
 const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // reactive 변수
@@ -227,11 +229,36 @@ const handleLike = async () => {
 // 채팅방 퇴장
 
 const leaveChatRoom = async () => {
-  const res = chatStore.leaveRoom(roomId.value)
+  // ✅ 퇴장 확인 대화상자 추가
+  const confirmed = confirm('채팅방을 퇴장하시겠습니까?')
+  
+  if (!confirmed) {
+    console.log('❌ 퇴장 취소')
+    return // 취소하면 아무것도 하지 않고 종료
+  }
+  
+  try {
+    // 1. 백엔드에 퇴장 요청
+    const res = await chatStore.leaveRoom(roomId.value)
+    
+    // 2. 웹소켓 연결 해제
+    chatRoomStore.disconnectWebSocket()
+    
+    // 3. 캐시에서 제거
+    chatStore.joinedRoomIds = chatStore.joinedRoomIds.filter(id => id !== Number(roomId.value))
+    
+    // 4. 사이드바 업데이트
+    await chatListStore.fetchMyRooms()
 
-  alert(res.data || '채팅방을 퇴장했습니다.')
-  await router.push('/chat-list')
+    // 5. 리다이렉트
+    alert(res.data || '채팅방을 퇴장했습니다.')
+    await router.push('/chat-list')
+  } catch (error) {
+    console.error('❌ 퇴장 실패:', error)
+    alert('퇴장 중 문제가 발생했습니다.')
+  }
 }
+
 onMounted(async () => {
   // 1️⃣ 채팅방 데이터 불러오기
   try {

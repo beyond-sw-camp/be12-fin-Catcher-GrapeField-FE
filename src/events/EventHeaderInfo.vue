@@ -104,6 +104,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { toast } from 'vue3-toastify';
 import { useChatStore } from '@/stores/useChatStore'
 import { useRouter } from 'vue-router'
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
 const props = defineProps({
   event: Object
@@ -114,6 +115,7 @@ const userStore = useUserStore()
 const eventsStore = useEventsStore();
 const chatStore = useChatStore()
 const router = useRouter()
+const chatListStore = useChatRoomListStore()
 
 //NOTE: 이미지 링크 임의 설정
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
@@ -144,18 +146,32 @@ const isNotify = ref(props.event.isNotify)
 // 채팅방 함수
 const goToChatRoom = async (eventId) => {
   const roomId = eventId;
-  if (!roomId) { // roomId 기준으로 체크
+  const roomName = props.event.title; // 공연 제목을 채팅방 이름으로 사용
+  
+  if (!roomId) {
     alert('채팅방 정보가 없습니다.');
     return;
   }
 
-  try {
-    await chatStore.joinRoom(roomId)
-    await router.push(`/chat-room/${roomId}`)
-  } catch (err) {
-    alert('채팅방 입장 실패! 로그인 상태를 확인하세요.');
-    console.error(err)
+  // 입장 확인 알림 추가
+  const confirmEnter = confirm(`"${roomName}" 채팅방에 입장하시겠습니까?`)
+  
+  if (!confirmEnter) {
+    return // 사용자가 취소를 누르면 함수 종료
   }
+
+  try {
+    // 이미 참여중이면 백엔드 요청 생략됨
+    await chatStore.joinRoom(roomId)
+  } catch (err) {
+    alert('채팅방 입장 실패. 로그인 상태를 확인하세요.')
+    return
+  }
+  
+  // List.vue와 동일한 후속 처리
+  await chatListStore.fetchMyRooms()
+  await chatListStore.fetchMyPageRooms()
+  await router.push(`/chat-room/${roomId}`)
 }
 
 // 하트 토글 함수
@@ -215,5 +231,7 @@ async function toggleNotify() {
       isFavorite.value = !isFavorite.value;
     }
   }
+
+
 }
 </script>
