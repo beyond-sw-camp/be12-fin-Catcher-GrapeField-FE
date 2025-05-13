@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue'
-import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
@@ -382,7 +381,7 @@ onBeforeUnmount(() => {
               <!-- 채팅 메세지 목록 -->
               <div ref="chatBody" class="flex-1 overflow-y-auto space-y-3 mb-3">
                 <transition-group>
-                  <div v-for="(msg, index) in chatRoomStore.formattedMessages" :key="msg.id"
+                  <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="msg.idx"
                     :class="['flex', msg.isMe ? 'justify-end' : 'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
                       <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />
