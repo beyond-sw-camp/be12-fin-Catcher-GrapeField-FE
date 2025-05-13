@@ -4,6 +4,7 @@ import axios from 'axios'
 import {connect as createWebSocketConnection} from '@/utils/webSocketClient'
 import {computed, nextTick} from "vue";
 import {useUserStore} from "@/stores/useUserStore";
+import { v4 as uuidv4 } from 'uuid';
 
 export const useChatRoomStore = defineStore('chatRoom', {
         state: () => ({
@@ -179,11 +180,12 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 console.warn('❗ stompClient 연결 안 됨');
                 return
             }
-
+            const heartId = uuidv4();
             this.stompClient.publish({
                 destination: `/app/chat.like.${roomId}`,
                 body: JSON.stringify({
-                    roomIdx: roomId
+                    roomIdx: roomId,
+                    heartIdx: heartId
                 })
             })
         },
