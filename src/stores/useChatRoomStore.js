@@ -23,6 +23,8 @@ export const useChatRoomStore = defineStore('chatRoom', {
         hearts: [],
         newMessage: '',
         chatBodyElement: null,
+        sidebarSubscriptions: new Map(),
+        isGlobalSocketConnected: false,
     }),
     getters: {
         formattedMessages: (state) => {
@@ -389,6 +391,69 @@ export const useChatRoomStore = defineStore('chatRoom', {
                     }, 10000)
                 }, i * 150)
             }
+        },
+        // 사이드바용 웹소켓 기능
+        async connectGlobalWebSocket() {
+            if (!this.isGlobalSocketConnected) {
+                try {
+                    await connectSocket()
+                    this.isGlobalSocketConnected = true
+                    console.log('✅ 글로벌 웹소켓 연결 성공')
+                } catch (error) {
+                    console.error('❌ 글로벌 웹소켓 연결 실패:', error)
+                    throw error
+                }
+            }
+        },
+
+        async subscribeChatListUpdates(userIdx, callback) {
+            if (!userIdx) return null
+
+            // 이미 구독 중이면 해제
+            const existingSub = this.sidebarSubscriptions.get('chatlist')
+            if (existingSub) {
+                unsubscribeTopic(existingSub)
+                this.sidebarSubscriptions.delete('chatlist')
+            }
+
+            try {
+                await this.connectGlobalWebSocket()
+                
+                const subscription = subscribeTopic(
+                    `/topic/user/${userIdx}/chatlist`,
+                    (message) => {
+                        const data = JSON.parse(message.body)
+                        console.log('📋 채팅방 리스트 업데이트:', data)
+                        callback(data)
+                    }
+                )
+                
+                this.sidebarSubscriptions.set('chatlist', subscription)
+                console.log(`✅ 채팅방 리스트 구독 완료: /topic/user/${userIdx}/chatlist`)
+                
+                return subscription
+            } catch (error) {
+                console.error('❌ 채팅방 리스트 구독 실패:', error)
+                throw error
+            }
+        },
+
+        unsubscribeChatListUpdates() {
+            const subscription = this.sidebarSubscriptions.get('chatlist')
+            if (subscription) {
+                unsubscribeTopic(subscription)
+                this.sidebarSubscriptions.delete('chatlist')
+                console.log('🔌 채팅방 리스트 구독 해제')
+            }
+        },
+
+        // 모든 사이드바 구독 해제
+        unsubscribeAllSidebarSubscriptions() {
+            this.sidebarSubscriptions.forEach((subscription, key) => {
+                unsubscribeTopic(subscription)
+                console.log(`🔌 사이드바 구독 해제: ${key}`)
+            })
+            this.sidebarSubscriptions.clear()
         }
     }
 })

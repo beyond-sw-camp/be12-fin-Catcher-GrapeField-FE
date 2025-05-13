@@ -7,7 +7,6 @@ import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 import { useChatRoomStore } from '@/stores/useChatRoomStore'
 import { useCalendarStore } from '@/stores/useCalendarStore'
 import { useEventsStore } from '@/stores/useEventsStore'
-import { connectSocket, subscribeTopic, unsubscribeTopic } from '@/utils/socketService'
 // import {connect, stompClient} from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
 const userStore = useUserStore()
@@ -15,7 +14,6 @@ const chatListStore = useChatRoomListStore()
 const chatRoomStore = useChatRoomStore()
 const calendarStore = useCalendarStore();
 const eventsStore = useEventsStore();
-let userListSubscription = null
 
 const route = useRoute()
 const router = useRouter()
@@ -101,7 +99,7 @@ async function showChatRoom(room) {
   state.activeRoomIdx = room.roomIdx;
 
   await chatRoomStore.connectWebSocket(room.roomIdx);
-  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody.value);
+  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
   await nextTick(() => {
     chatRoomStore.initialScroll(chatBody.value)
@@ -230,26 +228,16 @@ onMounted(async() => {
     userStore.fetchUserDetail()
   }
   if (userStore.isLogin && currentUserIdx.value) {
-    try {
-      await connectSocket()
-      
-      // 사용자별 채팅방 리스트 업데이트 구독
-      userListSubscription = subscribeTopic(
-        `/topic/user/${currentUserIdx.value}/chatlist`,
-        (message) => {
-          const data = JSON.parse(message.body)
-          console.log('📋 채팅방 리스트 업데이트:', data)
-          
-          if (data.action === 'JOIN' || data.action === 'LEAVE') {
-            // 채팅방 목록 새로고침
-            chatListStore.fetchMyRooms()
-          }
+    await chatRoomStore.subscribeChatListUpdates(
+      currentUserIdx.value,
+      (data) => {
+        if (data.action === 'JOIN' || data.action === 'LEAVE') {
+          // 채팅방 목록 새로고침
+          chatListStore.fetchMyRooms()
         }
-      )
-      console.log('✅ 사이드바 웹소켓 구독 완료')
-    } catch (error) {
-      console.error('❌ 사이드바 웹소켓 연결 실패:', error)
-    }
+      }
+    )
+    console.log('✅ 사이드바 웹소켓 구독 완료')
   }
 })
 
@@ -266,39 +254,26 @@ watch(() => userStore.isLogin, async (newValue) => {
       userStore.fetchUserDetail();
     }
     if (currentUserIdx.value) {
-      try {
-        await connectSocket()
-        
-        userListSubscription = subscribeTopic(
-          `/topic/user/${currentUserIdx.value}/chatlist`,
-          (message) => {
-            const data = JSON.parse(message.body)
-            console.log('📋 채팅방 리스트 업데이트:', data)
-            
-            if (data.action === 'JOIN' || data.action === 'LEAVE') {
-              chatListStore.fetchMyRooms()
-            }
+      // chatRoomStore의 새로운 메서드 사용
+      await chatRoomStore.subscribeChatListUpdates(
+        currentUserIdx.value,
+        (data) => {
+          if (data.action === 'JOIN' || data.action === 'LEAVE') {
+            chatListStore.fetchMyRooms()
           }
-        )
-        console.log('✅ 사이드바 웹소켓 구독 완료 (watch)')
-      } catch (error) {
-        console.error('❌ 사이드바 웹소켓 연결 실패 (watch):', error)
-      }
+        }
+      )
+      console.log('✅ 사이드바 웹소켓 구독 완료 (watch)')
     }
   } else {
-    // ✅ 로그아웃 시 구독 해제
-    if (userListSubscription) {
-      unsubscribeTopic(userListSubscription)
-      userListSubscription = null
-    }
+    // 로그아웃 시 구독 해제 - chatRoomStore 메서드 사용
+    chatRoomStore.unsubscribeAllSidebarSubscriptions()
   }
 })
+
 onBeforeUnmount(() => {
   // 구독 해제
-  if (userListSubscription) {
-    unsubscribeTopic(userListSubscription)
-    userListSubscription = null
-  }
+  chatRoomStore.unsubscribeAllSidebarSubscriptions()
 })
 
 
