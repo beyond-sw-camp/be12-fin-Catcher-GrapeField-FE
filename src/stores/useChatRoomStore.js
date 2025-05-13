@@ -30,7 +30,9 @@ export const useChatRoomStore = defineStore('chatRoom', {
             return state.messages.map(msg => ({
                 ...msg,
                 timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp),
-                isMe: msg.userIdx === currentUserIdx,
+                isMe: msg.hasOwnProperty('isMe')
+                    ? msg.isMe
+                    : msg.userIdx === currentUserIdx
             }))
 
         },
@@ -322,15 +324,18 @@ export const useChatRoomStore = defineStore('chatRoom', {
             const msg = JSON.parse(frame.body)
             const userStore = useUserStore()
             const currentUserIdx = userStore.userIdx
+            console.log("currentUserIdx = userStore.userIdx:", currentUserIdx)
+
             const newMsg = {
                 id: msg.messageIdx,
                 sender: msg.username,
                 avatar: msg.profileImageUrl,
                 content: msg.content,
                 timestamp: msg.createdAt,
-                isMe: msg.userIdx === currentUserIdx,
+                isMe: msg.userIdx === userStore.userIdx,
                 isHighlighted: msg.isHighlighted
             }
+            console.log("newMsg.isMe:", newMsg.isMe)
             this.messages.push(newMsg)
             nextTick(() => {
                 if(!this.chatBodyElement) {
