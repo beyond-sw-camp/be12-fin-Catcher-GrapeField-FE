@@ -2,11 +2,11 @@
 import {acceptHMRUpdate, defineStore} from 'pinia'
 import axios from 'axios'
 import {connect as createWebSocketConnection} from '@/utils/webSocketClient'
-import {nextTick} from "vue";
+import {computed, nextTick} from "vue";
 import {useUserStore} from "@/stores/useUserStore";
 
 export const useChatRoomStore = defineStore('chatRoom', {
-    state: () => ({
+        state: () => ({
         roomData: null,
         stompClient: null,
         highlightedTimes: [],
@@ -24,16 +24,15 @@ export const useChatRoomStore = defineStore('chatRoom', {
         newMessage: '',
         chatBodyElement: null,
     }),
-
     getters: {
         formattedMessages: (state) => {
-            const userStore = useUserStore()
-            const myIdx = userStore.userDetail?.userIdx
+            const currentUserIdx = useUserStore().userIdx
             return state.messages.map(msg => ({
                 ...msg,
                 timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp),
-                isMe: msg.userIdx === myIdx
+                isMe: msg.userIdx === currentUserIdx,
             }))
+
         },
         highlightList: (state) => state.highlightedTimes.map(h => ({
             id: h.id,
@@ -63,17 +62,6 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this.roomData = data
                 this.roomTitle = data.roomName
                 this.participantCount = data.memberList.length
-                /* // 페이지네이션 응답으로 변경하기전 !!
-                this.messages = data.messageList.map(msg => ({
-                    id: msg.messageIdx,
-                    userIdx: msg.userIdx,
-                    sender: msg.username,
-                    avatar: msg.profileImageUrl,
-                    content: msg.content,
-                    timestamp: new Date(msg.createdAt),
-                    // isMe: msg.userIdx === this.currentUserIdx,
-                    isHighlighted: msg.isHighlighted
-                })) */ // 페이지네이션 응답으로 변경하기전 !!
                 this.highlightedTimes = data.highlightList.map(h => ({
                     id: h.idx,
                     messageIdx: h.messageIdx,
@@ -332,13 +320,15 @@ export const useChatRoomStore = defineStore('chatRoom', {
             //console.log('[Store] 현재 구독 개수:', this.getSubscriptionCount());
             //console.log('chatBodyElement:', this.chatBodyElement)
             const msg = JSON.parse(frame.body)
+            const userStore = useUserStore()
+            const currentUserIdx = userStore.userIdx
             const newMsg = {
                 id: msg.messageIdx,
                 sender: msg.username,
                 avatar: msg.profileImageUrl,
                 content: msg.content,
                 timestamp: msg.createdAt,
-                // isMe: msg.userIdx === this.currentUserIdx,
+                isMe: msg.userIdx === currentUserIdx,
                 isHighlighted: msg.isHighlighted
             }
             this.messages.push(newMsg)
