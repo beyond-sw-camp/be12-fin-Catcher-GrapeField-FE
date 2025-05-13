@@ -13,6 +13,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         showHighlightEffect: false,
         participantCount: 0,
         roomTitle: '',
+        heartCnt: null,
         messages: [],
         page: 0,
         size: 20,
@@ -63,6 +64,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 const {data} = await axios.get(`/api/chat/${roomIdx}`, {withCredentials: true, headers: {}})
                 this.roomData = data
                 this.roomTitle = data.roomName
+                this.heartCnt = data.heartCnt
                 this.participantCount = data.memberList.length
                 this.highlightedTimes = data.highlightList.map(h => ({
                     id: h.idx,
@@ -229,13 +231,20 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this._likeSubscription = client.subscribe(
                     `/topic/chat.room.likes.${roomId}`,
                     (frame) => {
-                        const heart = JSON.parse(frame.body)
-                        //console.log("❤️ 하트 수신!", heart)
+                        // ⭐⭐ Redis 변경 이전 코드 ⭐⭐시작
+                        // const heart = JSON.parse(frame.body)
+                        // // console.log("❤️ 하트 수신!", heart)
+                        // // 하트 수 증가
+                        // if (this.heartCnt) {
+                        //     this.heartCnt += 1
+                        // } //  ⭐⭐ Redis 변경 이전 코드 ⭐⭐끝
 
-                        // 하트 수 증가
-                        if (this.roomData) {
-                            this.roomData.heartCnt += 1
-                        }
+                        // 🌟 Redis 변경 이후 코드 🌟시작
+                        const {roomIdx, heartCount} = JSON.parse(frame.body)
+                        console.log(frame.body);
+                        console.log("❤️ 하트 수신! roomIdx:"+roomIdx+" 개수:"+ heartCount)
+                        this.heartCnt = heartCount
+                        // 🌟 Redis 변경 이후 코드 🌟끝
 
                         // 하트 애니메이션
                         this.triggerHearts()
