@@ -5,11 +5,12 @@ import {useRoute, useRouter} from 'vue-router'
 import {useChatRoomStore} from '@/stores/useChatRoomStore'
 import {useChatStore} from "@/stores/useChatStore.js";
 import {useUserStore} from "@/stores/useUserStore.js";
+import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
 
 const userStore = useUserStore()
 const chatRoomStore = useChatRoomStore()
-const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
+const chatListStore = useChatRoomListStore()
 
 // reactive 변수
 const chatBody = ref(null)
@@ -224,14 +225,72 @@ const handleLike = async () => {
   chatRoomStore.sendHeart(roomId.value)
 }
 
-// 채팅방 퇴장
+function formatHeartCount(count) {
+  if (typeof count !== 'number' || isNaN(count) || !isFinite(count)) {  // 숫자가 아니거나 유효하지 않은 경우 원래 값 반환
+    return count;
+  }
+  if (count < 1000) {   // 1,000 미만은 그대로 반환
+    return count.toString();
+  }
+  else if (1000 <= count < 10000) {   // 1천 이상 (1,000)
+    const value = Math.floor(count / 100)/10;
+    return value.toFixed(1).replace(/\.0$/, '') + '천';
+  }
+  else if (10000 <= count <100000) {
+    const value = Math.floor(count / 1000)/10;
+    return value.toFixed(1).replace(/\.0$/, '') + '만';
+  }
+  else if (100000 <= count < 1000000) {
+    const value = Math.floor(count / 10000)/10;
+    return value.toFixed(1).replace(/\.0$/, '') + '십만';
+  }
+  else if (1000000 <= count <10000000) {
+    const value = Math.floor(count/100000)/10;
+    return value.toFixed(1).replace(/\.0$/, '') + '백만';
+  }
+  else if (10000000 <= count <100000000) {
+    const value = Math.floor(count / 1000000)/10;
+    return value.toFixed(1).replace(/\.0$/, '') + '천만';
+  }
+  else {
+    return '1억+';
+  }
 
-const leaveChatRoom = async () => {
-  const res = chatStore.leaveRoom(roomId.value)
 
-  alert(res.data || '채팅방을 퇴장했습니다.')
-  await router.push('/chat-list')
 }
+
+// 채팅방 퇴장
+const leaveChatRoom = async () => {
+  // ✅ 퇴장 확인 대화상자 추가
+  const confirmed = confirm('채팅방을 퇴장하시겠습니까?')
+
+  if (!confirmed) {
+    console.log('❌ 퇴장 취소')
+    return // 취소하면 아무것도 하지 않고 종료
+  }
+
+  try {
+    // 1. 백엔드에 퇴장 요청
+    const res = await chatStore.leaveRoom(roomId.value)
+
+    // 2. 웹소켓 연결 해제
+    chatRoomStore.disconnectWebSocket()
+
+    // 3. 캐시에서 제거
+    chatStore.joinedRoomIds = chatStore.joinedRoomIds.filter(id => id !== Number(roomId.value))
+
+    // 4. 사이드바 업데이트
+    await chatListStore.fetchMyRooms()
+
+    // 5. 리다이렉트
+    alert(res.data || '채팅방을 퇴장했습니다.')
+    await router.push('/chat-list')
+  } catch (error) {
+    console.error('❌ 퇴장 실패:', error)
+    alert('퇴장 중 문제가 발생했습니다.')
+  }
+}
+
 onMounted(async () => {
   // 1️⃣ 채팅방 데이터 불러오기
   try {
@@ -346,7 +405,7 @@ onBeforeUnmount(() => {
              :data-message-idx="msg.id"
              :class="['flex mb-4 gap-3', msg.isMe ? 'flex-row-reverse' : 'flex-row']">
           <div v-if="!msg.isMe"
-               class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+               class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
             <div v-if="!msg.avatar"
                  :class="['text-base sm:text-lg text-gray-800 h-full flex items-center justify-center font-semibold',
                 colorClasses[msg.userIdx % colorClasses.length]]">
@@ -375,22 +434,23 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- 하단 메세지 입력창 -->
-    <div class="bg-white px-6 py-4 flex items-center gap-4 border-t border-gray-200">
-      <button class="relative p-0 hover:scale-110 transform transition"
-              @click="handleLike">
-        <svg class="w-12 h-12 sm:w-14 sm:h-14 fill-current text-pink-500" viewBox="0 0 24 24"
-             xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
+    <div class="bg-white px-4 py-3 flex items-center gap-4 border-t border-gray-200">
+      <div class="flex flex-col justify-center items-center">
+        <button class="p-0 hover:scale-110 transform transition"
+                @click="handleLike">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 fill-current text-pink-500" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35c-.4-.35-1.6-1.45-2.9-2.7C5.2 15.1 2 11.95 2 8.2
                    2 5 4.5 2.8 7.5 2.8c1.7 0 3.2.8 4.5 2.2
                    1.3-1.4 2.8-2.2 4.5-2.2C19.5 2.8 22 5 22 8.2
                    c0 3.75-3.2 6.9-7.1 10.45-1.3 1.25-2.5 2.35-2.9 2.7z"/>
-        </svg>
-        <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
-        <span
-            v-for="heart in chatRoomStore.hearts"
-            :key="heart.id"
-            :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
-            class="heart-pop">
+          </svg>
+          <!-- 버튼 누르면 나오는 뿅뿅 하트들 -->
+          <span
+              v-for="heart in chatRoomStore.hearts"
+              :key="heart.id"
+              :style="{ left: `${heart.x}px`, top: `${heart.y}px` }"
+              class="heart-pop">
           <svg
               height="16"
               viewBox="0 0 24 24"
@@ -405,15 +465,18 @@ onBeforeUnmount(() => {
          6.86-8.55 11.54L12 21.35z"/>
           </svg>
         </span>
-      </button>
+        </button>
+        <span class="py-0 text-sm text-pink-500">{{formatHeartCount(chatRoomStore.heartCnt)}}</span>
+      </div>
+
       <input v-model="chatRoomStore.newMessage"
-             class="flex-1 border border-gray-300 rounded-full px-4 py-2
-                    text-base sm:text-lg focus:outline-none focus:ring-2
+             class="flex-1 h-12 sm:h-14 border border-gray-300 rounded-full px-4 py-2
+                    text-lg sm:text-xl focus:outline-none focus:ring-2
                     focus:ring-purple-500"
              placeholder="메시지 입력..."
              type="text"
              @keyup.enter="sendMessage"/>
-      <button class="bg-purple-700 text-white px-6 py-2 rounded-full text-base sm:text-lg
+      <button class="h-12 sm:h-14 bg-purple-700 text-white px-6 py-2 rounded-full text-lg sm:text-xl
                      hover:bg-purple-800 transition"
                      :disabled="!chatRoomStore.newMessage.trim()"
               @click="sendMessage">

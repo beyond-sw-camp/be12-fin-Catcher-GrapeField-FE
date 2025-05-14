@@ -1,6 +1,5 @@
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
-import axios from 'axios'
+import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore'
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
@@ -99,7 +98,7 @@ async function showChatRoom(room) {
   state.activeRoomIdx = room.roomIdx;
 
   await chatRoomStore.connectWebSocket(room.roomIdx);
-  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody.value);
+  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
   await nextTick(() => {
     chatRoomStore.initialScroll(chatBody.value)
@@ -214,7 +213,7 @@ function formatDateRange(start, end) {
 }
 
 
-onMounted(() => {
+onMounted(async() => {
   if (userStore.isLogin === true) {
     loadPlan();
     eventsStore.loadEventVisits();
@@ -227,9 +226,21 @@ onMounted(() => {
   if (userStore.isLogin && !userStore.userDetail) {
     userStore.fetchUserDetail()
   }
+  if (userStore.isLogin && currentUserIdx.value) {
+    await chatRoomStore.subscribeChatListUpdates(
+      currentUserIdx.value,
+      (data) => {
+        if (data.action === 'JOIN' || data.action === 'LEAVE') {
+          // 채팅방 목록 새로고침
+          chatListStore.fetchMyRooms()
+        }
+      }
+    )
+    console.log('✅ 사이드바 웹소켓 구독 완료')
+  }
 })
 
-watch(() => userStore.isLogin, (newValue) => {
+watch(() => userStore.isLogin, async (newValue) => {
   if (newValue === true) { // 로그인 상태가 true로 변경되었을 때
     loadPlan();
     eventsStore.loadEventVisits();
@@ -241,7 +252,27 @@ watch(() => userStore.isLogin, (newValue) => {
     if (!userStore.userDetail) {
       userStore.fetchUserDetail();
     }
+    if (currentUserIdx.value) {
+      // chatRoomStore의 새로운 메서드 사용
+      await chatRoomStore.subscribeChatListUpdates(
+        currentUserIdx.value,
+        (data) => {
+          if (data.action === 'JOIN' || data.action === 'LEAVE') {
+            chatListStore.fetchMyRooms()
+          }
+        }
+      )
+      console.log('✅ 사이드바 웹소켓 구독 완료 (watch)')
+    }
+  } else {
+    // 로그아웃 시 구독 해제 - chatRoomStore 메서드 사용
+    chatRoomStore.unsubscribeAllSidebarSubscriptions()
   }
+})
+
+onBeforeUnmount(() => {
+  // 구독 해제
+  chatRoomStore.unsubscribeAllSidebarSubscriptions()
 })
 
 
@@ -350,7 +381,7 @@ watch(() => userStore.isLogin, (newValue) => {
               <!-- 채팅 메세지 목록 -->
               <div ref="chatBody" class="flex-1 overflow-y-auto space-y-3 mb-3">
                 <transition-group>
-                  <div v-for="(msg, index) in chatRoomStore.formattedMessages" :key="msg.id"
+                  <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="msg.idx"
                     :class="['flex', msg.isMe ? 'justify-end' : 'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
                       <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />

@@ -69,7 +69,12 @@ const filteredRooms = computed(() => {
 
 
 // 채팅방 입장요청 로직(이미 참여중인 채팅방이라면 백엔드에 요청 x)
-const openChatRoom = async (roomId) => {
+const openChatRoom = async (roomId, roomName) => {
+  const confirmEnter = confirm(`"${roomName}" 채팅방에 입장하시겠습니까?`)
+  
+  if (!confirmEnter) {
+    return  // 사용자가 취소를 누르면 함수 종료
+  }
   try {
     await chatStore.joinRoom(roomId) // 이미 참여중이면 백엔드 요청 생략됨
   } catch (err) {
@@ -208,7 +213,7 @@ watch(searchQuery, (newQuery) => {
     </div>
 
     <div class="chat-rooms">
-      <div v-for="room in filteredRooms" :key="room.roomIdx" class="chat-room-card" @click="openChatRoom(room.roomIdx)">
+      <div v-for="room in filteredRooms" :key="room.roomIdx" class="chat-room-card" @click="openChatRoom(room.roomIdx, room.roomName)">
         <div class="chat-room-image">
           <img :src="BASE_IMAGE_URL + room.posterImgUrl || '/default.jpg'" :alt="room.roomName" />
           <div class="active-badge">LIVE</div>
