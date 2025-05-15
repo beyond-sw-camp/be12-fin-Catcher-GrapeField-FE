@@ -231,11 +231,6 @@ watch(searchQuery, (newQuery) => {
         </div>
       </div>
     </div>
-    <div class="text-sm text-gray-500 mt-2">
-      🔄 로딩 중: {{ chatListStore.loading ? 'Y' : 'N' }} /
-      ✅ 마지막 페이지: {{ chatListStore.isLast ? 'Y' : 'N' }} /
-      📦 방 개수: {{ filteredRooms.length }}개
-    </div>
     <!-- ✅ 무한 스크롤 트리거용 -->
     <div ref="scrollTrigger" class="h-4"></div>
   </div>
