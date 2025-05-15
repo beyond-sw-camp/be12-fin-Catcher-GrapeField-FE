@@ -22,7 +22,13 @@ pipeline {
             }
             steps {
                 sh '''
-                    export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
+                    # .env.production 파일 직접 생성
+                    echo "VITE_BASE_IMAGE_URL=https://grapefield-image.s3.ap-northeast-2.amazonaws.com/" > .env.production
+                    
+                    # 확인을 위해 파일 내용 출력
+                    echo "생성된 .env.production 파일 내용:"
+                    cat .env.production
+                    
                     npm install
                     npm run build
                 '''
