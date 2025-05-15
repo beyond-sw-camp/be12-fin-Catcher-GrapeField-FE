@@ -24,14 +24,17 @@ pipeline {
                 sh '''
                     # .env.production 파일 직접 생성
                     echo "VITE_BASE_IMAGE_URL=https://grapefield-image.s3.ap-northeast-2.amazonaws.com/" > .env.production
-                    
+
                     # 확인을 위해 파일 내용 출력
                     echo "생성된 .env.production 파일 내용:"
                     cat .env.production
-                    
+
                     npm install
                     npm run build
                 '''
+                // 빌드된 결과물과 k8s 파일 stash
+                stash includes: 'dist/**/*', name: 'build-output'
+                stash includes: 'k8s/*.yml', name: 'k8s-files'
             }
         }
         stage('Docker Build') {
@@ -39,6 +42,7 @@ pipeline {
                 label 'build'
             }
             steps {
+                unstash 'build-output'
                 sh """
                     # Docker 이미지 빌드
                     docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG} .
@@ -64,7 +68,8 @@ pipeline {
             }
             steps {
                 script {
-                    withEnv(['KUBECONFIG=/home/test/.kube/config']) {
+                    unstash 'k8s-files'
+                    withEnv(['KUBECONFIG=/home/jenkins/.kube/config']) {
                         sh """
                             # 이미지 태그 업데이트
                             sed -i 's|${DOCKER_USER}/${IMAGE_NAME}:.*|${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/frontend-deployment.yml
