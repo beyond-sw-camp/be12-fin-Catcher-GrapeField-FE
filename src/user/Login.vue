@@ -32,20 +32,21 @@
       </div>
 
       <!-- 소셜 로그인 버튼들 -->
-      <button class="social-btn kakao" @click="kakaoLogin">
-        <span class="icon">💬</span>
-        카카오 계정으로 로그인
-      </button>
+      <!-- ⭐⭐ 기능구현 완료되면 다시 주석해제하기 ⭐⭐-->
+<!--      <button class="social-btn kakao" @click="kakaoLogin">-->
+<!--        <span class="icon">💬</span>-->
+<!--        카카오 계정으로 로그인-->
+<!--      </button>-->
 
-      <button class="social-btn naver" @click="naverLogin">
-        <span class="icon">N</span>
-        네이버 계정으로 로그인
-      </button>
+<!--      <button class="social-btn naver" @click="naverLogin">-->
+<!--        <span class="icon">N</span>-->
+<!--        네이버 계정으로 로그인-->
+<!--      </button>-->
 
-      <button class="social-btn google" @click="googleLogin">
-        <span class="icon">G</span>
-        구글 계정으로 로그인
-      </button>
+<!--      <button class="social-btn google" @click="googleLogin">-->
+<!--        <span class="icon">G</span>-->
+<!--        구글 계정으로 로그인-->
+<!--      </button>-->
 
       <div class="bottom-links">
         <p>계정이 없으신가요? <router-link to="/signup">회원가입</router-link></p>
