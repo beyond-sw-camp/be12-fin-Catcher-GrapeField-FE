@@ -250,15 +250,4 @@ const nextMonth = () => {
   fetchEventsForCurrentMonth();
 };
 
-
-
-// 컴포넌트 마운트 시 초기화
-onMounted(() => {
-  // 현재 날짜로 초기화 (예시에서는 2025년 4월로 설정)
-  currentYear.value = 2025;
-  currentMonth.value = 4;
-
-  calculateCalendarDays();
-  fetchEventsForCurrentMonth();
-});
 </script>
