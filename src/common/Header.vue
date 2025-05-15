@@ -19,7 +19,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="{ 'router-link-active': isActive('/community') }" class="truncate" to="/community">커뮤니티
+            <router-link :class="{ 'router-link-active': isActive('/chat-list') }" class="truncate" to="/chat-list">채팅
             </router-link>
           </li>
           <li class="nav-item">
