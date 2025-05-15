@@ -22,19 +22,42 @@ pipeline {
             }
             steps {
                 sh '''
-                    # .env.production 파일 직접 생성
+                    # 노드가 설치되어 있는지 확인
+                    if ! command -v node &> /dev/null; then
+                        echo "Node.js를 설치합니다..."
+                        # NVM 설치 (Node Version Manager)
+                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+                        # NVM 환경 설정 로드
+                        export NVM_DIR="$HOME/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                        # Node.js LTS 버전 설치
+                        nvm install --lts
+                    fi
+                    
+                    set -x
+                    echo "Node.js 버전: $(node -v || echo 'not installed')"
+                    echo "NPM 버전: $(npm -v || echo 'not installed')"
+                    
+                    # .env.production 파일 생성 (이 방식이 가장 확실합니다)
                     echo "VITE_BASE_IMAGE_URL=https://grapefield-image.s3.ap-northeast-2.amazonaws.com/" > .env.production
-
-                    # 확인을 위해 파일 내용 출력
                     echo "생성된 .env.production 파일 내용:"
                     cat .env.production
-
+                    
+                    # .env 파일을 사용하여 빌드
                     npm install
                     npm run build
+                    
+                    # 빌드 결과 확인
+                    echo "빌드된 파일 목록:"
+                    ls -la dist/
+                    
+                    # 빌드된 JS 파일에 환경 변수가 포함되어 있는지 확인
+                    echo "이미지 URL 포함 여부 확인:"
+                    grep -r "grapefield-image" dist/ || echo "이미지 URL이 빌드 결과물에 없습니다"
                 '''
-                // 빌드된 결과물과 k8s 파일 stash
                 stash includes: 'dist/**/*', name: 'build-output'
                 stash includes: 'k8s/*.yml', name: 'k8s-files'
+                stash includes: 'Dockerfile', name: 'dockerfile'
             }
         }
         stage('Docker Build') {
@@ -43,7 +66,11 @@ pipeline {
             }
             steps {
                 unstash 'build-output'
+                unstash 'dockerfile'
                 sh """
+                    # 빌드된 파일이 제대로 unstash 되었는지 확인
+                    ls -la dist/
+                    
                     # Docker 이미지 빌드
                     docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG} .
                 """
