@@ -292,6 +292,13 @@ const leaveChatRoom = async () => {
 }
 
 onMounted(async () => {
+  if(!userStore.isLogin) {
+    console.log("❌ 로그인 필요")
+    alert('로그인 후 이용해주세요.')
+    router.push('/login')
+    return
+  }
+
   // 1️⃣ 채팅방 데이터 불러오기
   try {
     await chatRoomStore.fetchChatRoom(roomId.value, chatBody)
