@@ -22,25 +22,17 @@ pipeline {
             }
             steps {
                 sh '''
-                    # 노드가 설치되어 있는지 확인
-                    if ! command -v node &> /dev/null; then
-                        echo "Node.js를 설치합니다..."
-                        # NVM 설치 (Node Version Manager)
-                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-                        # NVM 환경 설정 로드
-                        export NVM_DIR="$HOME/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # 백슬래시 제거
-                        # Node.js LTS 버전 설치
-                        nvm install --lts
-                    fi
-                    
-                    set -x
-                    echo "Node.js 버전: $(node -v || echo 'not installed')"
-                    echo "NPM 버전: $(npm -v || echo 'not installed')"
-                    export VITE_BASE_IMAGE_URL=${VITE_BASE_IMAGE_URL}
+                    # .env.production 파일 직접 생성
+                    echo "VITE_BASE_IMAGE_URL=https://grapefield-image.s3.ap-northeast-2.amazonaws.com/" > .env.production
+
+                    # 확인을 위해 파일 내용 출력
+                    echo "생성된 .env.production 파일 내용:"
+                    cat .env.production
+
                     npm install
                     npm run build
                 '''
+                // 빌드된 결과물과 k8s 파일 stash
                 stash includes: 'dist/**/*', name: 'build-output'
                 stash includes: 'k8s/*.yml', name: 'k8s-files'
             }
