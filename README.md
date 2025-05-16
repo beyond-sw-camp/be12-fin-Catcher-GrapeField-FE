@@ -73,6 +73,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white">
 <img src="https://img.shields.io/badge/logstash-f3bd19?style=for-the-badge&logo=logstash&logoColor=white" style="border-radius: 5px;">
+<img src="https://img.shields.io/badge/kibana-c41bb1?style=for-the-badge&logo=kibana&logoColor=white" style="border-radius: 5px;">
+
 
 #### &nbsp;　[ Communication ]
 &nbsp;&nbsp;&nbsp;&nbsp;<img src="https://img.shields.io/badge/discord-326CE5?style=for-the-badge&logo=discord&logoColor=white" style="border-radius: 5px;">
@@ -83,15 +85,25 @@
 
 
 ## 📚 Grapefield 데모 사이트 바로가기
-### [Grapefield](https://grapefield.kro.kr/)</a>
-아이디 : animal255@example.com    
-비밀번호 : 1234     
-(그 외에도 animal1@example.com ~ animal346@example.com 중에서 자유롭게 사용 가능)
+### 🔗 [Grapefield](https://grapefield.kro.kr/)</a>
+<table>
+	<tr>
+		<td>아이디</td>
+		<td>animal255@example.com</td>
+	</tr>
+	<tr>
+		<td>비밀번호</td>
+		<td>1234</td>
+	</tr>
+</table>
+* 그 외에도 <code>animal1@example.com</code> ~ <code>animal376@example.com</code> 중에서 자유롭게 사용 가능
 <br><br>
 
 ## 📝 Grapefield 서비스 소개
 ### 프로젝트 배경
+<img width="80%" src="https://github.com/user-attachments/assets/06ca5c9b-b170-4dda-8c65-f990135127bc">
 //TODO: 사이트 정보를 한 눈에 확인할 수 있는 (커뮤니티 특성이 드러나는) 이미지 추가
+//TODO: 공연.전시 관련 이미지이도록 수정하기
 
 코로나 팬데믹 이후 오프라인 공연 및 전시회에 대한 수요가 급증하면서 관련 행사들이 활발히 개최되고 있다. 특히 기업, 기관의 홍보 담당자들은 브랜드 홍보 및 고객 접점을 확대하기 위한 전략으로 공연이나 박람회와 같은 오프라인 행사를 적극적으로 유치하거나 후원하며, 이를 통해 대면 중심의 마케팅 활동이 활성화되었다.   
 그러나 기존 정보는 개별 사이트나 SNS를 통해 확인해야 하며, 후기를 확인하거나 공유하는 과정이 번거롭다.    
