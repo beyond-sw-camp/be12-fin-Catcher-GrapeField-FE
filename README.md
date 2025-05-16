@@ -117,9 +117,9 @@ TODO : 이미지 추가
 ---
 
 ## 프론트엔드 프로젝트 목표
-사용자 인터페이스(UI) 개발 : 직관적이고 반응형(Responsive) 디자인 구현
-사용자 경험(UX) 향상 : 사용자의 편의성과 흐름을 고려한 화면 흐름 설계
-프론트엔드 기술 활용 : HTML, CSS, JavaScript, 프레임워크(Vue, React 등)를 사용할 때 확장성을 고려하여 프로젝트를 진행
+사용자 인터페이스(UI) 개발 : 직관적이고 반응형(Responsive) 디자인 구현    
+사용자 경험(UX) 향상 : 사용자의 편의성과 흐름을 고려한 화면 흐름 설계   
+프론트엔드 기술 활용 : HTML, CSS, JavaScript, 프레임워크(Vue, React 등)를 사용할 때 확장성을 고려하여 프로젝트를 진행   
 API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, interceptor 등)
 
 ---
