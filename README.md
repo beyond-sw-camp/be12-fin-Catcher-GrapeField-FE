@@ -217,6 +217,8 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 
 ## 📂 프로젝트 폴더 바로가기
 ### [📃 Frontend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE.git)
+### [📃 Devops(Frontend)](https://github.com/ddarahakit2025/be12-fin-template/tree/main/devops)
 ### [📃 Backend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-BE.git)
-### [📃 Devops](https://github.com/ddarahakit2025/be12-fin-template/tree/main/devops)
+### [📃 Devops(Backend)](https://github.com/ddarahakit2025/be12-fin-template/tree/main/devops)
+
 <br>
