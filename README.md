@@ -101,8 +101,6 @@
 ## 📝 Grapefield 서비스 소개
 ### 프로젝트 배경
 <img width="80%" src="https://github.com/user-attachments/assets/06ca5c9b-b170-4dda-8c65-f990135127bc">
-//TODO: 사이트 정보를 한 눈에 확인할 수 있는 (커뮤니티 특성이 드러나는) 이미지 추가
-//TODO: 공연.전시 관련 이미지이도록 수정하기
 
 코로나 팬데믹 이후 오프라인 공연 및 전시회에 대한 수요가 급증하면서 관련 행사들이 활발히 개최되고 있다. 특히 기업, 기관의 홍보 담당자들은 브랜드 홍보 및 고객 접점을 확대하기 위한 전략으로 공연이나 박람회와 같은 오프라인 행사를 적극적으로 유치하거나 후원하며, 이를 통해 대면 중심의 마케팅 활동이 활성화되었다.   
 그러나 기존 정보는 개별 사이트나 SNS를 통해 확인해야 하며, 후기를 확인하거나 공유하는 과정이 번거롭다.    
@@ -202,10 +200,12 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 
 <details>
 <summary>💬 실시간 채팅방<summary>
-- **행사별 실시간 채팅** 기능
+- **공연/전시 행사별 실시간 채팅방** 기능 제공
+- **공연/전시 행사별 채팅방 별 실시간 좋아요(하트 전송) 기능**
 - **과거 채팅 내용 조회 기능**
-- - **하이라이트 시간대 자동 탐지 및 북마크 기능** (개발중)
-- **주요 정보 핀 고정 기능** (개발중)
+- **하이라이트 시간대 자동 탐지 기능** (개발중)
+- 하이라이트 채팅구간 저장 시 AI API로 키워드 요약 기능
+
 </details>
 
 
@@ -224,13 +224,14 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </details>
 
 ## 🚀 핵심 로직 상세 설명
-### [📃 프로젝트 Wiki](https://github.com/ddarahakit2025/be12-fin-template/wiki/프론트엔드-프로젝트) <br><br>
+### [📃 프로젝트 Wiki](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE/wiki/프론트엔드-프로젝트) <br><br>
 
 
 ## 📂 프로젝트 폴더 바로가기
 ### [📃 Frontend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE.git)
-### [📃 Devops(Frontend)](https://github.com/ddarahakit2025/be12-fin-template/tree/main/devops)
+### [📃 Devops(Frontend)]()
+<br>//TODO: 수정해야함 <br>
 ### [📃 Backend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-BE.git)
-### [📃 Devops(Backend)](https://github.com/ddarahakit2025/be12-fin-template/tree/main/devops)
-
+### [📃 Devops(Backend)]()
+<br>//TODO: 수정해야함<br>
 <br>
