@@ -190,6 +190,9 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 - **예매 정보 및 링크** 표시
 - **후기 게시판 연결** 기능
 - 실시간 채팅방 입장 버튼
+
+![텐-상세페이지-채팅방입장](https://github.com/user-attachments/assets/0635ad09-a4cc-40df-86ec-2656553e7a58)
+
 </details>
 
 
@@ -211,8 +214,16 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 	
 ![Screenshot 2025-05-19 at 08 27 30](https://github.com/user-attachments/assets/69461828-0884-4a47-baf4-7689640d1603)
 
+
 - **공연/전시 행사별 실시간 채팅방** 기능 제공
+
+![뮤지컬-인기채팅리스트](https://github.com/user-attachments/assets/8a98cac6-1c7b-441a-9f2a-2de867c43966)
+
+
 - **공연/전시 행사별 채팅방 별 실시간 좋아요(하트 전송) 기능**
+
+![Screenshot 2025-05-19 at 08 27 30](https://github.com/user-attachments/assets/69461828-0884-4a47-baf4-7689640d1603)
+
 - **과거 채팅 내용 조회 기능**
 - **하이라이트 시간대 자동 탐지 기능** (개발중)
 - 하이라이트 채팅구간 저장 시 AI API로 키워드 요약 기능
