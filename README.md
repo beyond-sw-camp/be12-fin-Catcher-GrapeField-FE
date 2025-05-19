@@ -183,7 +183,7 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 <details>
 <summary>검색<summary>
 - 입력한 키워드를 통해 관련 공연/전시 결과 출력   
-![추천검색어](https://github.com/user-attachments/assets/bac0e711-6f5b-45d0-8194-854e0cab431f)
+![추천검색어](https://github.com/user-attachments/assets/ad355e56-1fd7-476b-bab6-faf1c5d85ee7)
 
 공연/전시, 게시글, 한줄평 결과를 통합하여 확인 가능 
 ![통합검색](https://github.com/user-attachments/assets/7c09a7c8-966d-4bba-984e-dd48569118a1)
