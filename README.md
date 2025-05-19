@@ -215,18 +215,22 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 ![Screenshot 2025-05-19 at 08 27 30](https://github.com/user-attachments/assets/69461828-0884-4a47-baf4-7689640d1603)
 
 
-- **공연/전시 행사별 실시간 채팅방** 기능 제공
+- **공연/전시 행사별 실시간 채팅방 제공**
+  - 과거 채팅 내용 조회 가능
 
 ![뮤지컬-인기채팅리스트](https://github.com/user-attachments/assets/8a98cac6-1c7b-441a-9f2a-2de867c43966)
 
 
-- **공연/전시 행사별 채팅방 별 실시간 좋아요(하트 전송) 기능**
+- **공연/전시 행사별 채팅방 별 실시간 좋아요(하트) 송수신 기능 및 메세지 송수신 기능**
+
+![채팅 3명 동시 접속-메세지-하트](https://github.com/user-attachments/assets/293cb264-c332-4d56-b79c-19b18eee12b5)
+
+- **실시간 하트 증가율에 따른 인기 채팅방 목록 조회 기능**
 
 ![Screenshot 2025-05-19 at 08 27 30](https://github.com/user-attachments/assets/69461828-0884-4a47-baf4-7689640d1603)
 
-- **과거 채팅 내용 조회 기능**
-- **하이라이트 시간대 자동 탐지 기능** (개발중)
-- 하이라이트 채팅구간 저장 시 AI API로 키워드 요약 기능
+- **하이라이트 시간대 자동 탐지 기능**
+- **하이라이트 채팅구간 저장 시 AI API로 키워드 요약 기능**
 
 </details>
 
