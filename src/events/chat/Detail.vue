@@ -43,6 +43,14 @@ function handleScroll() {
 }
 
 // 시간 포맷 함수
+function formatDateTime(date) {
+  const year = date.getFullYear().toString()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${year}/${month}/${day} ${hours}:${minutes}`
+}
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -58,66 +66,6 @@ function onNewMessageClick() {
 function toggleHighlight() {
   isHighlightCollapsed.value = !isHighlightCollapsed.value;
 }
-
-/*
-function scrollToHighlight(hStartMessageIdx, highlight) {
-  // console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
-  const container = chatBody.value
-  // if (!container) { console.error('chatBody ref 미설정'); return;}
-
-  const messageEls = Array.from(
-      container.querySelectorAll('[data-message-idx]')
-  );
-  // console.log('formattedMessages:', chatRoomStore.formattedMessages);
-  const targetIndex = chatRoomStore.formattedMessages.findIndex(
-      msg => msg.messageIdx === hStartMessageIdx
-  );
-  // const targetIndex = chatRoomStore.formattedMessages.findIndex(
-  //     msg => {
-  //       const match = msg.id === hStartMessageIdx;
-  //       if (!match) {
-  //         console.log('no match for', msg.id, '!==', hStartMessageIdx);
-  //       }
-  //       return match;
-  //     }
-  // );
-  console.log('targetIndex result:', targetIndex);
-
-  // if (targetIndex === -1) {
-  //   console.error('Target message not found:', hStartMessageIdx);
-  //   return;
-  // }
-
-  const targetElement = messageEls[targetIndex];
-  // if (!targetElement) {
-  //   console.error('스크롤 대상 요소를 찾을 수 없습니다:', targetIndex);
-  //   return;
-  // }
-
-  nextTick(() => {
-    const start = container.scrollTop;
-    const end = targetElement.offsetTop - container.clientHeight / 2 + targetElement.clientHeight / 2;
-    const duration = 600;
-    const startTime = performance.now();
-
-    function easeInOutQuad(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
-
-    function animateScroll(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = easeInOutQuad(progress);
-      container.scrollTop = start + (end - start) * ease;
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll);
-      }
-    }
-
-    requestAnimationFrame(animateScroll);
-  });
-}
-*/
 
 async function scrollToHighlight(hStartMessageIdx, highlight) {
   const container = chatBody.value
@@ -385,7 +333,7 @@ onBeforeUnmount(() => {
                     rounded-full text-sm sm:text-base shadow hover:bg-purple-700 hover:text-white
                     transition"
                  @click="scrollToHighlight(highlight.messageIdx, highlight)">
-              <div>{{ formatTime(highlight.time1) }}~{{ formatTime(highlight.time2) }}</div>
+              <div>{{ formatDateTime(highlight.time1) }}~{{ formatTime(highlight.time2) }}</div>
               <div>{{ highlight.summary }}</div>
             </div>
           </div>
