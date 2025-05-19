@@ -166,11 +166,12 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 
 <details>
 <summary>메인 페이지<summary>
-- 현재 진행 중이거나 예정된 **공연/전시회 정보를 최신순, 인기순으로 표시**
-- **카테고리별 필터링 기능** 제공 (공연, 전시, 박람회 등)
-- **추천 행사 및 하이라이트 코너** 제공
-</details>
 
+![메인](https://github.com/user-attachments/assets/e28a2d67-069c-4701-a1e2-8aaba80033aa)
+- 현재 진행 중이거나 예정된 **공연/전시회 정보를 최신순, 인기순으로 표시**    
+- **카테고리별 필터링 기능** 제공 (공연, 전시, 박람회 등)   
+- **추천 행사 및 하이라이트 코너** 제공   
+</details>
 
 
 <details>
