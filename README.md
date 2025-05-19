@@ -142,7 +142,7 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 
 ## 프로젝트 설계
 
-### [1. 프로젝트 기획서서](https://docs.google.com/document/d/1EU-eQ4YGXyAWV_YPDVykpVMUiA__RazJUJNwZiR4Dc4/edit?usp=sharing)
+### [1. 프로젝트 기획서](https://docs.google.com/document/d/1EU-eQ4YGXyAWV_YPDVykpVMUiA__RazJUJNwZiR4Dc4/edit?usp=sharing)
 ### [2. 요구사항 정의서](https://docs.google.com/spreadsheets/d/1lH3kFL2whL5Pu4R99AMO2kA6stfM88ZQs0zwe05mVwA/edit?usp=sharing)
 ### [3. WBS](https://docs.google.com/spreadsheets/d/18U7T2FRrp6uOwkVXoEHOKjuOz3vogf99nwD2UxC60iU/edit?usp=sharing)
 ### [4. 화면설계서 바로가기](https://www.figma.com/design/a0ICwRU8Sc7fTzA3aDfpTi/GrapeField?node-id=84-5&p=f&t=xdmjsKX0eJ5KoVA9-0)
