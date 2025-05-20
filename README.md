@@ -182,6 +182,19 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </details>
 
 <details>
+<summary>개인 일정 관리 및 공연/전시 즐겨찾기<summary>
+
+![개인 일정](https://github.com/user-attachments/assets/bf77a56c-72e2-411a-a613-8b39a2c2d0b4)
+
+- 마이페이지의 캘린더를 통해 개인적인 일정을 확인하고 등록 
+
+![Image](https://github.com/user-attachments/assets/0c8ee084-2214-4548-b443-70ebe6de944b)
+
+![Image](https://github.com/user-attachments/assets/4352bc7c-77ab-4c81-9410-febb82efe135)
+- 즐겨찾기 및 알림 설정한 전시/공연 확인
+</details>
+
+<details>
 <summary>검색<summary>
 - 입력한 키워드를 통해 관련 공연/전시 결과 출력
 	
@@ -254,11 +267,6 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 - **프로필 설정**
 </details>
 
-
-<details>
-<summary><summary>
-
-</details>
 
 ## 🚀 핵심 로직 상세 설명
 ### [📃 프로젝트 Wiki](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE/wiki/프론트엔드-프로젝트) <br><br>
