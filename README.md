@@ -143,32 +143,51 @@
 ---
 
 ## 프론트엔드 프로젝트 목표
-### 1. 직관적이고 일관된 사용자 인터페이스(UI)
+<details>
+	<summary><b>1. 직관적이고 일관된 사용자 인터페이스(UI)</b></summary>
+
 - Tailwind CSS 유틸리티 클래스와 **직관적인 아이콘**을 적극 활용해 기능별 시각적 구분 강화
 - **반응형(Responsive) 레이아웃** 설계로 데스크톱·모바일 등 모든 기기에서 최적화
-  
-### 2. 사용자 경험(UX) 향상
+ 
+</details>
+
+<details>
+	<summary><b>2. 사용자 경험(UX) 향상</b></summary>
+
 - **주요 기능**(공연/전시 목록, 채팅 목록, 예매일정 캘린더, 검색창 등)으로 이동하는 탭메뉴를 **상단 헤더에 고정 배치**해 **사용자 접근성 극대화**
 - **사이드바**에 **회원기능**(일정목록, 최근 방문페이지, 관심 행사 목록 등)을 제공하여 편의성 극대화
 - **사이드바**에서 참여중인 채팅방 목록을 조회하고, **실제 채팅기능을 이용할 수 있도록** 하여 사용자가 페이지를 이동하면서도 **실시간 소통 가능**하도록 설계
 - **사이드바**는 사용하지 않을 때 접어둘 수 있도록 **토글기능** 제공
 - 전체 채팅방 조회 및 전체 행사 조회 시 ‘무한 스크롤’을, 검색결과 목록 및 게시글 목록에는 ‘페이지네이션’을 적용하여 자연스러운 흐름 유지
 
-### 3. 견고한 아키텍처 및 확장성 확보
-- Vue 3 + Vite 기반의 SPA(Single Page Application) 컴포넌트 구조로 **코드 재사용성과 모듈화 극대화**
-- PiniaStore `userStore`, 인증정보 전역 상태 관리로 인증·사용자 정보 일관성 유지
-- 웹소켓 연결, 공연/전시 데이터, 사용자 데이터, 채팅 데이터, 일정알림 데이터 등의 상태를 PiniaStore를 통해 관리
-- Vue Router를 통한 코드 스플리팅 및 동적 라우팅 지원
+</details>
 
-### 4. WebSocket 기반 실시간 통신 구축
-- SockJS, stompclient를 활용하여 스프링부트 백엔드 서버와 효과적인 실시간 통신 
+<details>
+	<summary><b>3. 견고한 아키텍처 및 확장성 확보</b></summary>
+
+- Vue 3 + Vite 기반의 **SPA**(Single Page Application) **컴포넌트 구조**로 **코드 재사용성과 모듈화 극대화**
+- `PiniaStore` - `useUserStore`, 인증정보 전역 상태 관리로 인증·사용자 정보 일관성 유지
+- `WebSocket` 연결, 공연/전시 데이터, 사용자 데이터, 채팅 데이터, 일정알림 데이터 등의 상태를 `PiniaStore`를 통해 관리
+- `Vue Router`를 통한 코드 스플리팅 및 동적 라우팅 지원
+
+</details>
+
+<details>
+	<summary><b>4. WebSocket 기반 실시간 통신 구축</b></summary>
+
+- **`SockJS`**, **`stompclient`**를 활용하여 스프링부트 백엔드 서버와 효과적인 실시간 **`WebSocket`** 통신 
 - **모듈화된 클라이언트 분리**: 채팅 전용, 알림 전용 등 클라이언트 사용부에 따라서 모듈화하여 전역에서 연결이 중복되지 않도록 관리
 - **구독을 추척하고 해제하며 안정적 연결관리**
 - **인증 헤더**에 `withCredentials` 옵션을 추가하여 쿠키 기반 인증 처리
 - **개발 생산성 향상**
     - Vite HMR(`acceptHMRUpdate`) 지원으로 변경 시 상태 유지
     - lazy import와 Promise 기반 `connect()`로 비동기 흐름 명확화
-### 5. API 연동 : 백엔드와의 데이터 통신
+ 
+</details>
+
+<details>
+	<summary><b>5. API 연동 : 백엔드와의 데이터 통신</b></summary>
+
 - **Axios 인스턴스 분리**: 인터셉터 적용(`axiosInstance`) vs 비적용(`axiosNoInterceptor`)으로 토큰 갱신 충돌 방지
 - **자동 인증 헤더 & 토큰 갱신**
     - 요청 인터셉터로 `Authorization: Bearer …` 자동 삽입
@@ -182,6 +201,9 @@
 - **명확한 비동기 흐름 설계**
     - `async/await`와 `Promise` 반환으로 호출부에서는 결과(success/fail)만 간단히 처리
     - `login()`·`logout()`·`signup()` 액션이 모두 `{ success, message, code }` 형태로 통일된 리턴 구조 제공
+
+</details>
+
 
 ---
 
