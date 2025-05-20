@@ -95,7 +95,7 @@
 		<td>1234</td>
 	</tr>
 </table>
-* 그 외에도 <code>animal1@example.com</code> ~ <code>animal376@example.com</code> 중에서 자유롭게 사용 가능
+* 그 외에도 <code>animal1@example.com</code> ~ <code>animal376@example.com</code> 중에서 숫자를 바꾸어 아이디로 사용 가능
 <br><br>
 
 ## 📝 Grapefield 서비스 소개
@@ -115,15 +115,19 @@
 
 ### 세부 기능
 `Information`
-- \#문화_콘텐츠_통합_정보 \#통합_검색 \#지난_공연_후기_아카이브
+- **\#문화_콘텐츠_통합_정보 \#통합_검색 \#지난_공연_후기_아카이브**
 - 뮤지컬, 연극, 콘서트, 전시회, 클래식 등 다양한 오프라인 문화 콘텐츠에 대한 예매 정보, 상연 일정, 출연진, 세부 줄거리 등 상세한 정보를 제공한다.
 
 `Calendar`
-- \#예매일정_통합_제공 \#예매일절_알림_기능
+- **\#예매일정_통합_제공 \#예매일절_알림_기능**
 - 예매처별로 나누어진 공연 및 전시 일정을 플랫폼 내에서 통합하여 확인할 수 있으며, 개별 사이트를 방문하지 않고도 손쉽게 일정을 관리할 수 있다. 또한 개인 일정을 등록하여 함께 관리하는 기능도 지원하여 사이트에서 놓친 일정도 문제 없이 관리할 수 있다.
 
 `Chat`
-- \#문화콘텐츠별_단독_채팅방 \#실시간_소통_제공
+- **\#문화콘텐츠별_단독_채팅방 \#실시간_소통_제공**
+- 공연/전시 각각 개별로 실시간 채팅 기능을 제공하여 그를 주제로 이용자 간 즉각적인 소통이 가능하다. 관람 전 궁금한 사항을 묻거나, 관람 후 소감을 나누는 등 실시간 커뮤니케이션을 통해 현장의 분위기를 함께 느낄 수 있다.
+
+`Archive`
+- **\#후기 \#통합정보 \#채팅기록 \#모두_영구_보관**
 - 공연/전시 각각 개별로 실시간 채팅 기능을 제공하여 그를 주제로 이용자 간 즉각적인 소통이 가능하다. 관람 전 궁금한 사항을 묻거나, 관람 후 소감을 나누는 등 실시간 커뮤니케이션을 통해 현장의 분위기를 함께 느낄 수 있다.
 
 ---
@@ -134,8 +138,14 @@
 ---
 
 ## 프론트엔드 프로젝트 목표
-사용자 인터페이스(UI) 개발 : 직관적이고 반응형(Responsive) 디자인 구현    
-사용자 경험(UX) 향상 : 사용자의 편의성과 흐름을 고려한 화면 흐름 설계   
+사용자 인터페이스(UI) 개발
+- 다양한 기능에 아이콘을 적극 활용하여 직관적이고 편리한 사용성 추구
+- 반응형(Responsive) 레이아웃 활용
+  
+사용자 경험(UX) 향상
+- 사용자의 편의성을 고려하여 주요 기능 버튼을 헤더에 고정
+- 
+
 프론트엔드 기술 활용 : HTML, CSS, JavaScript, 프레임워크(Vue, React 등)를 사용할 때 확장성을 고려하여 프로젝트를 진행   
 API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, interceptor 등)
 
@@ -162,6 +172,9 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </p>
 </details>
 
+- 이전에 등록된 적 없는 이메일을 통하여 회원가입
+- 입력한 **이메일 주소로 발송된 링크**를 통하여 정상 회원가입 완료
+
 <details>
 <summary><b>🔐로그인</b></summary>
 <p align="left" style="margin: 0; padding: 0;">
@@ -169,14 +182,23 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </p>
 </details>
 
+- 가입할 때 기입한 이메일주소를 아이디로 입력하여 로그인
+
 <details>
-<summary>🙋 마이페이지<summary>
-	
-- **관심 행사 목록** 확인
-- **작성한 후기 관리**
-- **알림 설정 및 관리**
-- **프로필 설정**
+<summary>🙋 마이페이지</summary>
+<p align="left" style="margin: 0; padding: 0;">
+  <img width="640px" src="https://github.com/user-attachments/assets/cda77b53-9c09-464f-9186-f62f3e5f1aaf">
+</p>
+<p align="left" style="margin: 0; padding: 0;">
+  <img width="640px" src="https://github.com/user-attachments/assets/ee4eb976-90db-4bd2-929b-7fdefc2cd31b">
+</p>	
 </details>
+	
+- 프로필 설정
+- 관심 행사 목록 확인
+- 작성한 후기 관리
+- 알림 설정 및 관리
+
 
 ---
 ### 메인화면
@@ -247,6 +269,9 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 <p align="left" style="margin: 0; padding: 0;">
   <img width="640px" src="https://github.com/user-attachments/assets/21f4b9d2-448e-4c0f-9341-bcf3949b3892">
 </p>
+<p align="left" style="margin: 0; padding: 0;">
+  <img width="640px" src="https://github.com/user-attachments/assets/0c8ee084-2214-4548-b443-70ebe6de944b">
+</p>
 </details>
 
 - 즐겨찾기 및 알림 설정한 전시/공연 확인
@@ -256,12 +281,7 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 <p align="left" style="margin: 0; padding: 0;">
   <img width="640px" src="https://github.com/user-attachments/assets/bf77a56c-72e2-411a-a613-8b39a2c2d0b4">
 </p>
-<p align="left" style="margin: 0; padding: 0;">
-  <img width="640px" src="https://github.com/user-attachments/assets/0c8ee084-2214-4548-b443-70ebe6de944b">
-</p>
-<p align="left" style="margin: 0; padding: 0;">
-  <img width="640px" src="https://github.com/user-attachments/assets/21f4b9d2-448e-4c0f-9341-bcf3949b3892">
-</p>
+
 </details>
 
 - 상세페이지, 메인페이지의 캘린더, 캘린더 탭 등에서 일정을 등록할 수 있음
@@ -370,9 +390,6 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </details>
 
 - **실시간 좋아요♥️ 수치 & 접속자👥 수치 집계**하여 인기채팅방 목록 제공
-
-
-
 
 
 ---
