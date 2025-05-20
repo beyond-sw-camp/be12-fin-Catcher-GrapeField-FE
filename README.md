@@ -340,9 +340,27 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </p>
 </details>
 
-- **실시간 채팅방 좋아요(♥️) 송수신 기능**
-- **실시간 메세지 📨 송수신 기능**
+- 실시간 **채팅방 좋아요(♥️)** 송수신 기능
+- 실시간 **메세지 📨** 송수신 기능
 
+<details>
+<summary><b>💥채팅 하이라이트 구간 발생</b></summary>
+<p align="left" style="margin: 0; padding: 0;">
+<img width="640px" alt="채팅 3명 동시 접속" src="https://github.com/user-attachments/assets/c8cfe59a-7d1e-4e3d-a684-2f35682c872d">
+</p>
+</details>
+
+- 실시간 접속자수와 메세지 발생량을 자동으로 측정·탐지하여 채팅 하이라이트 구간 발생
+- 인공지능 API를 활용하여 구간의 메세지를 요약한 키워드를 제공
+
+<details>
+<summary><b>🖱️과거 하이라이트 구간 스크롤</b></summary>
+<p align="left" style="margin: 0; padding: 0;">
+<img width="640px" alt="채팅 3명 동시 접속" src="https://github.com/user-attachments/assets/b262264d-d8e5-4360-8dbd-471d91ced707">
+</p>
+</details>
+
+- 과거의 하이라이트 구간 버튼을 클릭하여 자동으로 스크롤하여 조회할 수 있도록 함
 
 <details>
 <summary><b>🔥실시간 인기 채팅방 목록 제공</b></summary>
@@ -351,13 +369,11 @@ API 연동 : 백엔드와의 데이터 통신(fetch, promise, ajax, axios, inter
 </p>
 </details>
 
-- 실시간 좋아요(♥️) 수치 & 접속자👥 수치 집계하여 인기채팅방 목록 제공
+- **실시간 좋아요♥️ 수치 & 접속자👥 수치 집계**하여 인기채팅방 목록 제공
 
 
 
 
-- **하이라이트 시간대 자동 탐지 기능**
-- **하이라이트 채팅구간 저장 시 AI API로 키워드 요약 기능**
 
 ---
 
