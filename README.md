@@ -241,7 +241,7 @@
 - 가입할 때 기입한 이메일주소를 아이디로 입력하여 로그인
 
 <details>
-<summary>🙋 마이페이지</summary>
+<summary><b>🙋 마이페이지</b></summary>
 <p align="left" style="margin: 0; padding: 0;">
   <img width="640px" src="https://github.com/user-attachments/assets/ee4eb976-90db-4bd2-929b-7fdefc2cd31b">
 </p>	
@@ -252,12 +252,12 @@
 - 작성한 후기 관리
 - 알림 설정 및 관리
 
-<details> <summary>✍🏻정보 수정</summary>
+<details> <summary><b>✍🏻정보 수정</b></summary>
 <p align="left" style="margin: 0; padding: 0;">
   <img width="640px" src="https://github.com/user-attachments/assets/cda77b53-9c09-464f-9186-f62f3e5f1aaf">
 </p>
 </details>
-<details> <summary>✍🏻비밀번호 변경</summary>
+<details> <summary><b>✍🏻비밀번호 변경</b></summary>
 <p align="left" style="margin: 0; padding: 0;">
   <img width="640px" src="https://github.com/user-attachments/assets/1c7666bf-3b19-4bd8-af5d-44461554e198">
 </p>
