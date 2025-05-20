@@ -44,6 +44,16 @@ const getIconUrl = (name) => `/assets/icons/${name}.png`
 //프로필 아이콘
 const profileImgUrl = new URL('/assets/icons/profile.png', import.meta.url).href
 
+// Tailwind 색상 클래스 - 보라~분홍 계열
+const colorClasses = [
+  'bg-purple-100',
+  'bg-violet-100',
+  'bg-fuchsia-100',
+  'bg-pink-100',
+  'bg-rose-100',
+  'bg-purple-200',
+  'bg-indigo-100'
+];
 
 // 패널 제목 계산
 const getPanelTitle = computed(() => {
@@ -384,7 +394,12 @@ onBeforeUnmount(() => {
                   <div v-for="(msg, idx) in chatRoomStore.formattedMessages" :key="msg.idx"
                     :class="['flex', msg.isMe ? 'justify-end' : 'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
-                      <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />
+                      <div v-if="!msg.avatar"
+                           :class="['text-sm sm:text-xm text-gray-800 h-full flex items-center justify-center font-semibold',
+                colorClasses[msg.userIdx % colorClasses.length]]">
+                        {{ msg.sender.charAt(0).toUpperCase() }}
+                      </div>
+                      <img v-else :src="msg.avatar" alt="프로필" class="text-xs w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col max-w-[70%]">
                       <div :class="msg.isMe ? 'bg-purple-700 text-white' : 'bg-purple-100 text-gray-800'"
