@@ -465,8 +465,6 @@
 ## 📂 프로젝트 폴더 바로가기
 ### [📃 Frontend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-FE.git)
 ### [📃 Devops(Frontend)]()
-<br>//TODO: 수정해야함 <br>
 ### [📃 Backend](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-BE.git)
-### [📃 Devops(Backend)]()
-<br>//TODO: 수정해야함<br>
+### [📃 Devops(Backend)](https://github.com/beyond-sw-camp/be12-fin-Catcher-GrapeField-BE/tree/develop/devops)
 <br>
