@@ -56,8 +56,8 @@ pipeline {
                     grep -r "grapefield-image" dist/ || echo "이미지 URL이 빌드 결과물에 없습니다"
                 '''
                 stash includes: 'dist/**/*', name: 'build-output'
-                stash includes: 'k8s/*.yml', name: 'k8s-files'
-                stash includes: 'Dockerfile', name: 'dockerfile'
+                stash includes: 'devops/k8s/*.yml', name: 'k8s-files'
+                stash includes: 'devops/Dockerfile', name: 'dockerfile'
             }
         }
         stage('Docker Build') {
@@ -99,14 +99,14 @@ pipeline {
                     withEnv(['KUBECONFIG=/home/jenkins/.kube/config']) {
                         sh """
                             # 이미지 태그 업데이트
-                            sed -i 's|${DOCKER_USER}/${IMAGE_NAME}:.*|${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/frontend-deployment.yml
+                            sed -i 's|${DOCKER_USER}/${IMAGE_NAME}:.*|${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}|g' devops/k8s/frontend-deployment.yml
                             
                             # 수정된 파일 내용 확인
                             echo "배포할 YAML 파일 내용:"
-                            cat k8s/frontend-deployment.yml
+                            cat devops/k8s/frontend-deployment.yml
                             
                             # Kubernetes에 배포
-                            kubectl apply -f k8s/frontend-deployment.yml -n first --validate=false
+                            kubectl apply -f devops/k8s/frontend-deployment.yml -n first --validate=false
                             kubectl rollout status deployment/nginx -n first
                         """
                     }
