@@ -152,7 +152,7 @@ defineExpose({
                 <div class="inline-flex justify-start items-center gap-4 w-full">
                     <div
                         class="w-9 h-10 px-3.5 py-3 bg-violet-50 rounded-[20px] inline-flex justify-center items-center">
-                        <div class="text-center text-violet-600 text-xs font-bold">별</div>
+                        <div class="text-center text-violet-600 text-xs font-bold">{{ review.writer.charAt(0).toUpperCase()}}</div>
                     </div>
                     <div class="w-full inline-flex flex-col gap-1">
                         <div class="flex justify-between items-center">

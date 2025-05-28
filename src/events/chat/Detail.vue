@@ -7,11 +7,10 @@ import {useChatStore} from "@/stores/useChatStore.js";
 import {useUserStore} from "@/stores/useUserStore.js";
 import { useChatRoomListStore } from '@/stores/useChatRoomListStore'
 
-
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 const userStore = useUserStore()
 const chatRoomStore = useChatRoomStore()
 const chatListStore = useChatRoomListStore()
-const currentUserIdx = computed(() => userStore.userDetail?.userIdx)
 
 // reactive 변수
 const chatBody = ref(null)
@@ -44,6 +43,14 @@ function handleScroll() {
 }
 
 // 시간 포맷 함수
+function formatDateTime(date) {
+  const year = date.getFullYear().toString()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${year}/${month}/${day} ${hours}:${minutes}`
+}
 function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -60,124 +67,98 @@ function toggleHighlight() {
   isHighlightCollapsed.value = !isHighlightCollapsed.value;
 }
 
-/*
-function scrollToHighlight(hStartMessageIdx, highlight) {
-  // console.log('scrollToHighlight called with:', hStartMessageIdx, typeof hStartMessageIdx);
-  const container = chatBody.value
-  // if (!container) { console.error('chatBody ref 미설정'); return;}
-
-  const messageEls = Array.from(
-      container.querySelectorAll('[data-message-idx]')
-  );
-  // console.log('formattedMessages:', chatRoomStore.formattedMessages);
-  const targetIndex = chatRoomStore.formattedMessages.findIndex(
-      msg => msg.messageIdx === hStartMessageIdx
-  );
-  // const targetIndex = chatRoomStore.formattedMessages.findIndex(
-  //     msg => {
-  //       const match = msg.id === hStartMessageIdx;
-  //       if (!match) {
-  //         console.log('no match for', msg.id, '!==', hStartMessageIdx);
-  //       }
-  //       return match;
-  //     }
-  // );
-  console.log('targetIndex result:', targetIndex);
-
-  // if (targetIndex === -1) {
-  //   console.error('Target message not found:', hStartMessageIdx);
-  //   return;
-  // }
-
-  const targetElement = messageEls[targetIndex];
-  // if (!targetElement) {
-  //   console.error('스크롤 대상 요소를 찾을 수 없습니다:', targetIndex);
-  //   return;
-  // }
-
-  nextTick(() => {
-    const start = container.scrollTop;
-    const end = targetElement.offsetTop - container.clientHeight / 2 + targetElement.clientHeight / 2;
-    const duration = 600;
-    const startTime = performance.now();
-
-    function easeInOutQuad(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
-
-    function animateScroll(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = easeInOutQuad(progress);
-      container.scrollTop = start + (end - start) * ease;
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll);
-      }
-    }
-
-    requestAnimationFrame(animateScroll);
-  });
-}
-*/
-
 async function scrollToHighlight(hStartMessageIdx, highlight) {
   const container = chatBody.value
   if (!container) {
     console.error('chatBody ref 미설정')
     return
   }
+  async function ensureTargetMessageLoaded() {
+    await nextTick() // DOM 업데이트 대기
 
-  // 1) 메시지 로드 및 스크롤 시도 재귀 함수
-  async function tryScroll() {
-    await nextTick()  // DOM 업데이트 대기
-
-    // 현재 로드된 메시지 중 타겟 메시지 인덱스 찾기
     const idx = chatRoomStore.formattedMessages
         .findIndex(msg => msg.id === hStartMessageIdx)
 
-    // 타겟을 못 찾았고, 더 로드할 페이지가 있으면 재귀 호출
     if (idx === -1 && chatRoomStore.hasNext) {
       await chatRoomStore.loadOlderMessagesInPages(roomId.value)
-      return tryScroll()
+      return ensureTargetMessageLoaded()
     }
-
-    // 더 이상 로드할 메시지가 없으면 경고 후 종료
-    if (idx === -1) {
-      console.warn('하이라이트 메시지를 찾을 수 없습니다:', hStartMessageIdx)
-      return
-    }
-
-    // 2) 메시지 엘리먼트 선택
-    const messageEls = Array.from(
-        container.querySelectorAll('[data-message-idx]')
-    )
-    const targetEl = messageEls[idx]
-    if (!targetEl) {
-      console.error('엘리먼트를 찾을 수 없습니다:', idx)
-      return
-    }
-
-    // 3) 애니메이션 스크롤
-    const start   = container.scrollTop
-    const end     = targetEl.offsetTop - container.clientHeight / 2 + targetEl.clientHeight / 2
-    const duration = 600
-    const startTime = performance.now()
-
-    function easeInOutQuad(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
-    }
-
-    function animate(now) {
-      const elapsed = now - startTime
-      const progress = Math.min(elapsed / duration, 1)
-      container.scrollTop = start + (end - start) * easeInOutQuad(progress)
-      if (progress < 1) requestAnimationFrame(animate)
-    }
-    requestAnimationFrame(animate)
+    return idx
+  }
+  const idx = await ensureTargetMessageLoaded()
+  if (idx === -1) {
+    console.warn('하이라이트 메시지를 찾을 수 없습니다:', hStartMessageIdx)
+    return
   }
 
-  // 최초 시도
-  tryScroll()
+  const messageEls = Array.from(
+      container.querySelectorAll('[data-message-idx]')
+  )
+  const targetEl = messageEls[idx]
+  if (!targetEl) {
+    console.error('엘리먼트를 찾을 수 없습니다:', idx)
+    return
+  }
+   const start   = container.scrollTop
+   const end     = targetEl.offsetTop - container.clientHeight / 2 + targetEl.clientHeight / 2
+   const duration = 600
+   const startTime = performance.now()
+   function easeInOutQuad(t) {
+     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+   }
+   function animate(now) {
+     const elapsed = now - startTime
+     const progress = Math.min(elapsed / duration, 1)
+     container.scrollTop = start + (end - start) * easeInOutQuad(progress)
+     if (progress < 1) requestAnimationFrame(animate)
+   }
+   requestAnimationFrame(animate)
+
+
+  // // 1) 메시지 로드 및 스크롤 시도 재귀 함수
+  // async function tryScroll() {
+  //   await nextTick()  // DOM 업데이트 대기
+  //   // 현재 로드된 메시지 중 타겟 메시지 인덱스 찾기
+  //   const idx = chatRoomStore.formattedMessages
+  //       .findIndex(msg => msg.id === hStartMessageIdx)
+  //
+  //   // 타겟을 못 찾았고, 더 로드할 페이지가 있으면 재귀 호출
+  //   if (idx === -1 && chatRoomStore.hasNext) {
+  //     await chatRoomStore.loadOlderMessagesInPages(roomId.value)
+  //     return tryScroll()
+  //   }
+  //   // 더 이상 로드할 메시지가 없으면 경고 후 종료
+  //   if (idx === -1) {
+  //     console.warn('하이라이트 메시지를 찾을 수 없습니다:', hStartMessageIdx)
+  //     return
+  //   }
+  //   // 2) 메시지 엘리먼트 선택
+  //   const messageEls = Array.from(
+  //       container.querySelectorAll('[data-message-idx]')
+  //   )
+  //   const targetEl = messageEls[idx]
+  //   if (!targetEl) {
+  //     console.error('엘리먼트를 찾을 수 없습니다:', idx)
+  //     return
+  //   }
+  //   // 3) 애니메이션 스크롤
+  //   const start   = container.scrollTop
+  //   const end     = targetEl.offsetTop - container.clientHeight / 2 + targetEl.clientHeight / 2
+  //   const duration = 600
+  //   const startTime = performance.now()
+  //   function easeInOutQuad(t) {
+  //     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+  //   }
+  //   function animate(now) {
+  //     const elapsed = now - startTime
+  //     const progress = Math.min(elapsed / duration, 1)
+  //     container.scrollTop = start + (end - start) * easeInOutQuad(progress)
+  //     if (progress < 1) requestAnimationFrame(animate)
+  //   }
+  //   requestAnimationFrame(animate)
+  // }
+  // // 최초 시도
+  // tryScroll()
 }
 
 function goBack() {
@@ -260,6 +241,13 @@ const leaveChatRoom = async () => {
 }
 
 onMounted(async () => {
+  if(!userStore.isLogin) {
+    console.log("❌ 로그인 필요")
+    alert('로그인 후 이용해주세요.')
+    router.push('/login')
+    return
+  }
+
   // 1️⃣ 채팅방 데이터 불러오기
   try {
     await chatRoomStore.fetchChatRoom(roomId.value, chatBody)
@@ -346,7 +334,7 @@ onBeforeUnmount(() => {
                     rounded-full text-sm sm:text-base shadow hover:bg-purple-700 hover:text-white
                     transition"
                  @click="scrollToHighlight(highlight.messageIdx, highlight)">
-              <div>{{ formatTime(highlight.time1) }}~{{ formatTime(highlight.time2) }}</div>
+              <div>{{ formatDateTime(highlight.time1) }}~{{ formatTime(highlight.time2) }}</div>
               <div>{{ highlight.summary }}</div>
             </div>
           </div>
@@ -379,7 +367,7 @@ onBeforeUnmount(() => {
                 colorClasses[msg.userIdx % colorClasses.length]]">
               {{ msg.sender.charAt(0).toUpperCase() }}
             </div>
-            <img v-else :src="msg.avatar || '@/assets/icons/default-avatar.png'"
+            <img v-else :src="BASE_IMAGE_URL + encodeURI(msg.avatar)"
                  alt="프로필" class="text-sm w-full h-full object-cover"/>
           </div>
 

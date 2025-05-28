@@ -1,10 +1,12 @@
 <script setup>
-import { ref} from 'vue'
+import {onMounted, ref} from 'vue'
+import axios from "axios";
+import {useUserStore} from "@/stores/useUserStore.js";
 
 const props = defineProps({
     menus: String
 });
-
+const userStore = useUserStore()
 // 부모에게 전달할 이벤트 정의
 const emit = defineEmits(['selectMenu'])
 const menus = [
@@ -21,11 +23,32 @@ const selectMenu = (value) => {
     activeMenu.value = value
     emit('selectMenu', value) // ✅ 부모로 이벤트 전달
 }
-const user = {
-    name: '김포도',
-    role: '일반 회원',
-    profileImg: '', // 실제 이미지 경로가 있을 경우 채움
-}
+const user = ref({
+  name: '',
+  email: '',
+  profileImg: '',
+  role: ''
+})
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
+
+// onMounted(async () => {
+//   try {
+//     const res = await axios.get('api/user/mypage', {
+//       withCredentials: true
+//     });
+//
+//     const username = res.data?.username || '';
+//     const email = res.data?.email || '';
+//     const profileImg = res.data?.profileImg || '';
+//     const role = res.data?.role || '일반 회원'; // 기본 역할 설정
+//
+//     user.value = { name:username, email, profileImg, role };
+//     //console.log("추출된 데이터:", user.value);
+//   } catch (error) {
+//     console.error('에러 발생:', error);
+//   }
+// });
+
 </script>
 
 <template>
@@ -36,15 +59,15 @@ const user = {
             <div
                 class="w-16 h-16 rounded-full bg-violet-200 flex items-center justify-center text-white text-lg font-bold">
                 <!-- 이미지가 없을 경우 기본 이미지 -->
-                <img v-if="user.profileImg" :src="user.profileImg" alt="프로필 이미지"
+                <img v-if="userStore.profileImg" :src="BASE_IMAGE_URL + encodeURI(userStore.profileImg)" alt="프로필 이미지"
                     class="w-full h-full rounded-full object-cover" />
-                <img v-else="user.profileImg" src="@/assets/icons/profile.png" alt="기본 이미지"
+                <img v-else="userStore.profileImg" src="@/assets/icons/profile.png" alt="기본 이미지"
                     class="w-full h-full rounded-full object-cover" />
             </div>
 
             <!-- 유저 이름 및 역할 -->
-            <div class="mt-2 font-semibold text-base">{{ user.name }}님</div>
-            <div class="text-sm text-gray-500">{{ user.role }}</div>
+            <div class="mt-2 font-semibold text-base">{{ userStore.username }}님</div>
+            <div class="text-sm text-gray-500">{{ userStore.userDetail.role }}</div>
         </div>
 
         <!-- 메뉴 리스트 -->

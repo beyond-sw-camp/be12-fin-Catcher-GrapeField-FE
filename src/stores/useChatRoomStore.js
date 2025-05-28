@@ -15,7 +15,7 @@ export const useChatRoomStore = defineStore('chatRoom', {
         roomTitle: '',
         messages: [],
         page: 0,
-        size: 20,
+        size: 100,
         hasNext: true,
         loading: false,
         error: null,
@@ -143,15 +143,18 @@ export const useChatRoomStore = defineStore('chatRoom', {
                 this.messages = [...olderMessages, ...this.messages];
                 this.hasNext = data.hasNext;
                 this.page++;
-                // DOM 업데이트 후 스크롤 위치 보정
-                await nextTick();
-                const newHeight = container.scrollHeight;
-                container.scrollTop = newHeight - prevHeight;
+                // // DOM 업데이트 후 스크롤 위치 보정
+                // await this.scrollUpdate(container, prevHeight);
             } catch(err){
                 console.error('🔴 메시지 더 많은 페이지 가져오기 실패:', err)
             } finally {
                 this.loading = false;
             }
+        },
+        async scrollUpdate(container, prevHeight) {
+            await nextTick();
+            const newHeight = container.scrollHeight;
+            container.scrollTop = newHeight - prevHeight;
         },
         addHighlightRealtime(highlightResp) {
             //('🟡 실시간 하이라이트 수신:', highlightResp)

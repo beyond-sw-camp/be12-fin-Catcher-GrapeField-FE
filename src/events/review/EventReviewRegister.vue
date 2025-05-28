@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useReviewStore } from '@/stores/useReviewStore'
+import {useUserStore} from "@/stores/useUserStore.js";
 
 const reviewStore = useReviewStore()
-
+const userStore = useUserStore()
+const username = computed(() => userStore.username)
 const props = defineProps({
     eventIdx: Number
 })
@@ -72,9 +74,9 @@ const submitReview = async () => {
             <!-- 프로필 섹션 -->
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span class="text-gray-600 font-bold">K</span>
+                    <span class="text-gray-600 font-bold">{{username.charAt(0).toUpperCase()}}</span>
                 </div>
-                <span class="text-neutral-800 font-medium">김그레이프</span>
+                <span class="text-neutral-800 font-medium">{{username}}</span>
             </div>
 
             <!-- 별점 선택 -->

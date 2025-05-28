@@ -256,7 +256,7 @@ const nextMonth = () => {
 onMounted(() => {
   // 현재 날짜로 초기화 (예시에서는 2025년 4월로 설정)
   currentYear.value = 2025;
-  currentMonth.value = 4;
+  currentMonth.value = 5;
 
   calculateCalendarDays();
   fetchEventsForCurrentMonth();

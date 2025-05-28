@@ -10,6 +10,7 @@ import { useEventsStore } from '@/stores/useEventsStore'
 import { connectSocket, subscribeTopic, unsubscribeTopic } from '@/utils/socketService'
 // import {connect, stompClient} from "@/utils/webSocketClient.js"; // 메세지 송수신을 위한 stompClient 가져오기
 
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 const userStore = useUserStore()
 const chatListStore = useChatRoomListStore()
 const chatRoomStore = useChatRoomStore()
@@ -45,8 +46,19 @@ const state = reactive({
 const getIconUrl = (name) => `/assets/icons/${name}.png`
 
 //프로필 아이콘
-const profileImgUrl = new URL('/assets/icons/profile.png', import.meta.url).href
 
+const profileImgUrl = userStore.profileImg? BASE_IMAGE_URL + encodeURI(userStore.profileImg) : new URL('/assets/icons/profile.png', import.meta.url).href
+
+// Tailwind 색상 클래스 - 보라~분홍 계열
+const colorClasses = [
+  'bg-purple-100',
+  'bg-violet-100',
+  'bg-fuchsia-100',
+  'bg-pink-100',
+  'bg-rose-100',
+  'bg-purple-200',
+  'bg-indigo-100'
+];
 
 // 패널 제목 계산
 const getPanelTitle = computed(() => {
@@ -101,7 +113,7 @@ async function showChatRoom(room) {
   state.activeRoomIdx = room.roomIdx;
 
   await chatRoomStore.connectWebSocket(room.roomIdx);
-  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody.value);
+  await chatRoomStore.fetchChatRoom(room.roomIdx, chatBody);
   state.activeChatRoomMessages = chatRoomStore.formattedMessages;
   await nextTick(() => {
     chatRoomStore.initialScroll(chatBody.value)
@@ -326,7 +338,7 @@ onBeforeUnmount(() => {
             <div
               class="w-16 h-16 rounded-full bg-purple-100 border border-purple-700 overflow-hidden mb-6 flex items-center justify-center">
               <img :src="profileImgUrl" @click="$router.push('/mypage')" alt="프로필"
-                class="w-full h-full object-contain" />
+                class="w-full h-full object-cover" />
             </div>
             <div class="text-lg font-semibold text-gray-800 mb-2">{{ userStore.username }}</div>
             <div class="text-sm text-gray-600 mb-6">{{ userStore.email }}</div>
@@ -410,7 +422,13 @@ onBeforeUnmount(() => {
                   <div v-for="(msg, index) in chatRoomStore.formattedMessages" :key="msg.id"
                     :class="['flex', msg.isMe ? 'justify-end' : 'justify-start']">
                     <div v-if="!msg.isMe" class="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2">
-                      <img :src="msg.avatar" alt="프로필" class="w-full h-full object-cover" />
+                      <div v-if="!msg.avatar"
+                           :class="['text-sm sm:text-xm text-gray-800 h-full flex items-center justify-center font-semibold',
+                colorClasses[msg.userIdx % colorClasses.length]]">
+                        {{ msg.sender.charAt(0).toUpperCase() }}
+                      </div>
+                      <img v-else :src="BASE_IMAGE_URL + encodeURI(msg.avatar)"
+                           alt="프로필" class="text-xs w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col max-w-[70%]">
                       <div :class="msg.isMe ? 'bg-purple-700 text-white' : 'bg-purple-100 text-gray-800'"
