@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
     userIdx: (state) => state.user?.userIdx,
     email: (state) => state.user?.email,
     username: (state) => state.user?.username,
-    profileImg: (state) => state.userDetail?.profileImg || 'images/default/profile.png',
+    profileImg: (state) => state.userDetail?.profileImg,
     phone: (state) => state.userDetail?.phoneNumber,
   },
   actions: {

@@ -61,7 +61,7 @@ const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
                 <!-- 이미지가 없을 경우 기본 이미지 -->
                 <img v-if="userStore.profileImg" :src="BASE_IMAGE_URL + encodeURI(userStore.profileImg)" alt="프로필 이미지"
                     class="w-full h-full rounded-full object-cover" />
-                <img v-else="userStore.profileImg" src="@/assets/icons/profile.png" alt="기본 이미지"
+                <img v-else="userStore.profileImg" src="/assets/icons/profile.png" alt="기본 이미지"
                     class="w-full h-full rounded-full object-cover" />
             </div>
 

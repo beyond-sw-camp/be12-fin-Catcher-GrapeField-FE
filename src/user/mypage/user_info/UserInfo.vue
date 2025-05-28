@@ -117,7 +117,7 @@ const saveChanges = async () => {
               <img v-if="user.profileImg" :src="BASE_IMAGE_URL + encodeURI(user.profileImg)" alt="프로필 이미지"
                    class="w-full h-full object-cover"/>
               <img v-else alt="기본 이미지" class="w-full h-full object-cover"
-                   src="@/assets/icons/profile.png"/>
+                   src="/assets/icons/profile.png"/>
             </div>
           </label>
 
@@ -126,7 +126,7 @@ const saveChanges = async () => {
             <img v-if="user.profileImg" :src="BASE_IMAGE_URL + encodeURI(user.profileImg)" alt="프로필 이미지"
                  class="w-full h-full object-cover"/>
             <img v-else alt="기본 이미지" class="w-full h-full object-cover"
-                 src="@/assets/icons/profile.png"/>
+                 src="/assets/icons/profile.png"/>
           </div>
 
           <!-- 삭제 버튼 (오른쪽 하단에 X 아이콘) -->
